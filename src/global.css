@@ -1,7 +1,25 @@
+:root {
+  --color-bg: #1b1d23;
+  --color-text: #eee;
+  --color-muted: #888;
+  --color-surface: #333;
+  --color-surface-raised: #444;
+  --color-accent: #3b82f6;
+  --color-accent-hover: #2563eb;
+  --color-accent-light: #60a5fa;
+  --color-accent-pale: #93c5fd;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fbbf24;
+  --color-warning-pale: #fde68a;
+  --color-fat: #a78bfa;
+  --color-on-accent: #fff;
+}
+
 body {
   font-family: system-ui, sans-serif;
-  background: #1b1d23;
-  color: #eee;
+  background: var(--color-bg);
+  color: var(--color-text);
   display: flex;
   justify-content: center;
   padding-top: 10vh;
@@ -16,17 +34,17 @@ button {
   padding: 0.9rem;
   border: 0;
   border-radius: 8px;
-  background: #3b82f6;
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
   cursor: pointer;
 }
 
 button:hover:not([disabled]) {
-  background: #2563eb;
+  background: var(--color-accent-hover);
 }
 
 button[disabled] {
-  background: #444;
-  color: #888;
+  background: var(--color-surface-raised);
+  color: var(--color-muted);
   cursor: not-allowed;
 }
