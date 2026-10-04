@@ -2,6 +2,7 @@ import {
   CalendarDays,
   ChevronDown,
   MapPin,
+  User,
   Utensils,
   Wallet,
 } from 'lucide-react';
@@ -39,6 +40,7 @@ const LINKS = [
   { to: '/', label: 'Game', Icon: Utensils },
   { to: '/calendar', label: 'Calendar', Icon: CalendarDays },
   { to: '/balance', label: 'Balance', Icon: Wallet },
+  { to: '/profile', label: 'Profile', Icon: User },
 ];
 
 // The gauges and the pages menu: slides in on mobile, always shown from
