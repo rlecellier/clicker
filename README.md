@@ -34,7 +34,7 @@ adapt them to the screen. The conventions are written down in the ADRs of
 review of the project is in [`docs/architecture-review.md`](docs/architecture-review.md).
 
 The e2e journeys (`e2e/`) are real tests; the `/demo` comment on a pull request
-replays them as a video.
+replays them and posts a screenshot of each.
 
 ## Deployment
 
