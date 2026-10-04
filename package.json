@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "demo": "node scripts/demo.mjs"
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -24,6 +24,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@faker-js/faker": "^10.6.0",
+    "@playwright/test": "^1.63.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
@@ -39,7 +40,6 @@
     "factory-kit": "^0.1.6",
     "globals": "^17.13.0",
     "jsdom": "^29.1.1",
-    "playwright": "^1.63.0",
     "prettier": "^3.9.9",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.0",
