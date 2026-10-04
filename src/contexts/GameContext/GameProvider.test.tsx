@@ -6,6 +6,7 @@ import { totalExpensesCents } from '@game/expenses';
 import { INITIAL_CALORIES, SNACK_CALORIES } from '@game/nutrition';
 import { DEFAULT_SPEED, HOURS_PER_SECOND, HOURS_PER_WEEK } from '@game/time';
 import { gameStateFactory } from '@test/factories/gameStateFactory';
+import { WORKING_STATE } from '@test/schedules';
 
 import { GameProvider } from './GameProvider';
 import type { GameContextValue } from './types';
@@ -93,7 +94,11 @@ const earnedCents = (game: GameContextValue) =>
   game.balanceCents + totalExpensesCents(game.expenses);
 
 test('earns the weekly pay while working, banked once the week ends', () => {
-  const { result } = renderGame();
+  const { result } = renderGame(
+    gameStateFactory.build({
+      overrides: { ...WORKING_STATE, balanceCents: 0 },
+    }),
+  );
 
   act(() => {
     vi.advanceTimersByTime(hoursToMs(18.5));
@@ -110,7 +115,11 @@ test('earns the weekly pay while working, banked once the week ends', () => {
 });
 
 test('speeding up the time brings the end of the week closer', () => {
-  const { result } = renderGame();
+  const { result } = renderGame(
+    gameStateFactory.build({
+      overrides: { ...WORKING_STATE, balanceCents: 0 },
+    }),
+  );
 
   act(() => {
     result.current.faster();
@@ -131,4 +140,63 @@ test('slowing down stops at the slowest speed', () => {
   });
 
   expect(result.current.canSlowDown).toBe(false);
+});
+
+test('takes a job, which plans the work and pays for it', () => {
+  const { result } = renderGame();
+  expect(result.current.job).toBeUndefined();
+
+  act(() => {
+    result.current.takeJob('clothes-seller');
+  });
+
+  expect(result.current.job?.id).toBe('clothes-seller');
+  expect(result.current.obligations.map((event) => event.title)).toContain(
+    'Sell clothes',
+  );
+  expect(result.current.schedule.plan.map((event) => event.title)).toContain(
+    'Go to work',
+  );
+});
+
+test('an ask event pauses the game until the player answers', () => {
+  const { result } = renderGame(
+    gameStateFactory.build({
+      overrides: {
+        ...WORKING_STATE,
+        plan: [
+          ...WORKING_STATE.plan,
+          {
+            id: 'read-ask',
+            title: 'Read a book',
+            kind: 'read',
+            mode: 'ask',
+            recurrence: { type: 'weekly', days: [0, 1, 2, 3, 4, 5, 6] },
+            start: 20,
+            end: 22,
+          },
+        ],
+      },
+    }),
+  );
+
+  act(() => {
+    vi.advanceTimersByTime(hoursToMs(21));
+  });
+  expect(result.current.asking?.event.id).toBe('read-ask');
+  expect(result.current.elapsedHours).toBe(20);
+
+  act(() => {
+    vi.advanceTimersByTime(hoursToMs(5));
+  });
+  expect(result.current.elapsedHours).toBe(20);
+
+  act(() => {
+    result.current.answerAsk(true);
+  });
+  act(() => {
+    vi.advanceTimersByTime(hoursToMs(1));
+  });
+  expect(result.current.asking).toBeUndefined();
+  expect(result.current.isReadingNow).toBe(true);
 });
