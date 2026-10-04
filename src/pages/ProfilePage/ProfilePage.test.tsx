@@ -34,13 +34,13 @@ test('a new player is the reference one', () => {
   renderPage(gameStateFactory.build({ overrides: { fat: 0 } }));
   expect(statOf('Height')).toHaveTextContent('1.70 m');
   expect(statOf('Weight')).toHaveTextContent('70.0 kg');
-  expect(statOf('Fat')).toHaveTextContent('20%');
-  expect(statOf('Muscle')).toHaveTextContent('80%');
+  expect(screen.getByText('Fat 20%')).toBeInTheDocument();
+  expect(screen.getByText('Muscle 80%')).toBeInTheDocument();
 });
 
 test('fat makes the player heavier', () => {
   renderPage(gameStateFactory.build({ overrides: { fat: 100 } }));
   expect(statOf('Weight')).toHaveTextContent('75.0 kg');
-  expect(statOf('Fat')).toHaveTextContent('25%');
-  expect(statOf('Muscle')).toHaveTextContent('75%');
+  expect(screen.getByText('Fat 25%')).toBeInTheDocument();
+  expect(screen.getByText('Muscle 75%')).toBeInTheDocument();
 });
