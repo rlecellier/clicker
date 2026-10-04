@@ -36,54 +36,56 @@ const Layout = () => {
 
   return (
     <div className={styles.layout}>
-      <Sidebar
-        id="sidebar"
-        calories={calories}
-        fat={fat}
-        brain={brain}
-        dreamGauge={dreamGauge}
-        dreams={dreams}
-        isSleeping={isSleeping}
-        location={location}
-        isOpen={isMenuOpen}
-        onClose={closeMenu}
-      />
-      <main className={styles.main}>
-        <header className={styles.header}>
-          <div className={styles.brand}>
-            <Button
-              className={styles.menuButton}
-              aria-label="Menu"
-              aria-expanded={isMenuOpen}
-              aria-controls="sidebar"
-              onClick={() => {
-                setIsMenuOpen((isOpen) => !isOpen);
-              }}
-            >
-              {isMenuOpen ? (
-                <X aria-hidden size={18} />
-              ) : (
-                <Menu aria-hidden size={18} />
-              )}
-            </Button>
-            <h1 className={styles.title}>Clicker</h1>
-          </div>
-          <div className={styles.status}>
-            <CaloriesStatus status={getCaloriesStatus(calories)} />
-            <MoneyCounter cents={balanceCents} />
-          </div>
-        </header>
-        <div className={styles.controls}>
-          <TimeControls
-            speed={speed}
-            canSpeedUp={canSpeedUp}
-            canSlowDown={canSlowDown}
-            onFaster={faster}
-            onSlower={slower}
-          />
+      <header className={styles.header}>
+        <div className={styles.brand}>
+          <Button
+            className={styles.menuButton}
+            aria-label="Menu"
+            aria-expanded={isMenuOpen}
+            aria-controls="sidebar"
+            onClick={() => {
+              setIsMenuOpen((isOpen) => !isOpen);
+            }}
+          >
+            {isMenuOpen ? (
+              <X aria-hidden size={18} />
+            ) : (
+              <Menu aria-hidden size={18} />
+            )}
+          </Button>
+          <h1 className={styles.title}>Clicker</h1>
         </div>
-        <Outlet />
-      </main>
+        <div className={styles.status}>
+          <CaloriesStatus status={getCaloriesStatus(calories)} />
+          <MoneyCounter cents={balanceCents} />
+        </div>
+      </header>
+      <div className={styles.body}>
+        <Sidebar
+          id="sidebar"
+          calories={calories}
+          fat={fat}
+          brain={brain}
+          dreamGauge={dreamGauge}
+          dreams={dreams}
+          isSleeping={isSleeping}
+          location={location}
+          isOpen={isMenuOpen}
+          onClose={closeMenu}
+        />
+        <main className={styles.main}>
+          <div className={styles.controls}>
+            <TimeControls
+              speed={speed}
+              canSpeedUp={canSpeedUp}
+              canSlowDown={canSlowDown}
+              onFaster={faster}
+              onSlower={slower}
+            />
+          </div>
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };
