@@ -17,7 +17,7 @@ import {
   weekHourOf,
   weekOf,
 } from '@game/gameState';
-import { isBookFinished } from '@game/reading';
+import { getBook, isLibraryRead } from '@game/reading';
 import { useAutoSave } from '@hook/useAutoSave';
 import { useFrameLoop } from '@hook/useFrameLoop';
 
@@ -61,7 +61,9 @@ export const GameProvider = ({
       isSleeping: isSleepingNow(state),
       isEnjoyingCake: isEnjoyingCakeNow(state),
       bookHours: state.bookHours,
-      isBookFinished: isBookFinished(state),
+      currentBook: getBook(state.bookId),
+      readBooks: state.readBookIds.flatMap((id) => getBook(id) ?? []),
+      isLibraryRead: isLibraryRead(state),
       isReadingNow: isReadingNow(state),
       isReading: state.isReading,
       faster: () => {
@@ -77,7 +79,7 @@ export const GameProvider = ({
         dispatch({ type: 'enjoyCake' });
       },
       toggleReading: () => {
-        dispatch({ type: 'toggleReading' });
+        dispatch({ type: 'toggleReading', roll: Math.random() });
       },
       restart: () => {
         dispatch({ type: 'restart', birthDate: birthDateOf(new Date()) });

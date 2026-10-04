@@ -34,7 +34,9 @@ const state = {
   dreamGauge: 42.5,
   dreams: 3,
   cakeUntil: 120,
+  bookId: 'hobbit',
   bookHours: 12.5,
+  readBookIds: ['animal-farm', 'dune'],
   isReading: true,
 };
 
@@ -89,8 +91,15 @@ test('refuses a save with a missing or invalid field', () => {
   expect(broken({ dreams: -1 })).toBeUndefined();
   expect(broken({ dreams: 1.5 })).toBeUndefined();
   expect(broken({ fat: undefined })).toBeUndefined();
-  expect(broken({ bookHours: 49 })).toBeUndefined();
+  expect(broken({ bookHours: 999 })).toBeUndefined();
   expect(broken({ bookHours: undefined })).toBeUndefined();
+  expect(broken({ bookId: 'unknown-book' })).toBeUndefined();
+  expect(broken({ bookId: undefined })).toBeUndefined();
+  expect(broken({ bookId: undefined, bookHours: 0 })).toBeUndefined();
+  expect(broken({ readBookIds: ['unknown-book'] })).toBeUndefined();
+  expect(broken({ readBookIds: ['dune', 'dune'] })).toBeUndefined();
+  expect(broken({ readBookIds: ['hobbit'] })).toBeUndefined();
+  expect(broken({ readBookIds: undefined })).toBeUndefined();
   expect(broken({ isReading: 'yes' })).toBeUndefined();
 });
 
