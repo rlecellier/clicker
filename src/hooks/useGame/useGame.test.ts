@@ -84,3 +84,16 @@ test('earns the weekly pay while working, banked once the week ends', () => {
   expect(result.current.money).toBe(250);
   expect(result.current.pendingPay).toBe(0);
 });
+
+test('speeding up the time brings the end of the week closer', () => {
+  const { result } = renderHook(() => useGame({ money: 0 }));
+
+  act(() => {
+    result.current.faster();
+  });
+  act(() => {
+    vi.advanceTimersByTime((HOURS_PER_WEEK / 2) * 1000 + 100);
+  });
+
+  expect(result.current.money).toBe(250);
+});
