@@ -60,3 +60,12 @@ test('an unknown page offers a way back to the game', async ({ page }) => {
   await page.getByRole('link', { name: 'Back to the game' }).click();
   await expect(page.getByRole('button', { name: /Eat a snack/ })).toBeVisible();
 });
+
+test('the title leads back to the game', async ({ page }) => {
+  await page.goto('/balance');
+  await expect(page.getByRole('heading', { name: 'Balance' })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Clicker' }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('button', { name: /Eat a snack/ })).toBeVisible();
+});
