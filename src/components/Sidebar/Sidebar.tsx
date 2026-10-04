@@ -1,10 +1,10 @@
 import {
   CalendarDays,
   ChevronDown,
+  Gamepad2,
   MapPin,
   RotateCcw,
   User,
-  Utensils,
   Wallet,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -42,7 +42,7 @@ type SidebarProps = {
 const PLACES_PATH = '/places/';
 
 const LINKS = [
-  { to: '/', label: 'Game', Icon: Utensils },
+  { to: '/', label: 'Game', Icon: Gamepad2 },
   { to: '/calendar', label: 'Calendar', Icon: CalendarDays },
   { to: '/balance', label: 'Balance', Icon: Wallet },
   { to: '/profile', label: 'Profile', Icon: User },
