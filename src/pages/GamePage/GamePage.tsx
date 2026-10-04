@@ -1,17 +1,13 @@
 import { Button } from '@base-ui/react/button';
-import { Briefcase, Hammer } from 'lucide-react';
+import { Cake, Cookie } from 'lucide-react';
 import { useOutletContext } from 'react-router';
 
+import { CaloriesGauge } from '@component/CaloriesGauge';
 import { MoneyCounter } from '@component/MoneyCounter';
 import { PendingPay } from '@component/PendingPay';
 import { TimeControls } from '@component/TimeControls';
 import { WeekCalendar } from '@component/WeekCalendar';
-import { WorkingDayProgress } from '@component/WorkingDayProgress';
-import {
-  CLICK_VALUE,
-  WORKING_DAY_REWARD,
-  type UseGameResult,
-} from '@hook/useGame';
+import { SNACK_CALORIES, type UseGameResult } from '@hook/useGame';
 
 import styles from './GamePage.module.css';
 
@@ -27,10 +23,11 @@ export const GamePage = () => {
     slower,
     pendingPay,
     isEarning,
-    progress,
-    isWorkingDay,
-    work,
-    startWorkingDay,
+    calories,
+    fat,
+    isEnjoyingCake,
+    snack,
+    cake,
   } = useOutletContext<UseGameResult>();
 
   return (
@@ -45,16 +42,16 @@ export const GamePage = () => {
         onFaster={faster}
         onSlower={slower}
       />
+      <CaloriesGauge calories={calories} fat={fat} />
       <div className={styles.actions}>
-        <Button onClick={work} disabled={isWorkingDay}>
-          <Hammer aria-hidden size={18} /> Work (+${CLICK_VALUE})
+        <Button onClick={snack}>
+          <Cookie aria-hidden size={18} /> Eat a snack (+{SNACK_CALORIES}%)
         </Button>
-        <Button onClick={startWorkingDay} disabled={isWorkingDay}>
-          <Briefcase aria-hidden size={18} /> Working day (5s, +$
-          {WORKING_DAY_REWARD})
+        <Button onClick={cake} disabled={isEnjoyingCake}>
+          <Cake aria-hidden size={18} />{' '}
+          {isEnjoyingCake ? 'Enjoying a cake…' : 'Enjoy a cake (30 min)'}
         </Button>
       </div>
-      {isWorkingDay && <WorkingDayProgress progress={progress} />}
     </>
   );
 };

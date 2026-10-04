@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
@@ -19,28 +19,19 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-test('work gives $1 per click', async () => {
+test('the cake can be enjoyed once at a time', async () => {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
   renderApp();
-  await user.click(screen.getByRole('button', { name: /^Work \(/ }));
-  await user.click(screen.getByRole('button', { name: /^Work \(/ }));
-  expect(screen.getByText('$2')).toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: /Enjoy a cake/ }));
+  expect(
+    screen.getByRole('button', { name: /Enjoying a cake/ }),
+  ).toBeDisabled();
 });
 
-test('working day disables actions for 5s then pays $10', async () => {
-  const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+test('shows the calories gauge and the snack action', () => {
   renderApp();
-  await user.click(screen.getByRole('button', { name: /Working day/ }));
-
-  expect(screen.getByRole('button', { name: /^Work \(/ })).toBeDisabled();
-  expect(screen.getByRole('button', { name: /Working day/ })).toBeDisabled();
-
-  await act(async () => {
-    await vi.advanceTimersByTimeAsync(5100);
-  });
-
-  expect(screen.getByText('$10')).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /^Work \(/ })).toBeEnabled();
+  expect(screen.getByRole('meter', { name: 'Calories' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /Eat a snack/ })).toBeEnabled();
 });
 
 test('unknown route shows the error page', () => {

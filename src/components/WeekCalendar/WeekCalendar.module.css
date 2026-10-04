@@ -77,3 +77,8 @@
 .cursor {
   z-index: 1;
 }
+
+.event[data-kind='meal'] {
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  border-left-color: #fde68a;
+}
