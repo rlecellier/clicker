@@ -14,7 +14,12 @@
   margin: 0;
 }
 
+/* The value comes first visually, the label under it; the markup keeps the
+   semantic order (term, then description). */
 .stats div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.25rem;
   padding: 0.75rem;
   border-radius: 0.5rem;
   background: var(--color-surface);
@@ -26,7 +31,7 @@
 }
 
 .stats dd {
-  margin: 0.25rem 0 0;
+  margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
