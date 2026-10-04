@@ -5,10 +5,10 @@ export const CALORIES_MAX_TARGET = 80;
 export const CALORIES_GOOD_MIN = 40;
 export const CALORIES_GOOD_MAX = 60;
 export const CALORIES_CAP = 100;
-export const INITIAL_CALORIES = 50;
+export const INITIAL_CALORIES = 60;
 // Calories burnt per game hour, resting and at work.
 export const IDLE_BURN = 2;
-export const WORK_BURN = 4;
+export const WORK_BURN = 3.4;
 // Share of the excess over 80% turned into fat each game hour; the bigger
 // the excess, the more calories are converted per hour.
 export const FAT_CONVERSION_RATE = 1.5;

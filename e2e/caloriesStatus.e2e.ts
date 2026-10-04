@@ -25,7 +25,7 @@ test('the carrot tells the calories state when clicked', async ({ page }) => {
   const carrot = page.getByRole('button', { name: 'Calories status' });
   await expect(carrot).toHaveAttribute('data-status', 'good');
 
-  // 50% plus four snacks of 10% goes over 80%.
+  // 60% plus four snacks of 10% goes over 80%.
   for (let snack = 0; snack < 4; snack += 1) {
     await page.getByRole('button', { name: /Eat a snack/ }).click();
   }
