@@ -16,12 +16,12 @@ test('the header shows the age, 18 at the start and one more each year', async (
   await page.reload();
 
   const header = page.getByRole('banner');
-  await expect(header.getByText('18 years old')).toBeVisible();
+  await expect(header.getByText('18 yo')).toBeVisible();
   await expect(header.getByText(/\$/)).toBeHidden();
 
   await page.clock.fastForward((HOURS_PER_YEAR - 1) * HOUR_MS);
-  await expect(header.getByText('18 years old')).toBeVisible();
+  await expect(header.getByText('18 yo')).toBeVisible();
 
   await page.clock.fastForward(2 * HOUR_MS);
-  await expect(header.getByText('19 years old')).toBeVisible();
+  await expect(header.getByText('19 yo')).toBeVisible();
 });
