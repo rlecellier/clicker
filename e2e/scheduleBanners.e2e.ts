@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { getAJob } from './support';
+
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const HOURS_PER_DAY = 24;
 const HOURS_PER_WEEK = HOURS_PER_DAY * DAYS.length;
@@ -45,10 +47,13 @@ test('the banners show the work task and the one after it', async ({
   await page.clock.install({ time: 0 });
   await page.clock.pauseAt(1000);
   await page.goto('/');
+  await getAJob(page);
 
   // Monday 09:00
   await page.clock.fastForward(9 * HOUR_MS);
-  await expect(page.getByRole('region', { name: 'Now' })).toContainText('Work');
+  await expect(page.getByRole('region', { name: 'Now' })).toContainText(
+    'Go to work',
+  );
   await expect(page.getByRole('region', { name: 'Next' })).toContainText(
     'Lunch',
   );
