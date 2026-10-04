@@ -18,6 +18,7 @@ import styles from './GamePage.module.css';
 export const GamePage = () => {
   const {
     money,
+    week,
     weekHour,
     speed,
     canSpeedUp,
@@ -36,7 +37,7 @@ export const GamePage = () => {
     <>
       <MoneyCounter amount={money} />
       <PendingPay amount={pendingPay} isEarning={isEarning} />
-      <WeekCalendar weekHour={weekHour} />
+      <WeekCalendar week={week} weekHour={weekHour} />
       <TimeControls
         speed={speed}
         canSpeedUp={canSpeedUp}

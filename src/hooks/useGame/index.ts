@@ -1,5 +1,6 @@
 export {
   CLICK_VALUE,
+  GAME_START,
   WORKING_DAY_DURATION_MS,
   WORKING_DAY_REWARD,
 } from './constants';

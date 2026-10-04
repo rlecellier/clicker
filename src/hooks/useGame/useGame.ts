@@ -56,6 +56,7 @@ export const useGame = (initialState = INITIAL_GAME_STATE) => {
   return {
     // clicks and working days, plus the salary of every finished week
     money: money + salary,
+    week,
     weekHour,
     speed,
     canSpeedUp,
