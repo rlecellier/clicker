@@ -1,12 +1,14 @@
 import { expect, test } from 'vitest';
 
-import { HOURS_PER_DAY } from '@game/time';
+import { HOURS_PER_DAY, HOURS_PER_WEEK } from '@game/time';
 
 import {
   CALORIES_CAP,
   CALORIES_MAX_TARGET,
+  CALORIES_MIN_TARGET,
   CAKE_CALORIES,
   IDLE_BURN,
+  INITIAL_CALORIES,
   SNACK_CALORIES,
   WORK_BURN,
 } from './constants';
@@ -36,9 +38,9 @@ test('calories go down faster at work', () => {
 });
 
 test('a meal adds its calories while it runs', () => {
-  // Lunch: 25% over one hour, minus the resting burn, on a weekend day
+  // Lunch: 21% over one hour, minus the resting burn, on a weekend day
   const after = stepNutrition(rested, at(5, 12), at(5, 13));
-  expect(after.calories).toBeCloseTo(50 + 25 - IDLE_BURN, 1);
+  expect(after.calories).toBeCloseTo(50 + 21 - IDLE_BURN, 1);
 });
 
 test('meals happen every day, work only on weekdays', () => {
@@ -125,4 +127,22 @@ test('status is green between 40% and 60%, yellow up to 20% and 80%, red beyond'
   expect(getCaloriesStatus(60.1)).toBe('running-high');
   expect(getCaloriesStatus(80)).toBe('running-high');
   expect(getCaloriesStatus(80.1)).toBe('overflowing');
+});
+
+test('without any snack or cake, the meals and the burn cancel out each week', () => {
+  let state = INITIAL_NUTRITION;
+  for (let week = 0; week < 12; week += 1) {
+    let low = state.calories;
+    let high = state.calories;
+    for (let hour = 0; hour < HOURS_PER_WEEK; hour += 0.25) {
+      const from = week * HOURS_PER_WEEK + hour;
+      state = stepNutrition(state, from, from + 0.25);
+      low = Math.min(low, state.calories);
+      high = Math.max(high, state.calories);
+    }
+    expect(state.calories).toBeCloseTo(INITIAL_CALORIES, 5);
+    expect(state.fat).toBe(0);
+    expect(low).toBeGreaterThanOrEqual(CALORIES_MIN_TARGET);
+    expect(high).toBeLessThanOrEqual(CALORIES_MAX_TARGET);
+  }
 });
