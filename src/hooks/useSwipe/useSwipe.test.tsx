@@ -50,3 +50,19 @@ test('ignores a mostly vertical move', () => {
   expect(onSwipeLeft).not.toHaveBeenCalled();
   expect(onSwipeRight).not.toHaveBeenCalled();
 });
+
+test('a second finger cancels the swipe, as it is a pinch', () => {
+  const onSwipeLeft = vi.fn();
+  render(<Surface onSwipeLeft={onSwipeLeft} onSwipeRight={vi.fn()} />);
+  const surface = screen.getByTestId('surface');
+  fireEvent.touchStart(surface, {
+    touches: [
+      { clientX: 200, clientY: 0 },
+      { clientX: 250, clientY: 0 },
+    ],
+  });
+  fireEvent.touchEnd(surface, {
+    changedTouches: [{ clientX: 50, clientY: 0 }],
+  });
+  expect(onSwipeLeft).not.toHaveBeenCalled();
+});
