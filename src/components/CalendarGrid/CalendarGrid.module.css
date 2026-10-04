@@ -1,4 +1,12 @@
+/* At zoom 1, the headings and the 24 hours fill --calendar-height, set by the
+   parent. */
 .root {
+  --heading-height: 3.5rem;
+  --fit-height: calc(
+    var(--calendar-height, 720px + var(--heading-height)) -
+      var(--heading-height)
+  );
+  --day-height: calc(var(--fit-height) * var(--zoom, 1));
   display: grid;
   column-gap: 2px;
   text-align: center;
@@ -6,9 +14,15 @@
 }
 
 .heading {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  height: var(--heading-height);
   display: flex;
   flex-direction: column;
   padding: 0.25rem 0 0.5rem;
+  background: var(--color-bg);
   color: var(--color-muted);
 }
 
@@ -23,7 +37,7 @@
 
 .hours {
   position: relative;
-  height: 720px;
+  height: var(--day-height);
 }
 
 .hour {
@@ -43,7 +57,7 @@
 /* One line every three hours, like the labels in the margin. */
 .day {
   position: relative;
-  height: 720px;
+  height: var(--day-height);
   margin: 0;
   padding: 0;
   list-style: none;
