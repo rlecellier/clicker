@@ -14,6 +14,7 @@ import { BodyGauge } from '@component/BodyGauge';
 import { BrainGauge } from '@component/BrainGauge';
 import { CaloriesGauge } from '@component/CaloriesGauge';
 import { DreamGauge } from '@component/DreamGauge';
+import { MoneyCounter } from '@component/MoneyCounter';
 import { PLACES } from '@component/PlaceInfo';
 import type { Body } from '@game/body';
 import { LOCATIONS, type Location } from '@game/location';
@@ -22,6 +23,8 @@ import styles from './Sidebar.module.css';
 
 type SidebarProps = {
   id: string;
+  // integer cents
+  balanceCents: number;
   calories: number;
   body: Body;
   brain: number;
@@ -45,10 +48,11 @@ const LINKS = [
   { to: '/profile', label: 'Profile', Icon: User },
 ];
 
-// The gauges and the pages menu: slides in on mobile, always shown from
+// The cash, the gauges and the pages menu: slides in on mobile, always shown from
 // tablet up.
 export const Sidebar = ({
   id,
+  balanceCents,
   calories,
   body,
   brain,
@@ -90,6 +94,7 @@ export const Sidebar = ({
         aria-hidden
       />
       <aside id={id} className={styles.panel} data-open={isOpen || undefined}>
+        <MoneyCounter cents={balanceCents} />
         <CaloriesGauge calories={calories} />
         <BodyGauge
           fatPercent={body.fatPercent}

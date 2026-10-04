@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useReducer } from 'react';
 
+import { ageAt } from '@game/age';
 import { getBody } from '@game/body';
 import {
   canSlowDown,
@@ -40,6 +41,7 @@ export const GameProvider = ({
       balanceCents: state.balanceCents,
       expenses: state.expenses,
       elapsedHours: state.elapsedHours,
+      age: ageAt(state.elapsedHours),
       week: weekOf(state),
       weekHour: weekHourOf(state),
       speed: speedOf(state),
