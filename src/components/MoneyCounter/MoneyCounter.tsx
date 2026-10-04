@@ -1,9 +1,12 @@
+import { formatMoney } from '@game/money';
+
 import styles from './MoneyCounter.module.css';
 
 type MoneyCounterProps = {
-  amount: number;
+  // integer cents
+  cents: number;
 };
 
-export const MoneyCounter = ({ amount }: MoneyCounterProps) => {
-  return <p className={styles.money}>${Number(amount.toFixed(2))}</p>;
+export const MoneyCounter = ({ cents }: MoneyCounterProps) => {
+  return <p className={styles.money}>{formatMoney(cents)}</p>;
 };

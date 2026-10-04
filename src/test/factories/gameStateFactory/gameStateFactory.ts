@@ -1,10 +1,11 @@
 import { faker } from '@faker-js/faker';
 import { createFactory } from 'factory-kit';
 
-import type { GameState } from '@game/gameState';
+import { INITIAL_GAME_STATE, type GameState } from '@game/gameState';
 
 export const gameStateFactory = createFactory<GameState>()
   .define({
-    money: () => faker.number.int({ min: 1, max: 10_000 }),
+    ...INITIAL_GAME_STATE,
+    balanceCents: () => faker.number.int({ min: 100, max: 1_000_000 }),
   })
-  .trait('broke', { money: 0 });
+  .trait('broke', { balanceCents: 0 });

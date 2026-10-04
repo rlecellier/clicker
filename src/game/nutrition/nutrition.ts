@@ -43,9 +43,9 @@ const mealIntake = (weekHour: number) => {
 const addCalories = (state: Nutrition, amount: number): Nutrition => {
   const calories = state.calories + amount;
   return {
-    ...state,
     calories: Math.min(calories, CALORIES_CAP),
     fat: state.fat + Math.max(calories - CALORIES_CAP, 0),
+    cakeUntil: state.cakeUntil,
   };
 };
 
@@ -53,7 +53,8 @@ export const eatSnack = (state: Nutrition) =>
   addCalories(state, SNACK_CALORIES);
 
 export const startCake = (state: Nutrition, now: number): Nutrition => ({
-  ...state,
+  calories: state.calories,
+  fat: state.fat,
   cakeUntil: now + CAKE_DURATION_HOURS,
 });
 
@@ -90,5 +91,5 @@ export const stepNutrition = (
     }
     calories = Math.max(calories, 0);
   }
-  return { ...state, calories, fat };
+  return { calories, fat, cakeUntil: state.cakeUntil };
 };

@@ -1,7 +1,7 @@
 import { EVENTS } from '@game/calendar';
 import { DAYS_PER_WEEK, HOURS_PER_DAY, daysInMonthOfWeek } from '@game/time';
 
-import { MONTHLY_SALARY } from './constants';
+import { MONTHLY_SALARY_CENTS } from './constants';
 
 const WORK_EVENTS = EVENTS.filter((event) => event.kind === 'work');
 
@@ -10,21 +10,12 @@ const WORK_HOURS_PER_WEEK = WORK_EVENTS.reduce(
   0,
 );
 
-const roundCents = (amount: number) => Math.round(amount * 100) / 100;
-
 // A week is worth 7/N of the monthly salary in a month of N days.
-export const weeklyPay = (week: number) =>
-  roundCents((MONTHLY_SALARY * DAYS_PER_WEEK) / daysInMonthOfWeek(week));
-
-// Pay of every week finished before the given one.
-export const bankedPay = (week: number) => {
-  let total = 0;
-  for (let past = 0; past < week; past += 1) total += weeklyPay(past);
-  return total;
-};
+export const weeklyPayCents = (week: number) =>
+  Math.round((MONTHLY_SALARY_CENTS * DAYS_PER_WEEK) / daysInMonthOfWeek(week));
 
 // Pay earned so far this week, paid out once the week is over.
-export const pendingPay = (week: number, weekHour: number) => {
+export const pendingPayCents = (week: number, weekHour: number) => {
   let workedHours = 0;
   for (const event of WORK_EVENTS) {
     for (const day of event.days) {
@@ -32,7 +23,7 @@ export const pendingPay = (week: number, weekHour: number) => {
       workedHours += Math.min(Math.max(elapsed, 0), event.end - event.start);
     }
   }
-  return roundCents((weeklyPay(week) * workedHours) / WORK_HOURS_PER_WEEK);
+  return Math.round((weeklyPayCents(week) * workedHours) / WORK_HOURS_PER_WEEK);
 };
 
 export const isWorking = (weekHour: number) =>
