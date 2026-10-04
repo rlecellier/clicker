@@ -11,7 +11,8 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "demo": "node scripts/demo.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -38,6 +39,7 @@
     "factory-kit": "^0.1.6",
     "globals": "^17.13.0",
     "jsdom": "^29.1.1",
+    "playwright": "^1.63.0",
     "prettier": "^3.9.9",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.0",
