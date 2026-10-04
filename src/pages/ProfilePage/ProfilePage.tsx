@@ -1,10 +1,11 @@
 import { BodyGauge } from '@component/BodyGauge';
+import { BrainGauge } from '@component/BrainGauge';
 import { useGameContext } from '@context/GameContext';
 
 import styles from './ProfilePage.module.css';
 
 export const ProfilePage = () => {
-  const { dreams, body } = useGameContext();
+  const { dreams, body, brain, isSleeping } = useGameContext();
 
   return (
     <section className={styles.root}>
@@ -23,6 +24,7 @@ export const ProfilePage = () => {
           <dd>{body.weightKg.toFixed(1)} kg</dd>
         </div>
       </dl>
+      <BrainGauge brain={brain} isSleeping={isSleeping} />
       <BodyGauge
         size="full"
         fatPercent={body.fatPercent}
