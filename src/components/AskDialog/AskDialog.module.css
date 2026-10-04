@@ -1,0 +1,13 @@
+.answers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.decline {
+  background: var(--color-surface-raised);
+}
+
+.decline:hover:not([disabled]) {
+  background: var(--color-surface);
+}
