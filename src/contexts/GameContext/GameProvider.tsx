@@ -38,6 +38,7 @@ export const GameProvider = ({
     () => ({
       balanceCents: state.balanceCents,
       expenses: state.expenses,
+      elapsedHours: state.elapsedHours,
       week: weekOf(state),
       weekHour: weekHourOf(state),
       speed: speedOf(state),

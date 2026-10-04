@@ -38,3 +38,17 @@ test('the balance page lists the rent and the meals the player paid', async ({
     '$18.50',
   );
 });
+
+test('the balance page switches period with the tabs and by swiping', async ({
+  page,
+}) => {
+  await page.clock.install({ time: 0 });
+  await page.clock.pauseAt(1000);
+  await page.goto('/balance');
+
+  await page.getByRole('tab', { name: 'Month' }).click();
+  await expect(page.getByText('Expenses this month')).toBeVisible();
+
+  await page.getByRole('tab', { name: 'Year' }).click();
+  await expect(page.getByText('Expenses this year')).toBeVisible();
+});
