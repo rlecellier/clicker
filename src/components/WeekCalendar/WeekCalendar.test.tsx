@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { expect, test } from 'vitest';
 
 import { WeekCalendar } from './WeekCalendar';
@@ -40,12 +40,23 @@ test('announces the current day and hour', () => {
   expect(screen.getByRole('img', { name: 'Wed, 13:00' })).toBeInTheDocument();
 });
 
-test('shows the work event from 8h to 12h and 13h to 18h on weekdays', () => {
+test('shows the work events from 8h to 12h and 13h to 18h on weekdays', () => {
   const { container } = render(<WeekCalendar week={0} weekHour={0} />);
-  const events = container.querySelectorAll<HTMLElement>('[title^="Work"]');
-  // two events on each weekday of the visible week and the days kept around it
-  expect(events).toHaveLength(14);
-  expect(events[0]).toHaveAttribute('title', 'Work 8:00–12:00');
+  const today = container.querySelector<HTMLElement>('[data-current]');
+  const events = within(today as HTMLElement).getAllByTitle(/^Work/);
+  expect(events.map((event) => event.title)).toEqual([
+    'Work 8:00–12:00',
+    'Work 13:00–18:00',
+  ]);
   expect(events[0]?.style.top).toBe(`${(8 / 24) * 100}%`);
-  expect(events[1]).toHaveAttribute('title', 'Work 13:00–18:00');
+});
+
+test('shows the meals every day, including the weekend', () => {
+  // Saturday
+  const { container } = render(<WeekCalendar week={0} weekHour={24 * 5} />);
+  const today = container.querySelector<HTMLElement>('[data-current]');
+  expect(within(today as HTMLElement).queryAllByTitle(/^Work/)).toHaveLength(0);
+  expect(
+    within(today as HTMLElement).getAllByTitle(/^(Breakfast|Lunch|Dinner)/),
+  ).toHaveLength(3);
 });
