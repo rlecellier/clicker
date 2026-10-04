@@ -1,8 +1,8 @@
 export {
-  CLICK_VALUE,
+  CALORIES_MAX_TARGET,
+  CALORIES_MIN_TARGET,
   GAME_START,
-  WORKING_DAY_DURATION_MS,
-  WORKING_DAY_REWARD,
+  SNACK_CALORIES,
 } from './constants';
 export type { GameState } from './types';
 export { useGame } from './useGame';

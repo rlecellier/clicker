@@ -81,6 +81,7 @@ export const WeekCalendar = ({ week, weekHour }: WeekCalendarProps) => {
                     <div
                       key={event.id}
                       className={styles.event}
+                      data-kind={event.kind}
                       style={{
                         top: `${(event.start / HOURS_PER_DAY) * 100}%`,
                         height: `${((event.end - event.start) / HOURS_PER_DAY) * 100}%`,

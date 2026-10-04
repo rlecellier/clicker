@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
 import { gameStateFactory } from '@test/factories/gameStateFactory';
-import { CLICK_VALUE, WORKING_DAY_DURATION_MS } from './constants';
+import { INITIAL_CALORIES, SNACK_CALORIES } from './constants';
 import {
   DEFAULT_SPEED,
   HOURS_PER_SECOND,
@@ -35,45 +35,52 @@ test('starts broke by default', () => {
   expect(result.current.money).toBe(0);
 });
 
-test('work adds one click value to the current money', () => {
-  const state = gameStateFactory.build();
-  const { result } = renderHook(() => useGame(state));
+test('a snack adds calories at once', () => {
+  const { result } = renderHook(() => useGame());
+  const before = result.current.calories;
 
   act(() => {
-    result.current.work();
+    result.current.snack();
   });
 
-  expect(result.current.money).toBe(state.money + CLICK_VALUE);
+  expect(result.current.calories).toBe(before + SNACK_CALORIES);
 });
 
-test('work is ignored during a working day', () => {
-  const state = gameStateFactory.build({ traits: ['broke'] });
-  const { result } = renderHook(() => useGame(state));
+test('calories go down during the night', () => {
+  const { result } = renderHook(() => useGame());
 
   act(() => {
-    result.current.startWorkingDay();
-  });
-  act(() => {
-    result.current.work();
+    vi.advanceTimersByTime(hoursToMs(6));
   });
 
-  expect(result.current.isWorkingDay).toBe(true);
-  expect(result.current.money).toBe(0);
+  expect(result.current.calories).toBeLessThan(INITIAL_CALORIES);
 });
 
-test('a working day pays ten clicks once it ends', () => {
-  const state = gameStateFactory.build();
-  const { result } = renderHook(() => useGame(state));
+test('enjoying a cake lasts 30 game minutes and cannot be restarted', () => {
+  const { result } = renderHook(() => useGame());
 
   act(() => {
-    result.current.startWorkingDay();
+    result.current.cake();
   });
   act(() => {
-    vi.advanceTimersByTime(WORKING_DAY_DURATION_MS + 100);
+    vi.advanceTimersByTime(hoursToMs(0.25));
   });
+  expect(result.current.isEnjoyingCake).toBe(true);
 
-  expect(result.current.isWorkingDay).toBe(false);
-  expect(result.current.money).toBe(state.money + 10 * CLICK_VALUE);
+  act(() => {
+    vi.advanceTimersByTime(hoursToMs(0.5));
+  });
+  expect(result.current.isEnjoyingCake).toBe(false);
+});
+
+test('the game keeps going after a long frame, like a hidden tab', () => {
+  const { result } = renderHook(() => useGame());
+
+  act(() => {
+    vi.advanceTimersByTime(hoursToMs(HOURS_PER_WEEK / 2));
+  });
+  expect(result.current.weekHour).toBeCloseTo(HOURS_PER_WEEK / 2, 0);
+  expect(result.current.calories).toBeGreaterThanOrEqual(0);
 });
 
 test('earns the weekly pay while working, banked once the week ends', () => {

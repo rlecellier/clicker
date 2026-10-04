@@ -1,61 +1,53 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
-import {
-  CLICK_VALUE,
-  WORKING_DAY_DURATION_MS,
-  WORKING_DAY_REWARD,
-} from './constants';
 import { useWeekClock } from '@hook/useWeekClock';
 import { bankedPay, isWorking, pendingPay } from './earnings';
+import {
+  eatSnack,
+  INITIAL_NUTRITION,
+  isEnjoyingCake,
+  startCake,
+  stepNutrition,
+} from './nutrition';
 import { INITIAL_GAME_STATE } from './types';
 
 export const useGame = (initialState = INITIAL_GAME_STATE) => {
-  const [money, setMoney] = useState(initialState.money);
-  const [workingDayStart, setWorkingDayStart] = useState<number | undefined>();
-  const [progress, setProgress] = useState(0);
+  const [nutrition, setNutrition] = useState(INITIAL_NUTRITION);
+  // game hour reached by the last frame, read by one-shot actions
+  const nowRef = useRef(0);
 
-  const { week, weekHour, speed, canSpeedUp, canSlowDown, faster, slower } =
-    useWeekClock();
+  const onTick = useCallback((from: number, to: number) => {
+    nowRef.current = to;
+    setNutrition((current) => stepNutrition(current, from, to));
+  }, []);
+
+  const {
+    elapsedHours,
+    week,
+    weekHour,
+    speed,
+    canSpeedUp,
+    canSlowDown,
+    faster,
+    slower,
+  } = useWeekClock({ onTick });
   const salary = useMemo(() => bankedPay(week), [week]);
 
-  const isWorkingDay = workingDayStart !== undefined;
+  const snack = useCallback(() => {
+    setNutrition(eatSnack);
+  }, []);
 
-  const work = useCallback(() => {
-    if (!isWorkingDay) setMoney((current) => current + CLICK_VALUE);
-  }, [isWorkingDay]);
-
-  const startWorkingDay = useCallback(() => {
-    if (!isWorkingDay) setWorkingDayStart(performance.now());
-  }, [isWorkingDay]);
-
-  useEffect(() => {
-    if (workingDayStart === undefined) return;
-
-    let frame = 0;
-    const tick = (now: number) => {
-      const ratio = Math.min(
-        (now - workingDayStart) / WORKING_DAY_DURATION_MS,
-        1,
-      );
-      setProgress(ratio);
-      if (ratio < 1) {
-        frame = requestAnimationFrame(tick);
-        return;
-      }
-      setMoney((current) => current + WORKING_DAY_REWARD);
-      setWorkingDayStart(undefined);
-      setProgress(0);
-    };
-    frame = requestAnimationFrame(tick);
-
-    return () => {
-      cancelAnimationFrame(frame);
-    };
-  }, [workingDayStart]);
+  const cake = useCallback(() => {
+    setNutrition((current) =>
+      isEnjoyingCake(current, nowRef.current)
+        ? current
+        : startCake(current, nowRef.current),
+    );
+  }, []);
 
   return {
-    // clicks and working days, plus the salary of every finished week
-    money: money + salary,
+    // the money given at the start, plus the salary of every finished week
+    money: initialState.money + salary,
     week,
     weekHour,
     speed,
@@ -65,10 +57,11 @@ export const useGame = (initialState = INITIAL_GAME_STATE) => {
     slower,
     pendingPay: pendingPay(week, weekHour),
     isEarning: isWorking(weekHour),
-    progress,
-    isWorkingDay,
-    work,
-    startWorkingDay,
+    calories: nutrition.calories,
+    fat: nutrition.fat,
+    isEnjoyingCake: isEnjoyingCake(nutrition, elapsedHours),
+    snack,
+    cake,
   };
 };
 
