@@ -12,6 +12,7 @@ import {
   weekHourOf,
   weekOf,
 } from '@game/gameState';
+import { useAutoSave } from '@hook/useAutoSave';
 import { useFrameLoop } from '@hook/useFrameLoop';
 
 import { GameContext } from './GameContext';
@@ -20,8 +21,10 @@ import type { GameContextValue, GameProviderProps } from './types';
 export const GameProvider = ({
   children,
   initialState = INITIAL_GAME_STATE,
+  persist = false,
 }: GameProviderProps) => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
+  useAutoSave(state, persist);
 
   useFrameLoop(
     useCallback((seconds: number) => {
