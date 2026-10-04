@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { Link, Outlet } from 'react-router';
 
 import { AgeCounter } from '@component/AgeCounter';
+import { AskPrompt } from '@component/AskPrompt';
 import { CaloriesStatus } from '@component/CaloriesStatus';
 import { Sidebar } from '@component/Sidebar';
 import { TimeControls } from '@component/TimeControls';
@@ -95,6 +96,7 @@ const Layout = () => {
           </div>
           <Outlet />
         </main>
+        <AskPrompt />
       </div>
     </div>
   );
