@@ -14,6 +14,7 @@ const renderPanel = (isOpen: boolean) => {
     <MemoryRouter>
       <Sidebar
         id="panel"
+        balanceCents={1250}
         calories={50}
         body={getBody(0)}
         brain={30}
@@ -45,6 +46,7 @@ test('is marked as open only when it is open', () => {
     <MemoryRouter>
       <Sidebar
         id="panel"
+        balanceCents={1250}
         calories={50}
         body={getBody(0)}
         brain={30}
@@ -135,6 +137,7 @@ test('is unfolded when a place is shown, and marks where the player is', () => {
     <MemoryRouter initialEntries={['/places/work']}>
       <Sidebar
         id="panel"
+        balanceCents={1250}
         calories={50}
         body={getBody(0)}
         brain={30}

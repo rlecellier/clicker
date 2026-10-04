@@ -3,8 +3,8 @@ import { Menu, X } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Outlet } from 'react-router';
 
+import { AgeCounter } from '@component/AgeCounter';
 import { CaloriesStatus } from '@component/CaloriesStatus';
-import { MoneyCounter } from '@component/MoneyCounter';
 import { Sidebar } from '@component/Sidebar';
 import { TimeControls } from '@component/TimeControls';
 import { GameProvider, useGameContext } from '@context/GameContext';
@@ -15,6 +15,7 @@ import styles from './RootLayout.module.css';
 
 const Layout = () => {
   const {
+    age,
     balanceCents,
     calories,
     body,
@@ -58,12 +59,13 @@ const Layout = () => {
         </div>
         <div className={styles.status}>
           <CaloriesStatus status={getCaloriesStatus(calories)} />
-          <MoneyCounter cents={balanceCents} />
+          <AgeCounter years={age} />
         </div>
       </header>
       <div className={styles.body}>
         <Sidebar
           id="sidebar"
+          balanceCents={balanceCents}
           calories={calories}
           body={body}
           brain={brain}
