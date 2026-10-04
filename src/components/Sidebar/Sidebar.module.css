@@ -61,6 +61,23 @@
   color: var(--color-text);
 }
 
+/* Pushed to the bottom of the panel, away from the navigation. */
+.panel button.restart {
+  justify-content: flex-start;
+  gap: 0.6rem;
+  margin-top: auto;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: inherit;
+}
+
+.panel button.restart:hover:not([disabled]) {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
 /* The places menu: a group that unfolds over its sub-links. */
 .nav button.group {
   justify-content: flex-start;

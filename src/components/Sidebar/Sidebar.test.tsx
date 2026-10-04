@@ -9,6 +9,7 @@ import { Sidebar } from './Sidebar';
 
 const renderPanel = (isOpen: boolean) => {
   const onClose = vi.fn();
+  const onRestart = vi.fn();
   render(
     <MemoryRouter>
       <Sidebar
@@ -22,10 +23,11 @@ const renderPanel = (isOpen: boolean) => {
         location="home"
         isOpen={isOpen}
         onClose={onClose}
+        onRestart={onRestart}
       />
     </MemoryRouter>,
   );
-  return onClose;
+  return { onClose, onRestart };
 };
 
 test('contains the calories, brain, dream and body gauges', () => {
@@ -52,6 +54,7 @@ test('is marked as open only when it is open', () => {
         location="home"
         isOpen
         onClose={vi.fn()}
+        onRestart={vi.fn()}
       />
     </MemoryRouter>,
   );
@@ -60,7 +63,7 @@ test('is marked as open only when it is open', () => {
 
 test('closes when the backdrop is clicked', async () => {
   const user = userEvent.setup();
-  const onClose = renderPanel(true);
+  const { onClose } = renderPanel(true);
   // the backdrop is decorative, so it has no role: reach it from the panel
   const backdrop = screen.getByRole('complementary').previousElementSibling;
   await user.click(backdrop as Element);
@@ -69,14 +72,14 @@ test('closes when the backdrop is clicked', async () => {
 
 test('closes on Escape when it is open', async () => {
   const user = userEvent.setup();
-  const onClose = renderPanel(true);
+  const { onClose } = renderPanel(true);
   await user.keyboard('{Escape}');
   expect(onClose).toHaveBeenCalledOnce();
 });
 
 test('ignores Escape when it is closed', async () => {
   const user = userEvent.setup();
-  const onClose = renderPanel(false);
+  const { onClose } = renderPanel(false);
   await user.keyboard('{Escape}');
   expect(onClose).not.toHaveBeenCalled();
 });
@@ -99,7 +102,7 @@ test('links to the game, the calendar and the balance', () => {
 
 test('marks the current page and closes when a link is clicked', async () => {
   const user = userEvent.setup();
-  const onClose = renderPanel(true);
+  const { onClose } = renderPanel(true);
   expect(screen.getByRole('link', { name: 'Game' })).toHaveAttribute(
     'aria-current',
     'page',
@@ -141,6 +144,7 @@ test('is unfolded when a place is shown, and marks where the player is', () => {
         location="restaurant"
         isOpen
         onClose={vi.fn()}
+        onRestart={vi.fn()}
       />
     </MemoryRouter>,
   );
@@ -155,4 +159,12 @@ test('is unfolded when a place is shown, and marks where the player is', () => {
     'aria-current',
     'page',
   );
+});
+
+test('restarts the game and closes when Restart Game is clicked', async () => {
+  const user = userEvent.setup();
+  const { onClose, onRestart } = renderPanel(true);
+  await user.click(screen.getByRole('button', { name: 'Restart Game' }));
+  expect(onRestart).toHaveBeenCalledOnce();
+  expect(onClose).toHaveBeenCalled();
 });

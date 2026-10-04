@@ -28,6 +28,7 @@ const Layout = () => {
     canSlowDown,
     faster,
     slower,
+    restart,
   } = useGameContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = useCallback(() => {
@@ -72,6 +73,7 @@ const Layout = () => {
           location={location}
           isOpen={isMenuOpen}
           onClose={closeMenu}
+          onRestart={restart}
         />
         <main className={styles.main}>
           <div className={styles.controls}>

@@ -2,6 +2,7 @@ import {
   CalendarDays,
   ChevronDown,
   MapPin,
+  RotateCcw,
   User,
   Utensils,
   Wallet,
@@ -32,6 +33,7 @@ type SidebarProps = {
   // only matters on mobile: from tablet up the sidebar is always shown
   isOpen: boolean;
   onClose: () => void;
+  onRestart: () => void;
 };
 
 const PLACES_PATH = '/places/';
@@ -56,6 +58,7 @@ export const Sidebar = ({
   location,
   isOpen,
   onClose,
+  onRestart,
 }: SidebarProps) => {
   const { pathname } = useLocation();
   const isOnPlace = pathname.startsWith(PLACES_PATH);
@@ -150,6 +153,16 @@ export const Sidebar = ({
             </ul>
           </div>
         </nav>
+        <button
+          type="button"
+          className={styles.restart}
+          onClick={() => {
+            onRestart();
+            onClose();
+          }}
+        >
+          <RotateCcw aria-hidden size={18} /> Restart Game
+        </button>
       </aside>
     </>
   );

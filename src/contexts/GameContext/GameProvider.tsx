@@ -67,6 +67,9 @@ export const GameProvider = ({
       cake: () => {
         dispatch({ type: 'enjoyCake' });
       },
+      restart: () => {
+        dispatch({ type: 'restart' });
+      },
     }),
     [state],
   );
