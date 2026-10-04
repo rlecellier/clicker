@@ -1,18 +1,22 @@
 import type { CSSProperties } from 'react';
 
-import { EVENTS } from '@game/calendar';
 import {
-  dayOfMonth,
-  HOURS_PER_DAY,
-  weekdayIndex,
-  weekdayLabel,
-} from '@game/time';
+  eventsOnDay,
+  occursOn,
+  type CalendarEvent,
+  type Schedule,
+} from '@game/calendar';
+import { dayOfMonth, HOURS_PER_DAY, weekdayLabel } from '@game/time';
 
 import styles from './CalendarGrid.module.css';
 
 type CalendarGridProps = {
   // days of the game to show side by side, as days since the start of the game
   days: number[];
+  // what the player plans to do, in the main lane of each day
+  schedule: Schedule;
+  // what the player must do, in a thin lane beside it
+  obligations: CalendarEvent[];
   // the day the game is on, which gets the cursor
   currentDay: number;
   // ratio of the current day already gone, between 0 and 1
@@ -35,6 +39,8 @@ const formatHour = (hour: number) => `${String(hour).padStart(2, '0')}:00`;
 // hours.
 export const CalendarGrid = ({
   days,
+  schedule,
+  obligations,
   currentDay,
   dayRatio,
   zoom = 1,
@@ -81,13 +87,27 @@ export const CalendarGrid = ({
             data-current={isCurrent || undefined}
             aria-label={`${weekdayLabel(day)} ${dayOfMonth(day)}`}
           >
-            {EVENTS.filter((event) =>
-              event.days.includes(weekdayIndex(day)),
-            ).map((event) => (
+            {obligations
+              .filter((event) => occursOn(event, day))
+              .map((event) => (
+                <li
+                  key={`must-${event.id}`}
+                  className={styles.obligation}
+                  style={{
+                    top: percentOfDay(event.start),
+                    height: percentOfDay(event.end - event.start),
+                  }}
+                  title={`Must: ${event.title} ${formatHour(event.start)}–${formatHour(event.end)}`}
+                >
+                  <span className={styles.hidden}>Must: {event.title}</span>
+                </li>
+              ))}
+            {eventsOnDay(schedule, day).map((event) => (
               <li
                 key={event.id}
                 className={styles.event}
                 data-kind={event.kind}
+                data-mode={event.mode}
                 style={{
                   top: percentOfDay(event.start),
                   height: percentOfDay(event.end - event.start),

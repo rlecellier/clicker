@@ -19,6 +19,10 @@
   --kind-color: var(--color-warning);
 }
 
+.root[data-kind='read'] {
+  --kind-color: var(--color-success);
+}
+
 .root[data-kind='sleep'] {
   --kind-color: var(--color-sleep);
 }

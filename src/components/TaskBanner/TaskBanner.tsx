@@ -1,10 +1,12 @@
+import type { EventKind } from '@game/calendar';
+
 import styles from './TaskBanner.module.css';
 
 type TaskBannerProps = {
   // what the banner stands for, e.g. "Now" or "Next"
   label: string;
   title: string;
-  kind: 'work' | 'meal' | 'sleep' | 'free';
+  kind: EventKind | 'free';
   detail: string;
 };
 
