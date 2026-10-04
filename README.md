@@ -43,6 +43,10 @@ Every push to `main` that changes the site runs lint, tests and build, then
 deploys to GitHub Pages via `.github/workflows/deploy.yml`. The base path is set
 with the `BASE_PATH` environment variable (`/clicker/` on Pages).
 
+GitHub Pages has no SPA fallback, so a refresh on `/balance` would return a 404.
+The build copies `index.html` to `404.html`: Pages serves it for unknown paths and
+the router then renders the matching page.
+
 ## License
 
 See [LICENSE](LICENSE).
