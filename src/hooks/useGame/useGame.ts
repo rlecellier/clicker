@@ -5,12 +5,15 @@ import {
   WORKING_DAY_DURATION_MS,
   WORKING_DAY_REWARD,
 } from './constants';
+import { useWeekClock } from '@hook/useWeekClock';
 import { INITIAL_GAME_STATE } from './types';
 
 export function useGame(initialState = INITIAL_GAME_STATE) {
   const [money, setMoney] = useState(initialState.money);
   const [workingDayStart, setWorkingDayStart] = useState<number | undefined>();
   const [progress, setProgress] = useState(0);
+
+  const weekHour = useWeekClock();
 
   const isWorkingDay = workingDayStart !== undefined;
 
@@ -47,7 +50,7 @@ export function useGame(initialState = INITIAL_GAME_STATE) {
     };
   }, [workingDayStart]);
 
-  return { money, progress, isWorkingDay, work, startWorkingDay };
+  return { money, weekHour, progress, isWorkingDay, work, startWorkingDay };
 }
 
 export type UseGameResult = ReturnType<typeof useGame>;
