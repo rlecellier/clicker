@@ -37,7 +37,33 @@ export default tseslint.config(
             {
               group: ['../*', './*/*'],
               message:
-                'Use an alias (@page, @component, @hook, @context) or import the folder index.',
+                'Use an alias (@page, @component, @hook, @game, @context) or import the folder index.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // The game rules are pure TypeScript: no React, and nothing from the UI
+    // layers (ADR 0002, §4).
+    files: ['src/game/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../*', './*/*'],
+              message: 'Use an alias (@game) or import the folder index.',
+            },
+            {
+              group: ['react', 'react-*', '@base-ui/*', 'lucide-react'],
+              message: 'src/game is pure logic: no React or UI library.',
+            },
+            {
+              group: ['@page/*', '@component/*', '@hook/*', '@context/*'],
+              message: 'src/game never depends on the UI layers.',
             },
           ],
         },

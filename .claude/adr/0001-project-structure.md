@@ -122,7 +122,9 @@ chemin relatif remontant (`../`).
 | `@page/*`      | `src/pages/*`      |
 | `@component/*` | `src/components/*` |
 | `@hook/*`      | `src/hooks/*`      |
+| `@game/*`      | `src/game/*`       |
 | `@context/*`   | `src/contexts/*`   |
+| `@test/*`      | `src/test/*`       |
 
 Seuls les imports vers un fichier du **même dossier** restent relatifs
 (`./types`, `./MoneyCounter`).
