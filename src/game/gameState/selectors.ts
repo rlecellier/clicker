@@ -1,0 +1,25 @@
+import { isWorking, pendingPayCents } from '@game/earnings';
+import { isEnjoyingCake } from '@game/nutrition';
+import { HOURS_PER_WEEK, SPEEDS } from '@game/time';
+import type { GameState } from './types';
+
+export const weekOf = (state: GameState) =>
+  Math.floor(state.elapsedHours / HOURS_PER_WEEK);
+
+export const weekHourOf = (state: GameState) =>
+  state.elapsedHours % HOURS_PER_WEEK;
+
+export const speedOf = (state: GameState) => SPEEDS[state.speedIndex] ?? 1;
+
+export const canSpeedUp = (state: GameState) =>
+  state.speedIndex < SPEEDS.length - 1;
+
+export const canSlowDown = (state: GameState) => state.speedIndex > 0;
+
+export const pendingPayOf = (state: GameState) =>
+  pendingPayCents(weekOf(state), weekHourOf(state));
+
+export const isEarning = (state: GameState) => isWorking(weekHourOf(state));
+
+export const isEnjoyingCakeNow = (state: GameState) =>
+  isEnjoyingCake(state, state.elapsedHours);

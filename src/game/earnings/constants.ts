@@ -1,1 +1,1 @@
-export const MONTHLY_SALARY = 1000;
+export const MONTHLY_SALARY_CENTS = 100_000;

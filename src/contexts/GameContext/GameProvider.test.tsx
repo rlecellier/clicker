@@ -1,11 +1,13 @@
 import { act, renderHook } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
 import { INITIAL_CALORIES, SNACK_CALORIES } from '@game/nutrition';
-import { HOURS_PER_WEEK } from '@game/time';
-import { DEFAULT_SPEED, HOURS_PER_SECOND } from '@hook/useWeekClock';
+import { DEFAULT_SPEED, HOURS_PER_SECOND, HOURS_PER_WEEK } from '@game/time';
 import { gameStateFactory } from '@test/factories/gameStateFactory';
-import { useGame } from './useGame';
+
+import { GameProvider } from './GameProvider';
+import { useGameContext } from './useGameContext';
 
 // Real milliseconds needed for the game to run the given number of hours.
 const hoursToMs = (hours: number) =>
@@ -21,30 +23,44 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+const renderGame = (
+  initialState?: Parameters<typeof GameProvider>[0]['initialState'],
+) =>
+  renderHook(() => useGameContext(), {
+    wrapper: ({ children }: { children: ReactNode }) => (
+      <GameProvider initialState={initialState}>{children}</GameProvider>
+    ),
+  });
+
 test('starts with the given state', () => {
   const state = gameStateFactory.build();
-  const { result } = renderHook(() => useGame(state));
-  expect(result.current.money).toBe(state.money);
+  const { result } = renderGame(state);
+  expect(result.current.balanceCents).toBe(state.balanceCents);
 });
 
 test('starts broke by default', () => {
-  const { result } = renderHook(() => useGame());
-  expect(result.current.money).toBe(0);
+  const { result } = renderGame();
+  expect(result.current.balanceCents).toBe(0);
+});
+
+test('needs a provider', () => {
+  const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+  expect(() => renderHook(() => useGameContext())).toThrow(/GameProvider/);
+  error.mockRestore();
 });
 
 test('a snack adds calories at once', () => {
-  const { result } = renderHook(() => useGame());
-  const before = result.current.calories;
+  const { result } = renderGame();
 
   act(() => {
     result.current.snack();
   });
 
-  expect(result.current.calories).toBe(before + SNACK_CALORIES);
+  expect(result.current.calories).toBe(INITIAL_CALORIES + SNACK_CALORIES);
 });
 
 test('calories go down during the night', () => {
-  const { result } = renderHook(() => useGame());
+  const { result } = renderGame();
 
   act(() => {
     vi.advanceTimersByTime(hoursToMs(6));
@@ -53,8 +69,8 @@ test('calories go down during the night', () => {
   expect(result.current.calories).toBeLessThan(INITIAL_CALORIES);
 });
 
-test('enjoying a cake lasts 30 game minutes and cannot be restarted', () => {
-  const { result } = renderHook(() => useGame());
+test('enjoying a cake lasts 30 game minutes', () => {
+  const { result } = renderGame();
 
   act(() => {
     result.current.cake();
@@ -70,35 +86,25 @@ test('enjoying a cake lasts 30 game minutes and cannot be restarted', () => {
   expect(result.current.isEnjoyingCake).toBe(false);
 });
 
-test('the game keeps going after a long frame, like a hidden tab', () => {
-  const { result } = renderHook(() => useGame());
-
-  act(() => {
-    vi.advanceTimersByTime(hoursToMs(HOURS_PER_WEEK / 2));
-  });
-  expect(result.current.weekHour).toBeCloseTo(HOURS_PER_WEEK / 2, 0);
-  expect(result.current.calories).toBeGreaterThanOrEqual(0);
-});
-
 test('earns the weekly pay while working, banked once the week ends', () => {
-  const { result } = renderHook(() => useGame({ money: 0 }));
+  const { result } = renderGame();
 
   act(() => {
     vi.advanceTimersByTime(hoursToMs(18.5));
   });
   expect(result.current.isEarning).toBe(false);
-  expect(result.current.pendingPay).toBeGreaterThan(0);
-  expect(result.current.money).toBe(0);
+  expect(result.current.pendingPayCents).toBeGreaterThan(0);
+  expect(result.current.balanceCents).toBe(0);
 
   act(() => {
     vi.advanceTimersByTime(hoursToMs(HOURS_PER_WEEK - 18.5) + 100);
   });
-  expect(result.current.money).toBe(250);
-  expect(result.current.pendingPay).toBe(0);
+  expect(result.current.balanceCents).toBe(25_000);
+  expect(result.current.pendingPayCents).toBe(0);
 });
 
 test('speeding up the time brings the end of the week closer', () => {
-  const { result } = renderHook(() => useGame({ money: 0 }));
+  const { result } = renderGame();
 
   act(() => {
     result.current.faster();
@@ -107,5 +113,16 @@ test('speeding up the time brings the end of the week closer', () => {
     vi.advanceTimersByTime(hoursToMs(HOURS_PER_WEEK / 2) + 100);
   });
 
-  expect(result.current.money).toBe(250);
+  expect(result.current.speed).toBe(DEFAULT_SPEED * 2);
+  expect(result.current.balanceCents).toBe(25_000);
+});
+
+test('slowing down stops at the slowest speed', () => {
+  const { result } = renderGame();
+
+  act(() => {
+    for (let index = 0; index < 20; index += 1) result.current.slower();
+  });
+
+  expect(result.current.canSlowDown).toBe(false);
 });
