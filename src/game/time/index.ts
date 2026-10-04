@@ -16,3 +16,4 @@ export {
   weekdayIndex,
   weekdayLabel,
 } from './dates';
+export { formatClock, formatDuration, parseClock } from './clock';
