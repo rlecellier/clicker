@@ -1,4 +1,4 @@
-import { Receipt, Utensils } from 'lucide-react';
+import { Utensils, Wallet } from 'lucide-react';
 import { useEffect } from 'react';
 import { NavLink } from 'react-router';
 
@@ -23,7 +23,7 @@ type SidebarProps = {
 
 const LINKS = [
   { to: '/', label: 'Game', Icon: Utensils },
-  { to: '/expenses', label: 'Expenses', Icon: Receipt },
+  { to: '/balance', label: 'Balance', Icon: Wallet },
 ];
 
 // The gauges and the pages menu: slides in on mobile, always shown from

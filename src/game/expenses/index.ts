@@ -5,5 +5,6 @@ export {
   expensesBetween,
   INITIAL_EXPENSES,
   totalExpensesCents,
+  weeklyExpensesCents,
 } from './expenses';
 export type { ExpenseId, Expenses, MealId } from './expenses';

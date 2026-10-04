@@ -48,3 +48,41 @@
   border-bottom: 0;
   color: var(--color-danger);
 }
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+}
+
+.summary div {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+}
+
+.summary dt {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.summary dd {
+  margin: 0.25rem 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary .income {
+  color: var(--color-success, inherit);
+}
+
+.summary .expense {
+  color: var(--color-danger);
+}
+
+.subtitle {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}

@@ -53,11 +53,11 @@ test('the menu button opens and closes the gauges sidebar', async () => {
   expect(menu).toHaveAttribute('aria-expanded', 'false');
 });
 
-test('the sidebar opens the expenses page, with the rent and the meals', async () => {
+test('the sidebar opens the balance page, with the rent and the meals', async () => {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
   renderApp();
-  await user.click(screen.getByRole('link', { name: 'Expenses' }));
-  expect(screen.getByRole('heading', { name: 'Expenses' })).toBeInTheDocument();
+  await user.click(screen.getByRole('link', { name: 'Balance' }));
+  expect(screen.getByRole('heading', { name: 'Balance' })).toBeInTheDocument();
   for (const name of ['Rent', 'Breakfast', 'Lunch', 'Dinner']) {
     expect(screen.getByRole('rowheader', { name })).toBeInTheDocument();
   }

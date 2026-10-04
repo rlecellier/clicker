@@ -75,15 +75,15 @@ test('ignores Escape when it is closed', async () => {
   expect(onClose).not.toHaveBeenCalled();
 });
 
-test('links to the game and to the expenses', () => {
+test('links to the game and to the balance', () => {
   renderPanel(false);
   expect(screen.getByRole('link', { name: 'Game' })).toHaveAttribute(
     'href',
     '/',
   );
-  expect(screen.getByRole('link', { name: 'Expenses' })).toHaveAttribute(
+  expect(screen.getByRole('link', { name: 'Balance' })).toHaveAttribute(
     'href',
-    '/expenses',
+    '/balance',
   );
 });
 
@@ -94,6 +94,6 @@ test('marks the current page and closes when a link is clicked', async () => {
     'aria-current',
     'page',
   );
-  await user.click(screen.getByRole('link', { name: 'Expenses' }));
+  await user.click(screen.getByRole('link', { name: 'Balance' }));
   expect(onClose).toHaveBeenCalled();
 });
