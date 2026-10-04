@@ -22,6 +22,7 @@ const Layout = () => {
     dreamGauge,
     dreams,
     isSleeping,
+    location,
     speed,
     canSpeedUp,
     canSlowDown,
@@ -43,6 +44,7 @@ const Layout = () => {
         dreamGauge={dreamGauge}
         dreams={dreams}
         isSleeping={isSleeping}
+        location={location}
         isOpen={isMenuOpen}
         onClose={closeMenu}
       />

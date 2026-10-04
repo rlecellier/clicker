@@ -1,1 +1,4 @@
-export type Location = 'home' | 'office' | 'restaurant';
+export type Location = 'home' | 'work' | 'restaurant';
+
+// What the player is doing at a given hour.
+export type Activity = 'sleeping' | 'working' | 'eating' | 'relaxing';
