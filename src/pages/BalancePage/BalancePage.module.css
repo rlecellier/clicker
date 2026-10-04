@@ -1,5 +1,7 @@
 .root {
   padding: 0 1rem 1rem;
+  /* vertical scroll stays native, horizontal swipes switch the period */
+  touch-action: pan-y;
 }
 
 .title {
@@ -85,4 +87,30 @@
 .subtitle {
   margin: 0 0 0.5rem;
   font-size: 1rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin: 0 0 1rem;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+}
+
+.tab {
+  flex: 1;
+  padding: 0.5rem;
+  border: 0;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--color-muted);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tab[aria-selected='true'] {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
 }

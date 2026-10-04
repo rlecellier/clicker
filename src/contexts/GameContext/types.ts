@@ -7,6 +7,8 @@ export type GameContextValue = {
   balanceCents: number;
   // total paid so far, per kind of expense
   expenses: Expenses;
+  // game hours since Monday 00:00 of the first week
+  elapsedHours: number;
   week: number;
   weekHour: number;
   speed: number;
