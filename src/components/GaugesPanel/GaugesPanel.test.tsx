@@ -2,15 +2,17 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test, vi } from 'vitest';
 
-import { CaloriesPanel } from './CaloriesPanel';
+import { GaugesPanel } from './GaugesPanel';
 
 const renderPanel = (isOpen: boolean) => {
   const onClose = vi.fn();
   render(
-    <CaloriesPanel
+    <GaugesPanel
       id="panel"
       calories={50}
       fat={1.5}
+      brain={30}
+      isSleeping={false}
       isOpen={isOpen}
       onClose={onClose}
     />,
@@ -18,15 +20,24 @@ const renderPanel = (isOpen: boolean) => {
   return onClose;
 };
 
-test('contains the calories gauge and the fat', () => {
+test('contains the calories and brain gauges and the fat', () => {
   renderPanel(false);
   expect(screen.getByRole('meter', { name: 'Calories' })).toBeInTheDocument();
+  expect(screen.getByRole('meter', { name: 'Brain' })).toBeInTheDocument();
   expect(screen.getByText('Fat 1.5')).toBeInTheDocument();
 });
 
 test('is marked as open only when it is open', () => {
   const { container } = render(
-    <CaloriesPanel id="panel" calories={50} fat={0} isOpen onClose={vi.fn()} />,
+    <GaugesPanel
+      id="panel"
+      calories={50}
+      fat={0}
+      brain={30}
+      isSleeping={false}
+      isOpen
+      onClose={vi.fn()}
+    />,
   );
   expect(container.querySelector('#panel')).toHaveAttribute('data-open');
 });

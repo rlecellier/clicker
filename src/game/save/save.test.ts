@@ -30,6 +30,7 @@ const state = {
   balanceCents: 25_000,
   calories: 61.2,
   fat: 4.5,
+  brain: 33.3,
   cakeUntil: 120,
 };
 
@@ -68,6 +69,8 @@ test('refuses a save with a missing or invalid field', () => {
   expect(broken({ elapsedHours: [] })).toBeUndefined();
   expect(broken({ calories: 101 })).toBeUndefined();
   expect(broken({ speedIndex: 99 })).toBeUndefined();
+  expect(broken({ brain: 101 })).toBeUndefined();
+  expect(broken({ brain: undefined })).toBeUndefined();
   expect(broken({ fat: undefined })).toBeUndefined();
 });
 

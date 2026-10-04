@@ -108,3 +108,13 @@ test('a speed change never moves the time already elapsed', () => {
   });
   expect(faster.elapsedHours - after.elapsedHours).toBeCloseTo(6, 5);
 });
+
+test('the brain fills during the day and empties during the night', () => {
+  // Monday 00:00 to 07:00: the rest of the night empties the gauge
+  const morning = run(INITIAL_GAME_STATE, 7);
+  expect(morning.brain).toBeCloseTo(0, 5);
+
+  // 16 hours awake fill it
+  const evening = run(morning, 16);
+  expect(evening.brain).toBeCloseTo(100, 5);
+});

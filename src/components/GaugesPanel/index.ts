@@ -1,0 +1,1 @@
+export { GaugesPanel } from './GaugesPanel';

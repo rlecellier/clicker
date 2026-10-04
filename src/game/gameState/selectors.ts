@@ -1,5 +1,6 @@
 import { isWorkHours, pendingPayCents } from '@game/earnings';
 import { isEnjoyingCake } from '@game/nutrition';
+import { isSleeping } from '@game/sleep';
 import { HOURS_PER_WEEK, SPEEDS } from '@game/time';
 import type { GameState } from './types';
 
@@ -23,3 +24,6 @@ export const isEarning = (state: GameState) => isWorkHours(weekHourOf(state));
 
 export const isEnjoyingCakeNow = (state: GameState) =>
   isEnjoyingCake(state, state.elapsedHours);
+
+export const isSleepingNow = (state: GameState) =>
+  isSleeping(weekHourOf(state));

@@ -5,6 +5,7 @@ import {
   startCake,
   stepNutrition,
 } from '@game/nutrition';
+import { stepSleep } from '@game/sleep';
 import { HOURS_PER_SECOND, HOURS_PER_WEEK, SPEEDS } from '@game/time';
 import type { GameState } from './types';
 
@@ -38,6 +39,7 @@ const advance = (state: GameState, hours: number): GameState => {
   return {
     ...state,
     ...stepNutrition(state, from, to),
+    ...stepSleep(state, from, to),
     elapsedHours: to,
     balanceCents: state.balanceCents + paySince(from, to),
   };
