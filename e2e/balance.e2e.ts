@@ -1,7 +1,18 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 // The game runs eight times faster than real time by default.
 const HOUR_MS = 1000 / 8;
+
+// Playwright has no swipe gesture: the touch events are sent by hand.
+const swipe = async (page: Page, from: number, to: number) => {
+  const root = page.getByRole('heading', { name: 'Balance' }).locator('..');
+  await root.dispatchEvent('touchstart', {
+    touches: [{ identifier: 0, clientX: from, clientY: 0 }],
+  });
+  await root.dispatchEvent('touchend', {
+    changedTouches: [{ identifier: 0, clientX: to, clientY: 0 }],
+  });
+};
 
 test('the sidebar is always shown on desktop', async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 700 });
@@ -50,5 +61,11 @@ test('the balance page switches period with the tabs and by swiping', async ({
   await expect(page.getByText('Expenses this month')).toBeVisible();
 
   await page.getByRole('tab', { name: 'Year' }).click();
+  await expect(page.getByText('Expenses this year')).toBeVisible();
+
+  // Swiping right goes back to the previous period, left to the next one.
+  await swipe(page, 100, 300);
+  await expect(page.getByText('Expenses this month')).toBeVisible();
+  await swipe(page, 300, 100);
   await expect(page.getByText('Expenses this year')).toBeVisible();
 });
