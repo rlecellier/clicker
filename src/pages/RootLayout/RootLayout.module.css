@@ -1,12 +1,16 @@
+.layout {
+  display: flex;
+  align-items: flex-start;
+}
+
 .main {
+  flex: 1;
+  min-width: 0;
   box-sizing: border-box;
   text-align: center;
 }
 
 .header {
-  /* its own layer, above the page, for the mobile sidebar and its backdrop */
-  position: relative;
-  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -21,7 +25,7 @@
   gap: 0.75rem;
 }
 
-/* Mobile only: opens the calories sidebar, above the sidebar and backdrop. */
+/* Mobile only: opens the sidebar, above the sidebar and backdrop. */
 .menuButton {
   position: relative;
   z-index: 3;

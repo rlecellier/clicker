@@ -53,6 +53,16 @@ test('the menu button opens and closes the gauges sidebar', async () => {
   expect(menu).toHaveAttribute('aria-expanded', 'false');
 });
 
+test('the sidebar opens the expenses page, with the rent and the meals', async () => {
+  const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+  renderApp();
+  await user.click(screen.getByRole('link', { name: 'Expenses' }));
+  expect(screen.getByRole('heading', { name: 'Expenses' })).toBeInTheDocument();
+  for (const name of ['Rent', 'Breakfast', 'Lunch', 'Dinner']) {
+    expect(screen.getByRole('rowheader', { name })).toBeInTheDocument();
+  }
+});
+
 test('unknown route shows the error page', () => {
   renderApp('/nope');
   expect(screen.getByText('404 Not Found')).toBeInTheDocument();

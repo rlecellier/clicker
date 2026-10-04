@@ -4,8 +4,8 @@ import { useCallback, useState } from 'react';
 import { Outlet } from 'react-router';
 
 import { CaloriesStatus } from '@component/CaloriesStatus';
-import { GaugesPanel } from '@component/GaugesPanel';
 import { MoneyCounter } from '@component/MoneyCounter';
+import { Sidebar } from '@component/Sidebar';
 import { TimeControls } from '@component/TimeControls';
 import { GameProvider, useGameContext } from '@context/GameContext';
 import { getCaloriesStatus } from '@game/nutrition';
@@ -32,51 +32,53 @@ const Layout = () => {
   }, []);
 
   return (
-    <main className={styles.main}>
-      <header className={styles.header}>
-        <div className={styles.brand}>
-          <Button
-            className={styles.menuButton}
-            aria-label="Menu"
-            aria-expanded={isMenuOpen}
-            aria-controls="gauges-panel"
-            onClick={() => {
-              setIsMenuOpen((isOpen) => !isOpen);
-            }}
-          >
-            {isMenuOpen ? (
-              <X aria-hidden size={18} />
-            ) : (
-              <Menu aria-hidden size={18} />
-            )}
-          </Button>
-          <h1 className={styles.title}>Clicker</h1>
+    <div className={styles.layout}>
+      <Sidebar
+        id="sidebar"
+        calories={calories}
+        fat={fat}
+        brain={brain}
+        isSleeping={isSleeping}
+        isOpen={isMenuOpen}
+        onClose={closeMenu}
+      />
+      <main className={styles.main}>
+        <header className={styles.header}>
+          <div className={styles.brand}>
+            <Button
+              className={styles.menuButton}
+              aria-label="Menu"
+              aria-expanded={isMenuOpen}
+              aria-controls="sidebar"
+              onClick={() => {
+                setIsMenuOpen((isOpen) => !isOpen);
+              }}
+            >
+              {isMenuOpen ? (
+                <X aria-hidden size={18} />
+              ) : (
+                <Menu aria-hidden size={18} />
+              )}
+            </Button>
+            <h1 className={styles.title}>Clicker</h1>
+          </div>
+          <div className={styles.status}>
+            <CaloriesStatus status={getCaloriesStatus(calories)} />
+            <MoneyCounter cents={balanceCents} />
+          </div>
+        </header>
+        <div className={styles.controls}>
+          <TimeControls
+            speed={speed}
+            canSpeedUp={canSpeedUp}
+            canSlowDown={canSlowDown}
+            onFaster={faster}
+            onSlower={slower}
+          />
         </div>
-        <GaugesPanel
-          id="gauges-panel"
-          calories={calories}
-          fat={fat}
-          brain={brain}
-          isSleeping={isSleeping}
-          isOpen={isMenuOpen}
-          onClose={closeMenu}
-        />
-        <div className={styles.status}>
-          <CaloriesStatus status={getCaloriesStatus(calories)} />
-          <MoneyCounter cents={balanceCents} />
-        </div>
-      </header>
-      <div className={styles.controls}>
-        <TimeControls
-          speed={speed}
-          canSpeedUp={canSpeedUp}
-          canSlowDown={canSlowDown}
-          onFaster={faster}
-          onSlower={slower}
-        />
-      </div>
-      <Outlet />
-    </main>
+        <Outlet />
+      </main>
+    </div>
   );
 };
 
