@@ -1,4 +1,6 @@
+import { isCalendarEvent } from '@game/calendar';
 import { EXPENSE_IDS } from '@game/expenses';
+import { isJobId } from '@game/jobs';
 import { CALORIES_CAP } from '@game/nutrition';
 import { getBook } from '@game/reading';
 import { BRAIN_CAP, DREAM_CAP } from '@game/sleep';
@@ -7,7 +9,7 @@ import type { GameState } from '@game/gameState';
 
 export const SAVE_KEY = 'clicker.save';
 // Bumped when the shape of `GameState` changes in a way old saves can't fit.
-export const SAVE_VERSION = 5;
+export const SAVE_VERSION = 6;
 
 // The part of `Storage` the save needs, so it can be faked in tests.
 export type SaveStorage = Pick<Storage, 'getItem' | 'setItem'>;
@@ -47,6 +49,23 @@ const isExpenses = (value: unknown) =>
     ),
   );
 
+const isEmployment = (value: unknown) =>
+  value === undefined ||
+  (typeof value === 'object' &&
+    value !== null &&
+    isJobId((value as Record<string, unknown>).id) &&
+    isBetweenZeroAnd(
+      (value as Record<string, unknown>).since,
+      Number.MAX_SAFE_INTEGER,
+    ));
+
+const isAsking = (value: unknown) =>
+  value === undefined ||
+  (typeof value === 'object' &&
+    value !== null &&
+    typeof (value as Record<string, unknown>).eventId === 'string' &&
+    Number.isSafeInteger((value as Record<string, unknown>).day));
+
 // A save comes from outside: it is checked before it becomes a game.
 const isGameState = (value: unknown): value is GameState => {
   if (typeof value !== 'object' || value === null) return false;
@@ -72,8 +91,17 @@ const isGameState = (value: unknown): value is GameState => {
     isBetweenZeroAnd(state.cakeUntil, Number.MAX_SAFE_INTEGER) &&
     isCurrentBook(state.bookId, state.bookHours) &&
     isReadBookIds(state.readBookIds, state.bookId) &&
-    (state.bookId !== undefined || state.isReading === false) &&
-    typeof state.isReading === 'boolean'
+    Array.isArray(state.plan) &&
+    state.plan.every(isCalendarEvent) &&
+    Array.isArray(state.declined) &&
+    state.declined.every((key) => typeof key === 'string') &&
+    isEmployment(state.job) &&
+    isAsking(state.asking) &&
+    // the game waits on the answer: the event asked about must be planned
+    (state.asking === undefined ||
+      state.plan.some(
+        ({ id }) => id === (state.asking as Record<string, unknown>).eventId,
+      ))
   );
 };
 

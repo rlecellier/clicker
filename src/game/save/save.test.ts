@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 
 import { INITIAL_GAME_STATE } from '@game/gameState';
+import { READING_SCHEDULE, WORKING_STATE } from '@test/schedules';
 
 import {
   parseSave,
@@ -37,7 +38,10 @@ const state = {
   bookId: 'hobbit',
   bookHours: 12.5,
   readBookIds: ['animal-farm', 'dune'],
-  isReading: true,
+  ...WORKING_STATE,
+  plan: READING_SCHEDULE.plan,
+  declined: ['read-evening@3'],
+  asking: { eventId: 'read-evening', day: 4 },
 };
 
 const broken = (patch: Record<string, unknown>) =>
@@ -95,12 +99,16 @@ test('refuses a save with a missing or invalid field', () => {
   expect(broken({ bookHours: undefined })).toBeUndefined();
   expect(broken({ bookId: 'unknown-book' })).toBeUndefined();
   expect(broken({ bookId: undefined })).toBeUndefined();
-  expect(broken({ bookId: undefined, bookHours: 0 })).toBeUndefined();
   expect(broken({ readBookIds: ['unknown-book'] })).toBeUndefined();
   expect(broken({ readBookIds: ['dune', 'dune'] })).toBeUndefined();
   expect(broken({ readBookIds: ['hobbit'] })).toBeUndefined();
   expect(broken({ readBookIds: undefined })).toBeUndefined();
-  expect(broken({ isReading: 'yes' })).toBeUndefined();
+  expect(broken({ plan: undefined })).toBeUndefined();
+  expect(broken({ plan: [{ id: 'x' }] })).toBeUndefined();
+  expect(broken({ declined: [1] })).toBeUndefined();
+  expect(broken({ job: { id: 'astronaut', since: 0 } })).toBeUndefined();
+  expect(broken({ asking: { eventId: 3, day: 1 } })).toBeUndefined();
+  expect(broken({ asking: { eventId: 'gone', day: 1 } })).toBeUndefined();
 });
 
 test('writes then reads the save in the storage', () => {

@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 
 import { HOURS_PER_WEEK, SPEEDS } from '@game/time';
+import { WORKING_STATE } from '@test/schedules';
 
 import {
   canSlowDown,
@@ -14,12 +15,17 @@ import { INITIAL_GAME_STATE, type GameState } from './types';
 
 const at = (elapsedHours: number): GameState => ({
   ...INITIAL_GAME_STATE,
+  ...WORKING_STATE,
   elapsedHours,
 });
 
 test('splits the elapsed hours into a week and an hour of the week', () => {
   expect(weekOf(at(HOURS_PER_WEEK + 3))).toBe(1);
   expect(weekHourOf(at(HOURS_PER_WEEK + 3))).toBe(3);
+});
+
+test('is not earning without a job', () => {
+  expect(isEarning({ ...at(10), job: undefined })).toBe(false);
 });
 
 test('is earning during work hours only', () => {
