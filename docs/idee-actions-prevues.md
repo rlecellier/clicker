@@ -17,6 +17,14 @@ Dans l'onglet calendrier, on distingue deux familles d'actions :
 
 - **Lire un livre**, quand on est à la maison.
 
+## Mode de déclenchement : `auto` ou `ask`
+
+Chaque action prévue est taguée avec un mode :
+
+- **`auto`** : l'action se déroule automatiquement, sans intervention.
+- **`ask`** : on demande au joueur « voulez-vous faire cette action ? » avant de
+  la lancer. Sur desktop, une pop-up ; sur mobile, une page entière.
+
 ## À préciser (questions ouvertes, à venir)
 
 _À compléter par la suite de la description._
