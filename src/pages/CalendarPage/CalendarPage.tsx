@@ -6,6 +6,7 @@ import { CalendarGrid } from '@component/CalendarGrid';
 import { useGameContext } from '@context/GameContext';
 import { useMediaQuery } from '@hook/useMediaQuery';
 import { useSwipe } from '@hook/useSwipe';
+import { useZoom } from '@hook/useZoom';
 import { DAYS_PER_WEEK, HOURS_PER_DAY } from '@game/time';
 
 import { rangeLabel, visibleDays, type CalendarView } from './calendarRange';
@@ -17,7 +18,8 @@ const VIEWS: { view: CalendarView; label: string }[] = [
 ];
 
 // The days of the game: a week at once on a large screen (or a single day if
-// chosen), a single day on mobile, with a swipe to go to the next one.
+// chosen), a single day on mobile, with a swipe to go to the next one. The
+// whole day fits the screen; ctrl + wheel or a pinch zooms in on the hours.
 export const CalendarPage = () => {
   const { week, weekHour } = useGameContext();
   const currentDay =
@@ -29,6 +31,8 @@ export const CalendarPage = () => {
   // the view toggle only exists from tablet up: mobile always shows one day
   const isLargeScreen = useMediaQuery('(min-width: 640px)');
   const view = isLargeScreen ? chosenView : 'day';
+
+  const { ref: scroller, zoom } = useZoom<HTMLDivElement>();
 
   const days = visibleDays(selectedDay, view);
   const unit = view === 'week' ? 'week' : 'day';
@@ -96,8 +100,13 @@ export const CalendarPage = () => {
           )}
         </div>
       </header>
-      <div className={styles.grid} {...swipe}>
-        <CalendarGrid days={days} currentDay={currentDay} dayRatio={dayRatio} />
+      <div className={styles.grid} ref={scroller} {...swipe}>
+        <CalendarGrid
+          days={days}
+          currentDay={currentDay}
+          dayRatio={dayRatio}
+          zoom={zoom}
+        />
       </div>
     </section>
   );

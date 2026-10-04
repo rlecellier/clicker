@@ -64,3 +64,68 @@ test('on desktop, the calendar page shows the week and can show a day', async ({
   await page.getByRole('button', { name: 'Week', exact: true }).click();
   await expect(page.getByRole('list')).toHaveCount(7);
 });
+
+test('the whole day fits the screen, and ctrl + wheel zooms in on the hours', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1024, height: 700 });
+  await page.goto('/calendar');
+  const grid = page.getByRole('list').first().locator('..').locator('..');
+  const fits = await grid.evaluate(
+    (element) => element.scrollHeight <= element.clientHeight,
+  );
+  expect(fits).toBe(true);
+
+  // the event under the mouse grows and stays under it
+  const lunch = page.getByTitle(/^Lunch/).first();
+  const before = (await lunch.boundingBox())!;
+  await page.mouse.move(before.x + 5, before.y);
+  await page.keyboard.down('Control');
+  await page.mouse.wheel(0, -100);
+  await page.keyboard.up('Control');
+  await expect
+    .poll(async () => (await lunch.boundingBox())!.height)
+    .toBeGreaterThan(before.height * 2);
+  const after = (await lunch.boundingBox())!;
+  expect(Math.abs(after.y - before.y)).toBeLessThan(5);
+});
+
+test('on mobile, a pinch zooms in without changing the day', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 800 },
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  await page.goto('/calendar');
+  const lunch = page.getByTitle(/^Lunch/);
+  const before = (await lunch.boundingBox())!;
+
+  // Playwright has no pinch gesture: two fingers are moved apart by hand.
+  const cdp = await context.newCDPSession(page);
+  const fingers = (gap: number) => [
+    { x: 200, y: before.y - gap },
+    { x: 200, y: before.y + gap },
+  ];
+  await cdp.send('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: fingers(20),
+  });
+  await cdp.send('Input.dispatchTouchEvent', {
+    type: 'touchMove',
+    touchPoints: fingers(60),
+  });
+  await cdp.send('Input.dispatchTouchEvent', {
+    type: 'touchEnd',
+    touchPoints: [],
+  });
+
+  await expect
+    .poll(async () => (await lunch.boundingBox())!.height)
+    .toBeGreaterThan(before.height * 2);
+  await expect(page.getByRole('heading', { level: 2 })).toHaveText(
+    'Mon 1 Feb 2027',
+  );
+  await context.close();
+});
