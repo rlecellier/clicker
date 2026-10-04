@@ -38,6 +38,31 @@ Google Calendar.
 prévues : un mode `auto` / `ask` et une récurrence. Il n'y a donc qu'un seul
 modèle pour les deux familles.
 
+## Début de partie : le bouton « Get a Job »
+
+Au début de la partie, le joueur n'a pas de travail. Un bouton **Get a Job**
+ouvre, comme pour un événement `ask` (modale sur desktop, page entière sur
+mobile), la liste des jobs disponibles.
+
+- Aujourd'hui, un seul job : **vendeur de vêtements**.
+- Cliquer dessus : le joueur devient vendeur de vêtements.
+
+### Impact sur le calendrier
+
+Deux effets, sur les **horaires de travail déjà définis** :
+
+1. **Ce qu'il doit faire** : vendre des vêtements.
+2. **Ce qu'il a prévu de faire** : « aller au travail pour vendre des
+   vêtements », ajouté automatiquement sur les mêmes horaires.
+
+Plus tard, le joueur pourra reconfigurer son prévu pour que ce qu'il fait
+effectivement diffère de ce qu'il doit faire.
+
+### `eat` et `sleep`
+
+Ils deviennent des événements **que le joueur a choisi de faire** (donc du
+côté « prévu »), présents **par défaut**.
+
 ## À préciser (questions ouvertes, à venir)
 
 _À compléter par la suite de la description._
