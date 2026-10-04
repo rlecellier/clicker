@@ -17,17 +17,19 @@
   font-weight: 600;
 }
 
-/* below 20%: yellow, 20%–80%: balanced, above 80%: orange */
-.value[data-level='low'] {
+/* green 40%–60%, yellow 20%–40% and 60%–80%, red beyond */
+.value[data-status='good'] {
+  color: var(--color-success);
+}
+
+.value[data-status='running-low'],
+.value[data-status='running-high'] {
   color: var(--color-warning-light);
 }
 
-.value[data-level='balanced'] {
-  color: var(--color-text);
-}
-
-.value[data-level='high'] {
-  color: var(--color-orange);
+.value[data-status='starving'],
+.value[data-status='overflowing'] {
+  color: var(--color-danger);
 }
 
 .fat {
@@ -59,14 +61,16 @@
   transition: background 0.3s;
 }
 
-.indicator[data-level='low'] {
-  background: var(--color-warning-light);
-}
-
-.indicator[data-level='balanced'] {
+.indicator[data-status='good'] {
   background: var(--color-success);
 }
 
-.indicator[data-level='high'] {
-  background: var(--color-orange);
+.indicator[data-status='running-low'],
+.indicator[data-status='running-high'] {
+  background: var(--color-warning-light);
+}
+
+.indicator[data-status='starving'],
+.indicator[data-status='overflowing'] {
+  background: var(--color-danger);
 }

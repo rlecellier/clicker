@@ -13,19 +13,20 @@ test('shows the calories and the fat', () => {
   expect(screen.getByText('Fat 3.2')).toBeInTheDocument();
 });
 
-test('colors the gauge by level: low below 20%, high above 80%', () => {
-  const { rerender } = render(<CaloriesGauge calories={50} fat={0} />);
-  expect(screen.getByText('50%')).toHaveAttribute('data-level', 'balanced');
-
-  rerender(<CaloriesGauge calories={85} fat={0} />);
-  expect(screen.getByText('85%')).toHaveAttribute('data-level', 'high');
-
-  rerender(<CaloriesGauge calories={10} fat={0} />);
-  expect(screen.getByText('10%')).toHaveAttribute('data-level', 'low');
-
-  rerender(<CaloriesGauge calories={20} fat={0} />);
-  expect(screen.getByText('20%')).toHaveAttribute('data-level', 'balanced');
-
-  rerender(<CaloriesGauge calories={80} fat={0} />);
-  expect(screen.getByText('80%')).toHaveAttribute('data-level', 'balanced');
+test.each([
+  [50, 'good'],
+  [40, 'good'],
+  [60, 'good'],
+  [30, 'running-low'],
+  [20, 'running-low'],
+  [70, 'running-high'],
+  [80, 'running-high'],
+  [10, 'starving'],
+  [85, 'overflowing'],
+])('colors the gauge at %s%% as %s', (calories, status) => {
+  render(<CaloriesGauge calories={calories} fat={0} />);
+  expect(screen.getByText(`${calories}%`)).toHaveAttribute(
+    'data-status',
+    status,
+  );
 });

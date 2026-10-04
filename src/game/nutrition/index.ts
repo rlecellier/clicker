@@ -8,9 +8,10 @@ export {
 export {
   eatSnack,
   getCaloriesLevel,
+  getCaloriesStatus,
   INITIAL_NUTRITION,
   isEnjoyingCake,
   startCake,
   stepNutrition,
 } from './nutrition';
-export type { CaloriesLevel, Nutrition } from './types';
+export type { CaloriesLevel, CaloriesStatus, Nutrition } from './types';

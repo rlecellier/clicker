@@ -6,6 +6,8 @@ import {
   CAKE_CALORIES,
   CAKE_DURATION_HOURS,
   CALORIES_CAP,
+  CALORIES_GOOD_MAX,
+  CALORIES_GOOD_MIN,
   CALORIES_MAX_TARGET,
   CALORIES_MIN_TARGET,
   FAT_CONVERSION_RATE,
@@ -15,7 +17,7 @@ import {
   STEP_HOURS,
   WORK_BURN,
 } from './constants';
-import type { CaloriesLevel, Nutrition } from './types';
+import type { CaloriesLevel, CaloriesStatus, Nutrition } from './types';
 
 export const INITIAL_NUTRITION: Nutrition = {
   calories: INITIAL_CALORIES,
@@ -43,6 +45,13 @@ const mealIntake = (weekHour: number) => {
 export const getCaloriesLevel = (calories: number): CaloriesLevel => {
   if (calories < CALORIES_MIN_TARGET) return 'low';
   return calories > CALORIES_MAX_TARGET ? 'high' : 'balanced';
+};
+
+export const getCaloriesStatus = (calories: number): CaloriesStatus => {
+  if (calories < CALORIES_MIN_TARGET) return 'starving';
+  if (calories < CALORIES_GOOD_MIN) return 'running-low';
+  if (calories <= CALORIES_GOOD_MAX) return 'good';
+  return calories <= CALORIES_MAX_TARGET ? 'running-high' : 'overflowing';
 };
 
 // Puts calories in the gauge; what does not fit in 100% becomes fat.

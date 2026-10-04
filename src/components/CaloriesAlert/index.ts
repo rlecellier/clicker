@@ -1,1 +1,0 @@
-export { CaloriesAlert } from './CaloriesAlert';
