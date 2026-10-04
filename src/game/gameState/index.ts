@@ -1,6 +1,7 @@
 export { gameReducer } from './reducer';
 export type { GameAction } from './reducer';
 export {
+  askingOf,
   canSlowDown,
   canSpeedUp,
   isEarning,

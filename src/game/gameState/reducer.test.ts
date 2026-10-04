@@ -13,6 +13,8 @@ import {
   SPEEDS,
 } from '@game/time';
 
+import { EVENING_READING, WORKING_STATE } from '@test/schedules';
+
 import { gameReducer } from './reducer';
 import { INITIAL_GAME_STATE, type GameState } from './types';
 
@@ -20,8 +22,14 @@ import { INITIAL_GAME_STATE, type GameState } from './types';
 const hoursToSeconds = (hours: number) =>
   hours / (HOURS_PER_SECOND * DEFAULT_SPEED);
 
+const WORKING: GameState = { ...INITIAL_GAME_STATE, ...WORKING_STATE };
+
 const run = (state: GameState, hours: number) =>
-  gameReducer(state, { type: 'elapse', seconds: hoursToSeconds(hours) });
+  gameReducer(state, {
+    type: 'elapse',
+    seconds: hoursToSeconds(hours),
+    roll: 0,
+  });
 
 // Salary banked so far: the balance before the bills were paid.
 const earnedCents = (state: GameState) =>
@@ -52,8 +60,13 @@ test('does not change the state it is given', () => {
   expect(state).toEqual(INITIAL_GAME_STATE);
 });
 
+test('pays nothing without a job', () => {
+  const state = run(INITIAL_GAME_STATE, 2 * HOURS_PER_WEEK);
+  expect(earnedCents(state)).toBe(0);
+});
+
 test('pays the weekly salary once the week is over, not before', () => {
-  const midWeek = run(INITIAL_GAME_STATE, HOURS_PER_WEEK - 1);
+  const midWeek = run(WORKING, HOURS_PER_WEEK - 1);
   expect(earnedCents(midWeek)).toBe(0);
 
   const nextWeek = run(midWeek, 2);
@@ -62,13 +75,13 @@ test('pays the weekly salary once the week is over, not before', () => {
 
 test('pays every week that went by in a long frame', () => {
   // Weeks 0 to 3 are in February, a 28-day month.
-  const state = run(INITIAL_GAME_STATE, 4 * HOURS_PER_WEEK + 1);
+  const state = run(WORKING, 4 * HOURS_PER_WEEK + 1);
   expect(earnedCents(state)).toBe(4 * 25_000);
 });
 
 test('a long frame gives the same result as many short ones', () => {
-  const long = run(INITIAL_GAME_STATE, 3 * 24 + 5);
-  let short = INITIAL_GAME_STATE;
+  const long = run(WORKING, 3 * 24 + 5);
+  let short = WORKING;
   for (let index = 0; index < 77; index += 1) short = run(short, 1);
 
   expect(long.elapsedHours).toBeCloseTo(short.elapsedHours, 5);
@@ -114,13 +127,14 @@ test('a speed change never moves the time already elapsed', () => {
   const faster = gameReducer(after, {
     type: 'elapse',
     seconds: hoursToSeconds(3),
+    roll: 0,
   });
   expect(faster.elapsedHours - after.elapsedHours).toBeCloseTo(6, 5);
 });
 
 test('the brain fills during the day and empties during the night', () => {
   // Monday 00:00 to 07:00: the rest of the night empties the gauge
-  const morning = run(INITIAL_GAME_STATE, 7);
+  const morning = run(WORKING, 7);
   expect(morning.brain).toBeCloseTo(0, 5);
   expect(morning.dreams).toBe(0);
 
@@ -142,7 +156,7 @@ test('pays each meal when it starts', () => {
 });
 
 test('pays the rent when the week ends and keeps the bills in the balance', () => {
-  const state = run(INITIAL_GAME_STATE, HOURS_PER_WEEK + 1);
+  const state = run(WORKING, HOURS_PER_WEEK + 1);
   expect(state.expenses.rent).toBe(WEEKLY_RENT_CENTS);
   expect(state.balanceCents).toBe(25_000 - totalExpensesCents(state.expenses));
 });
@@ -157,26 +171,132 @@ test('restarts a brand new game, whatever the current one', () => {
   ).toEqual({ ...INITIAL_GAME_STATE, birthDate: '2008-10-04' });
 });
 
-test('the book moves while the player reads in free time', () => {
-  const reading = gameReducer(INITIAL_GAME_STATE, {
-    type: 'toggleReading',
-    roll: 0,
+test('the book moves during the reading events', () => {
+  const reader = gameReducer(WORKING, {
+    type: 'planEvent',
+    event: EVENING_READING,
   });
-  expect(reading.isReading).toBe(true);
-  // Monday 00:00 to 20:00: 07:30 to 08:00 and 18:00 to 19:00 are free
-  const evening = run(reading, 20);
-  expect(evening.bookHours).toBeCloseTo(1.5, 5);
-  expect(evening.isReading).toBe(true);
-  const stopped = gameReducer(evening, { type: 'toggleReading', roll: 0 });
-  expect(run(stopped, 48).bookHours).toBe(evening.bookHours);
+  // Monday 00:00 to 22:00: the reading event runs from 20:00
+  const evening = run(reader, 22);
+  // the reading event draws the first book of the library (roll 0)
+  expect(evening.bookId).toBe('animal-farm');
+  expect(evening.bookHours).toBeCloseTo(2, 5);
+  // without a reading event the book stays where it is
+  expect(run(WORKING, 22).bookHours).toBe(0);
 });
 
 test('the brain fills faster while reading', () => {
-  const reading = gameReducer(INITIAL_GAME_STATE, {
-    type: 'toggleReading',
-    roll: 0,
+  const reader = gameReducer(WORKING, {
+    type: 'planEvent',
+    event: EVENING_READING,
   });
-  expect(run(reading, 20).brain).toBeGreaterThan(
-    run(INITIAL_GAME_STATE, 20).brain,
+  expect(run(reader, 22).brain).toBeGreaterThan(run(WORKING, 22).brain);
+});
+
+test('taking a job plans the work, and the pay starts at the hire', () => {
+  const hired = gameReducer(run(INITIAL_GAME_STATE, 2 * 24 + 8), {
+    type: 'takeJob',
+    jobId: 'clothes-seller',
+  });
+  expect(hired.job).toEqual({ id: 'clothes-seller', since: 2 * 24 + 8 });
+  expect(hired.plan.map((event) => event.title)).toContain('Go to work');
+  expect(earnedCents(run(hired, HOURS_PER_WEEK))).toBe(15_000);
+});
+
+test('a job is taken once', () => {
+  const again = gameReducer(WORKING, {
+    type: 'takeJob',
+    jobId: 'clothes-seller',
+  });
+  expect(again).toBe(WORKING);
+});
+
+test('plans an event that fits, with an id of its own', () => {
+  const planned = gameReducer(WORKING, {
+    type: 'planEvent',
+    event: EVENING_READING,
+  });
+  expect(planned.plan).toHaveLength(WORKING.plan.length + 1);
+  const ids = planned.plan.map((event) => event.id);
+  expect(new Set(ids).size).toBe(ids.length);
+});
+
+test('refuses an event that overlaps the plan', () => {
+  const clash = gameReducer(WORKING, {
+    type: 'planEvent',
+    event: { ...EVENING_READING, start: 9, end: 10 },
+  });
+  expect(clash).toBe(WORKING);
+});
+
+const ASKING: GameState = {
+  ...WORKING,
+  plan: [
+    ...WORKING.plan,
+    { ...EVENING_READING, id: 'read-ask', mode: 'ask' as const },
+  ],
+};
+
+test('the game stops where an ask event starts and waits for the answer', () => {
+  const stopped = run(ASKING, 30);
+  expect(stopped.asking).toEqual({ eventId: 'read-ask', day: 0 });
+  expect(stopped.elapsedHours).toBe(20);
+  // time does not move while waiting
+  expect(run(stopped, 5)).toBe(stopped);
+});
+
+test('accepting an ask event lets it run', () => {
+  const stopped = run(ASKING, 30);
+  const accepted = gameReducer(stopped, {
+    type: 'answerAsk',
+    isAccepted: true,
+  });
+  expect(accepted.asking).toBeUndefined();
+  expect(run(accepted, 3).bookHours).toBeCloseTo(3, 5);
+  // the next day asks again
+  expect(run(accepted, 30).asking).toEqual({ eventId: 'read-ask', day: 1 });
+});
+
+test('declining an ask event skips that occurrence only', () => {
+  const stopped = run(ASKING, 30);
+  const declined = gameReducer(stopped, {
+    type: 'answerAsk',
+    isAccepted: false,
+  });
+  expect(declined.declined).toEqual(['read-ask@0']);
+  expect(run(declined, 3).bookHours).toBe(0);
+  expect(run(declined, 30).asking).toEqual({ eventId: 'read-ask', day: 1 });
+});
+
+test('an ask event planned while it should run asks at once', () => {
+  const evening = run(WORKING, 21);
+  const planned = gameReducer(evening, {
+    type: 'planEvent',
+    event: { ...EVENING_READING, mode: 'ask' },
+  });
+  expect(planned.asking).toEqual({
+    eventId: planned.plan.at(-1)?.id,
+    day: 0,
+  });
+  // an auto one just runs
+  const auto = gameReducer(evening, {
+    type: 'planEvent',
+    event: EVENING_READING,
+  });
+  expect(auto.asking).toBeUndefined();
+});
+
+test('forgets the declined occurrences of the days gone by', () => {
+  const stopped = run(ASKING, 30);
+  const declined = gameReducer(stopped, {
+    type: 'answerAsk',
+    isAccepted: false,
+  });
+  expect(run(declined, 24).declined).toEqual([]);
+});
+
+test('answering with no question changes nothing', () => {
+  expect(gameReducer(WORKING, { type: 'answerAsk', isAccepted: true })).toBe(
+    WORKING,
   );
 });
