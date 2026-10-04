@@ -11,10 +11,9 @@ import styles from './CaloriesGauge.module.css';
 type CaloriesGaugeProps = {
   // gauge between 0 and 100
   calories: number;
-  fat: number;
 };
 
-export const CaloriesGauge = ({ calories, fat }: CaloriesGaugeProps) => {
+export const CaloriesGauge = ({ calories }: CaloriesGaugeProps) => {
   const status = getCaloriesStatus(calories);
 
   return (
@@ -28,7 +27,6 @@ export const CaloriesGauge = ({ calories, fat }: CaloriesGaugeProps) => {
         <span className={styles.value} data-status={status}>
           {Math.round(calories)}%
         </span>
-        <span className={styles.fat}>Fat {fat.toFixed(1)}</span>
       </div>
       <Meter.Track className={styles.track}>
         <div

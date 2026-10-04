@@ -17,7 +17,7 @@ const Layout = () => {
   const {
     balanceCents,
     calories,
-    fat,
+    body,
     brain,
     dreamGauge,
     dreams,
@@ -64,7 +64,7 @@ const Layout = () => {
         <Sidebar
           id="sidebar"
           calories={calories}
-          fat={fat}
+          body={body}
           brain={brain}
           dreamGauge={dreamGauge}
           dreams={dreams}

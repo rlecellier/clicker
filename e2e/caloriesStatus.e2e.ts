@@ -12,7 +12,7 @@ test('the menu opens the calories sidebar on mobile', async ({ page }) => {
   await menu.click();
   await expect(menu).toHaveAttribute('aria-expanded', 'true');
   await expect(page.getByRole('complementary')).toBeInViewport();
-  await expect(page.getByText('Fat 0.0')).toBeVisible();
+  await expect(page.getByText('Fat 20%')).toBeVisible();
 
   await menu.click();
   await expect(page.getByRole('complementary')).not.toBeInViewport();

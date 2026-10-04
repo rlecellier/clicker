@@ -32,11 +32,6 @@
   color: var(--color-danger);
 }
 
-.fat {
-  font-size: 0.75rem;
-  color: var(--color-fat);
-}
-
 .track {
   position: relative;
   height: 8px;
