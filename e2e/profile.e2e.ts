@@ -49,8 +49,9 @@ test('the cash is shown in the sidebar, on the game page and in the profile', as
 test('the profile shows the age, the birth date and the time played', async ({
   page,
 }) => {
-  await page.clock.install({ time: 0 });
-  await page.clock.pauseAt(1000);
+  // The birthday is the day the game is launched.
+  await page.clock.install({ time: new Date(2026, 9, 4, 12) });
+  await page.clock.pauseAt(new Date(2026, 9, 4, 12, 0, 1));
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.clear();
@@ -61,7 +62,7 @@ test('the profile shows the age, the birth date and the time played', async ({
   await page.getByRole('link', { name: 'Profile' }).click();
   await expect(page.getByText('Age').locator('..')).toContainText('18 years');
   await expect(page.getByText('Born').locator('..')).toContainText(
-    '1 February 2009',
+    '4 October 2008',
   );
   await expect(page.getByText('Played').locator('..')).toContainText('0 d');
 

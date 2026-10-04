@@ -12,5 +12,5 @@ export {
   weekHourOf,
   weekOf,
 } from './selectors';
-export { INITIAL_GAME_STATE } from './types';
+export { INITIAL_GAME_STATE, newGameState } from './types';
 export type { GameState } from './types';

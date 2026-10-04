@@ -71,6 +71,8 @@ test('keeps a balance below zero: the bills are paid anyway', () => {
 });
 
 test('refuses a save with a missing or invalid field', () => {
+  expect(broken({ birthDate: undefined })).toBeUndefined();
+  expect(broken({ birthDate: '4 October 2008' })).toBeUndefined();
   expect(broken({ balanceCents: 12.5 })).toBeUndefined();
   expect(broken({ expenses: undefined })).toBeUndefined();
   expect(broken({ expenses: { ...state.expenses, rent: -1 } })).toBeUndefined();

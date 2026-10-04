@@ -8,6 +8,8 @@ import { CaloriesStatus } from '@component/CaloriesStatus';
 import { Sidebar } from '@component/Sidebar';
 import { TimeControls } from '@component/TimeControls';
 import { GameProvider, useGameContext } from '@context/GameContext';
+import { birthDateOf } from '@game/age';
+import { newGameState } from '@game/gameState';
 import { getCaloriesStatus } from '@game/nutrition';
 import { readSave } from '@game/save';
 
@@ -100,7 +102,9 @@ const Layout = () => {
 
 export const RootLayout = () => {
   // The saved game is read once, when the page opens.
-  const [savedGame] = useState(() => readSave(localStorage));
+  const [savedGame] = useState(
+    () => readSave(localStorage) ?? newGameState(birthDateOf(new Date())),
+  );
 
   return (
     <GameProvider initialState={savedGame} persist>
