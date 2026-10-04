@@ -1,16 +1,21 @@
 import { BodyGauge } from '@component/BodyGauge';
 import { BrainGauge } from '@component/BrainGauge';
 import { useGameContext } from '@context/GameContext';
+import { formatMoney } from '@game/money';
 
 import styles from './ProfilePage.module.css';
 
 export const ProfilePage = () => {
-  const { dreams, body, brain, isSleeping } = useGameContext();
+  const { balanceCents, dreams, body, brain, isSleeping } = useGameContext();
 
   return (
     <section className={styles.root}>
       <h2 className={styles.title}>Profile</h2>
       <dl className={styles.stats}>
+        <div>
+          <dt>Cash</dt>
+          <dd>{formatMoney(balanceCents)}</dd>
+        </div>
         <div>
           <dt>Dreams</dt>
           <dd>{dreams}</dd>
