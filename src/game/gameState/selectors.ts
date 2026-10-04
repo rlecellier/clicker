@@ -1,4 +1,5 @@
 import { isWorkHours, pendingPayCents } from '@game/earnings';
+import { locationAt } from '@game/location';
 import { isEnjoyingCake } from '@game/nutrition';
 import { isSleeping } from '@game/sleep';
 import { HOURS_PER_WEEK, SPEEDS } from '@game/time';
@@ -27,3 +28,5 @@ export const isEnjoyingCakeNow = (state: GameState) =>
 
 export const isSleepingNow = (state: GameState) =>
   isSleeping(weekHourOf(state));
+
+export const locationOf = (state: GameState) => locationAt(weekHourOf(state));
