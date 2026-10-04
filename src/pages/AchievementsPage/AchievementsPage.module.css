@@ -1,0 +1,19 @@
+.root {
+  padding: 0 1rem 1rem;
+}
+
+.title {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+}
+
+.name {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.done {
+  margin: 0.75rem 0 0;
+  color: var(--color-accent-light);
+  font-weight: 600;
+}

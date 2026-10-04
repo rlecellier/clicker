@@ -1,0 +1,39 @@
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.hours {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.track {
+  height: 8px;
+  background: var(--color-surface);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.indicator {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--color-muted);
+  transition: background 0.3s;
+}
+
+.indicator[data-reading] {
+  background: var(--color-accent-light);
+}

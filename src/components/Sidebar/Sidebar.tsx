@@ -4,6 +4,7 @@ import {
   Gamepad2,
   MapPin,
   RotateCcw,
+  Trophy,
   User,
   Wallet,
 } from 'lucide-react';
@@ -46,6 +47,7 @@ const LINKS = [
   { to: '/calendar', label: 'Calendar', Icon: CalendarDays },
   { to: '/balance', label: 'Balance', Icon: Wallet },
   { to: '/profile', label: 'Profile', Icon: User },
+  { to: '/achievements', label: 'Achievements', Icon: Trophy },
 ];
 
 // The cash, the gauges and the pages menu: slides in on mobile, always shown from
