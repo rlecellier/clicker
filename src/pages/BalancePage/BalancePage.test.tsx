@@ -55,7 +55,11 @@ test('shows the current week first', () => {
 
 test('the tabs switch between the week, the month and the year', async () => {
   setup();
-  const week = expensesBetween(5 * HOURS_PER_WEEK, LATE_STATE.elapsedHours);
+  const week = expensesBetween(
+    LATE_STATE,
+    5 * HOURS_PER_WEEK,
+    LATE_STATE.elapsedHours,
+  );
   expect(screen.getByRole('row', { name: /Total/ })).toHaveTextContent(
     money(totalExpensesCents(week)),
   );
@@ -63,14 +67,18 @@ test('the tabs switch between the week, the month and the year', async () => {
   await userEvent.click(screen.getByRole('tab', { name: 'Month' }));
   expect(screen.getByText('Expenses this month')).toBeVisible();
   // the month started on 1 March, day 28
-  const month = expensesBetween(28 * HOURS_PER_DAY, LATE_STATE.elapsedHours);
+  const month = expensesBetween(
+    LATE_STATE,
+    28 * HOURS_PER_DAY,
+    LATE_STATE.elapsedHours,
+  );
   expect(screen.getByRole('row', { name: /Total/ })).toHaveTextContent(
     money(totalExpensesCents(month)),
   );
 
   await userEvent.click(screen.getByRole('tab', { name: 'Year' }));
   expect(screen.getByText('Expenses this year')).toBeVisible();
-  const year = expensesBetween(0, LATE_STATE.elapsedHours);
+  const year = expensesBetween(LATE_STATE, 0, LATE_STATE.elapsedHours);
   expect(screen.getByRole('row', { name: /Total/ })).toHaveTextContent(
     money(totalExpensesCents(year)),
   );

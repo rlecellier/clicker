@@ -8,7 +8,7 @@ import styles from './PlacePage.module.css';
 
 export const PlacePage = () => {
   const { place } = useParams();
-  const { location, weekHour } = useGameContext();
+  const { location, elapsedHours, schedule } = useGameContext();
 
   if (!isLocation(place)) {
     // the route loader already answered 404: this only narrows the type
@@ -20,7 +20,7 @@ export const PlacePage = () => {
       <PlaceBanner
         place={place}
         location={location}
-        activity={activityAt(weekHour)}
+        activity={activityAt(schedule, elapsedHours)}
       />
     </div>
   );

@@ -1,7 +1,8 @@
 import { Button } from '@base-ui/react/button';
-import { BookOpen, Cake, Cookie } from 'lucide-react';
+import { Cake, Cookie } from 'lucide-react';
 
 import { BookProgress } from '@component/BookProgress';
+import { GetJob } from '@component/GetJob';
 import { LocationIndicator } from '@component/LocationIndicator';
 import { MoneyCounter } from '@component/MoneyCounter';
 import { PendingPay } from '@component/PendingPay';
@@ -22,10 +23,7 @@ export const GamePage = () => {
     cake,
     currentBook,
     bookHours,
-    isLibraryRead,
-    isReading,
     isReadingNow,
-    toggleReading,
   } = useGameContext();
 
   return (
@@ -38,22 +36,13 @@ export const GamePage = () => {
           <MoneyCounter cents={balanceCents} />
         </div>
         <div className={styles.actions}>
+          <GetJob />
           <Button onClick={snack}>
             <Cookie aria-hidden size={18} /> Eat a snack (+{SNACK_CALORIES}%)
           </Button>
           <Button onClick={cake} disabled={isEnjoyingCake}>
             <Cake aria-hidden size={18} />{' '}
             {isEnjoyingCake ? 'Enjoying a cake…' : 'Enjoy a cake (30 min)'}
-          </Button>
-          <Button onClick={toggleReading} disabled={isLibraryRead}>
-            <BookOpen aria-hidden size={18} />{' '}
-            {isLibraryRead
-              ? 'Library read'
-              : isReading
-                ? 'Stop reading'
-                : currentBook
-                  ? 'Resume reading'
-                  : 'Read a book'}
           </Button>
           {currentBook && (
             <BookProgress

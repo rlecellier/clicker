@@ -13,7 +13,7 @@ export const PLACES = {
   home: {
     label: 'Home',
     Icon: House,
-    purpose: 'Sleep, rest and recover between two events.',
+    purpose: 'Sleep, read and rest between two events.',
   },
   work: {
     label: 'Work',
