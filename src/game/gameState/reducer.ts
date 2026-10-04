@@ -1,4 +1,4 @@
-import { weeklyPayCents } from '@game/earnings';
+import { payBetween } from '@game/earnings';
 import {
   addExpenses,
   expensesBetween,
@@ -11,7 +11,7 @@ import {
   stepNutrition,
 } from '@game/nutrition';
 import { stepSleep } from '@game/sleep';
-import { HOURS_PER_SECOND, HOURS_PER_WEEK, SPEEDS } from '@game/time';
+import { HOURS_PER_SECOND, SPEEDS } from '@game/time';
 import type { GameState } from './types';
 
 export type GameAction =
@@ -21,20 +21,6 @@ export type GameAction =
   | { type: 'enjoyCake' }
   | { type: 'speedUp' }
   | { type: 'slowDown' };
-
-// Pay of the weeks that ended between two game hours.
-const paySince = (from: number, to: number) => {
-  let pay = 0;
-  const lastWeek = Math.floor(to / HOURS_PER_WEEK);
-  for (
-    let week = Math.floor(from / HOURS_PER_WEEK);
-    week < lastWeek;
-    week += 1
-  ) {
-    pay += weeklyPayCents(week);
-  }
-  return pay;
-};
 
 // Runs `hours` game hours, however many there are: a hidden tab comes back
 // with all the time that went by and the game catches up.
@@ -49,7 +35,7 @@ const advance = (state: GameState, hours: number): GameState => {
     elapsedHours: to,
     // the balance can go below zero: the bills are paid anyway
     balanceCents:
-      state.balanceCents + paySince(from, to) - totalExpensesCents(paid),
+      state.balanceCents + payBetween(from, to) - totalExpensesCents(paid),
     expenses: addExpenses(state.expenses, paid),
   };
 };
