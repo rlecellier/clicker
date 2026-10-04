@@ -17,6 +17,10 @@ export type GameContextValue = {
   fat: number;
   // gauge between 0 and 100
   brain: number;
+  // gauge below 100: a dream is made each time it is full
+  dreamGauge: number;
+  // dreams made so far
+  dreams: number;
   isSleeping: boolean;
   isEnjoyingCake: boolean;
   faster: () => void;

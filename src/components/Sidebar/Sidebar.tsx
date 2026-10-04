@@ -4,6 +4,7 @@ import { NavLink } from 'react-router';
 
 import { BrainGauge } from '@component/BrainGauge';
 import { CaloriesGauge } from '@component/CaloriesGauge';
+import { DreamGauge } from '@component/DreamGauge';
 
 import styles from './Sidebar.module.css';
 
@@ -12,6 +13,8 @@ type SidebarProps = {
   calories: number;
   fat: number;
   brain: number;
+  dreamGauge: number;
+  dreams: number;
   isSleeping: boolean;
   // only matters on mobile: from tablet up the sidebar is always shown
   isOpen: boolean;
@@ -30,6 +33,8 @@ export const Sidebar = ({
   calories,
   fat,
   brain,
+  dreamGauge,
+  dreams,
   isSleeping,
   isOpen,
   onClose,
@@ -56,6 +61,7 @@ export const Sidebar = ({
       <aside id={id} className={styles.panel} data-open={isOpen || undefined}>
         <CaloriesGauge calories={calories} fat={fat} />
         <BrainGauge brain={brain} isSleeping={isSleeping} />
+        <DreamGauge dreamGauge={dreamGauge} dreams={dreams} />
         <nav aria-label="Pages" className={styles.nav}>
           {LINKS.map(({ to, label, Icon }) => (
             <NavLink

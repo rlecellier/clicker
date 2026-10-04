@@ -1,12 +1,12 @@
 import { EXPENSE_IDS } from '@game/expenses';
 import { CALORIES_CAP } from '@game/nutrition';
-import { BRAIN_CAP } from '@game/sleep';
+import { BRAIN_CAP, DREAM_CAP } from '@game/sleep';
 import { SPEEDS } from '@game/time';
 import type { GameState } from '@game/gameState';
 
 export const SAVE_KEY = 'clicker.save';
 // Bumped when the shape of `GameState` changes in a way old saves can't fit.
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 // The part of `Storage` the save needs, so it can be faked in tests.
 export type SaveStorage = Pick<Storage, 'getItem' | 'setItem'>;
@@ -41,6 +41,11 @@ const isGameState = (value: unknown): value is GameState => {
     isExpenses(state.expenses) &&
     isBetweenZeroAnd(state.calories, CALORIES_CAP) &&
     isBetweenZeroAnd(state.brain, BRAIN_CAP) &&
+    isBetweenZeroAnd(state.dreamGauge, DREAM_CAP) &&
+    // a full gauge has already made its dream
+    (state.dreamGauge as number) < DREAM_CAP &&
+    Number.isSafeInteger(state.dreams) &&
+    isBetweenZeroAnd(state.dreams, Number.MAX_SAFE_INTEGER) &&
     isBetweenZeroAnd(state.fat, Number.MAX_SAFE_INTEGER) &&
     isBetweenZeroAnd(state.cakeUntil, Number.MAX_SAFE_INTEGER)
   );
