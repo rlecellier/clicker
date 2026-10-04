@@ -1,7 +1,7 @@
 import type { RouteObject } from 'react-router';
 
 import { ErrorPage } from '@page/ErrorPage';
-import { ExpensesPage } from '@page/ExpensesPage';
+import { BalancePage } from '@page/BalancePage';
 import { GamePage } from '@page/GamePage';
 import { RootLayout } from '@page/RootLayout';
 
@@ -12,7 +12,7 @@ export const routes: RouteObject[] = [
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <GamePage /> },
-      { path: 'expenses', element: <ExpensesPage /> },
+      { path: 'balance', element: <BalancePage /> },
     ],
   },
 ];

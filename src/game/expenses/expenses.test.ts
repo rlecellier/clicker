@@ -8,6 +8,7 @@ import {
   expensesBetween,
   INITIAL_EXPENSES,
   totalExpensesCents,
+  weeklyExpensesCents,
 } from './expenses';
 
 test('pays nothing while no meal starts and no week ends', () => {
@@ -52,4 +53,11 @@ test('adds and totals expenses', () => {
   );
   expect(sum).toEqual({ rent: 11, breakfast: 22, lunch: 33, dinner: 44 });
   expect(totalExpensesCents(sum)).toBe(110);
+});
+
+test('a full week costs the rent plus every meal', () => {
+  expect(weeklyExpensesCents()).toBe(
+    totalExpensesCents(expensesBetween(0, 168)),
+  );
+  expect(weeklyExpensesCents()).toBeGreaterThan(8000);
 });

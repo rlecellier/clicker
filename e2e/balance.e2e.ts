@@ -14,7 +14,7 @@ test('the sidebar is always shown on desktop', async ({ page }) => {
   await expect(page.getByRole('meter', { name: 'Calories' })).toBeVisible();
 });
 
-test('the expenses page lists the rent and the meals the player paid', async ({
+test('the balance page lists the rent and the meals the player paid', async ({
   page,
 }) => {
   await page.clock.install({ time: 0 });
@@ -28,9 +28,9 @@ test('the expenses page lists the rent and the meals the player paid', async ({
   // A full day: breakfast, lunch and dinner are paid.
   await page.clock.fastForward(24 * HOUR_MS);
   await page.getByRole('button', { name: 'Menu' }).click();
-  await page.getByRole('link', { name: 'Expenses' }).click();
+  await page.getByRole('link', { name: 'Balance' }).click();
 
-  await expect(page.getByRole('heading', { name: 'Expenses' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Balance' })).toBeVisible();
   await expect(page.getByRole('row', { name: /Breakfast/ })).toContainText(
     '$2.50',
   );

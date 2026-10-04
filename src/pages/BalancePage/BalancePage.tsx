@@ -4,11 +4,13 @@ import {
   MEAL_PRICES_CENTS,
   totalExpensesCents,
   WEEKLY_RENT_CENTS,
+  weeklyExpensesCents,
   type ExpenseId,
 } from '@game/expenses';
+import { weeklyPayCents } from '@game/earnings';
 import { formatMoney } from '@game/money';
 
-import styles from './ExpensesPage.module.css';
+import styles from './BalancePage.module.css';
 
 const LINES: Record<ExpenseId, { label: string; price: string }> = {
   rent: {
@@ -29,12 +31,40 @@ const LINES: Record<ExpenseId, { label: string; price: string }> = {
   },
 };
 
-export const ExpensesPage = () => {
-  const { expenses } = useGameContext();
+export const BalancePage = () => {
+  const { balanceCents, expenses, week } = useGameContext();
+  const incomeCents = weeklyPayCents(week);
+  const costsCents = weeklyExpensesCents();
+  const savingsCents = incomeCents - costsCents;
 
   return (
     <section className={styles.root}>
-      <h2 className={styles.title}>Expenses</h2>
+      <h2 className={styles.title}>Balance</h2>
+      <dl className={styles.summary}>
+        <div>
+          <dt>In the bank</dt>
+          <dd>{formatMoney(balanceCents, { alwaysCents: true })}</dd>
+        </div>
+        <div>
+          <dt>Income / week</dt>
+          <dd className={styles.income}>
+            {formatMoney(incomeCents, { alwaysCents: true })}
+          </dd>
+        </div>
+        <div>
+          <dt>Expenses / week</dt>
+          <dd className={styles.expense}>
+            {formatMoney(costsCents, { alwaysCents: true })}
+          </dd>
+        </div>
+        <div>
+          <dt>Savings / week</dt>
+          <dd className={savingsCents >= 0 ? styles.income : styles.expense}>
+            {formatMoney(savingsCents, { alwaysCents: true })}
+          </dd>
+        </div>
+      </dl>
+      <h3 className={styles.subtitle}>Expenses</h3>
       <table className={styles.table}>
         <thead>
           <tr>

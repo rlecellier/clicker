@@ -55,3 +55,7 @@ export const addExpenses = (a: Expenses, b: Expenses): Expenses => ({
   lunch: a.lunch + b.lunch,
   dinner: a.dinner + b.dinner,
 });
+
+// What a full week costs: the rent plus every meal of the calendar.
+export const weeklyExpensesCents = () =>
+  totalExpensesCents(expensesBetween(0, HOURS_PER_WEEK));
