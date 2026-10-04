@@ -32,6 +32,7 @@ export type GameContextValue = {
   slower: () => void;
   snack: () => void;
   cake: () => void;
+  restart: () => void;
 };
 
 export type GameProviderProps = {
