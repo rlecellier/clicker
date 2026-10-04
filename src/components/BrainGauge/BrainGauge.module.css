@@ -1,6 +1,14 @@
-/* Compact: it sits next to the calories gauge. */
-.root {
+/* compact sits next to the calories gauge, full takes the width of its
+   container, like the body gauge */
+.compact {
   width: 100px;
+  --header-size: 1rem;
+  --header-gap: 0.25rem;
+}
+
+.full {
+  --header-size: 1rem;
+  --header-gap: 0.5rem;
 }
 
 .header {
@@ -8,7 +16,7 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 0.4rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--header-gap);
   font-variant-numeric: tabular-nums;
 }
 
