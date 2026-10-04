@@ -9,6 +9,7 @@ import {
   INITIAL_GAME_STATE,
   isEarning,
   isEnjoyingCakeNow,
+  isReadingNow,
   isSleepingNow,
   locationOf,
   pendingPayOf,
@@ -16,6 +17,7 @@ import {
   weekHourOf,
   weekOf,
 } from '@game/gameState';
+import { isBookFinished } from '@game/reading';
 import { useAutoSave } from '@hook/useAutoSave';
 import { useFrameLoop } from '@hook/useFrameLoop';
 
@@ -58,6 +60,10 @@ export const GameProvider = ({
       dreams: state.dreams,
       isSleeping: isSleepingNow(state),
       isEnjoyingCake: isEnjoyingCakeNow(state),
+      bookHours: state.bookHours,
+      isBookFinished: isBookFinished(state),
+      isReadingNow: isReadingNow(state),
+      isReading: state.isReading,
       faster: () => {
         dispatch({ type: 'speedUp' });
       },
@@ -69,6 +75,9 @@ export const GameProvider = ({
       },
       cake: () => {
         dispatch({ type: 'enjoyCake' });
+      },
+      toggleReading: () => {
+        dispatch({ type: 'toggleReading' });
       },
       restart: () => {
         dispatch({ type: 'restart', birthDate: birthDateOf(new Date()) });

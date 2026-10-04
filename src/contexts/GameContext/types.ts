@@ -32,10 +32,18 @@ export type GameContextValue = {
   dreams: number;
   isSleeping: boolean;
   isEnjoyingCake: boolean;
+  // free-time hours spent on the book so far
+  bookHours: number;
+  isBookFinished: boolean;
+  // the player reads and nothing is scheduled: the book moves on
+  isReadingNow: boolean;
+  // the player wants to read, in free time or not
+  isReading: boolean;
   faster: () => void;
   slower: () => void;
   snack: () => void;
   cake: () => void;
+  toggleReading: () => void;
   restart: () => void;
 };
 

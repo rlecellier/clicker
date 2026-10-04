@@ -10,6 +10,7 @@ import {
   startCake,
   stepNutrition,
 } from '@game/nutrition';
+import { readingHoursBetween, stepReading, toggleReading } from '@game/reading';
 import { stepSleep } from '@game/sleep';
 import { HOURS_PER_SECOND, SPEEDS } from '@game/time';
 import { newGameState, type GameState } from './types';
@@ -19,6 +20,7 @@ export type GameAction =
   | { type: 'elapse'; seconds: number }
   | { type: 'eatSnack' }
   | { type: 'enjoyCake' }
+  | { type: 'toggleReading' }
   | { type: 'speedUp' }
   | { type: 'slowDown' }
   // a brand new game, whatever the current one
@@ -33,7 +35,8 @@ const advance = (state: GameState, hours: number): GameState => {
   return {
     ...state,
     ...stepNutrition(state, from, to),
-    ...stepSleep(state, from, to),
+    ...stepSleep(state, from, to, readingHoursBetween(state, from, to)),
+    ...stepReading(state, from, to),
     elapsedHours: to,
     // the balance can go below zero: the bills are paid anyway
     balanceCents:
@@ -58,6 +61,9 @@ export const gameReducer = (
       return isEnjoyingCake(state, state.elapsedHours)
         ? state
         : { ...state, ...startCake(state, state.elapsedHours) };
+    }
+    case 'toggleReading': {
+      return { ...state, ...toggleReading(state) };
     }
     case 'speedUp': {
       return {

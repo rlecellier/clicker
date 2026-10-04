@@ -1,5 +1,6 @@
 import { EXPENSE_IDS } from '@game/expenses';
 import { CALORIES_CAP } from '@game/nutrition';
+import { BOOK_HOURS } from '@game/reading';
 import { BRAIN_CAP, DREAM_CAP } from '@game/sleep';
 import { SPEEDS } from '@game/time';
 import type { GameState } from '@game/gameState';
@@ -51,7 +52,9 @@ const isGameState = (value: unknown): value is GameState => {
     Number.isSafeInteger(state.dreams) &&
     isBetweenZeroAnd(state.dreams, Number.MAX_SAFE_INTEGER) &&
     isBetweenZeroAnd(state.fat, Number.MAX_SAFE_INTEGER) &&
-    isBetweenZeroAnd(state.cakeUntil, Number.MAX_SAFE_INTEGER)
+    isBetweenZeroAnd(state.cakeUntil, Number.MAX_SAFE_INTEGER) &&
+    isBetweenZeroAnd(state.bookHours, BOOK_HOURS) &&
+    typeof state.isReading === 'boolean'
   );
 };
 

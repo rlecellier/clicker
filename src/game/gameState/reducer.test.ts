@@ -156,3 +156,21 @@ test('restarts a brand new game, whatever the current one', () => {
     gameReducer(played, { type: 'restart', birthDate: '2008-10-04' }),
   ).toEqual({ ...INITIAL_GAME_STATE, birthDate: '2008-10-04' });
 });
+
+test('the book moves while the player reads in free time', () => {
+  const reading = gameReducer(INITIAL_GAME_STATE, { type: 'toggleReading' });
+  expect(reading.isReading).toBe(true);
+  // Monday 00:00 to 20:00: 07:30 to 08:00 and 18:00 to 19:00 are free
+  const evening = run(reading, 20);
+  expect(evening.bookHours).toBeCloseTo(1.5, 5);
+  expect(evening.isReading).toBe(true);
+  const stopped = gameReducer(evening, { type: 'toggleReading' });
+  expect(run(stopped, 48).bookHours).toBe(evening.bookHours);
+});
+
+test('the brain fills faster while reading', () => {
+  const reading = gameReducer(INITIAL_GAME_STATE, { type: 'toggleReading' });
+  expect(run(reading, 20).brain).toBeGreaterThan(
+    run(INITIAL_GAME_STATE, 20).brain,
+  );
+});

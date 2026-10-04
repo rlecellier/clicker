@@ -5,6 +5,7 @@ export {
   canSpeedUp,
   isEarning,
   isEnjoyingCakeNow,
+  isReadingNow,
   isSleepingNow,
   locationOf,
   pendingPayOf,
