@@ -208,7 +208,7 @@ flag) avant que le jeu ait de vrais joueurs.
 ### 🔴 3.1 Aucune CI sur les pull requests
 
 Les workflows sont `deploy.yml` (push sur `main` uniquement) et `demo.yml`
-(commentaire `/demo`). Lint, tests et build ne tournent **qu'après le merge**.
+(sur chaque pull request : e2e et screenshots). Lint, tests et build ne tournent **qu'après le merge**.
 Un MR rouge peut être mergé, et la PR #10 indique que `npm run e2e` n'a pas pu
 être exécuté. Ni `tsc` seul, ni `format:check`, ni les parcours e2e ne sont dans
 la CI.
