@@ -63,6 +63,16 @@ test('the sidebar opens the balance page, with the rent and the meals', async ()
   }
 });
 
+test('the sidebar opens the profile page, with the stats of the player', async () => {
+  const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+  renderApp();
+  await user.click(screen.getByRole('link', { name: 'Profile' }));
+  expect(screen.getByRole('heading', { name: 'Profile' })).toBeInTheDocument();
+  for (const name of ['Dreams', 'Height', 'Weight', 'Fat', 'Muscle']) {
+    expect(screen.getByText(name)).toBeInTheDocument();
+  }
+});
+
 test('the sidebar unfolds the places and opens one with its banner', async () => {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
   renderApp();
