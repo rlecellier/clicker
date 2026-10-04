@@ -1,7 +1,6 @@
 import { Button } from '@base-ui/react/button';
 import { Cake, Cookie } from 'lucide-react';
 
-import { CaloriesGauge } from '@component/CaloriesGauge';
 import { PendingPay } from '@component/PendingPay';
 import { WeekCalendar } from '@component/WeekCalendar';
 import { useGameContext } from '@context/GameContext';
@@ -15,8 +14,6 @@ export const GamePage = () => {
     weekHour,
     pendingPayCents,
     isEarning,
-    calories,
-    fat,
     isEnjoyingCake,
     snack,
     cake,
@@ -29,7 +26,6 @@ export const GamePage = () => {
       </div>
       <div className={styles.content}>
         <PendingPay cents={pendingPayCents} isEarning={isEarning} />
-        <CaloriesGauge calories={calories} fat={fat} />
         <div className={styles.actions}>
           <Button onClick={snack}>
             <Cookie aria-hidden size={18} /> Eat a snack (+{SNACK_CALORIES}%)

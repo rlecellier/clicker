@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router';
 
+import { CaloriesGauge } from '@component/CaloriesGauge';
 import { MoneyCounter } from '@component/MoneyCounter';
 import { TimeControls } from '@component/TimeControls';
 import { GameProvider, useGameContext } from '@context/GameContext';
@@ -9,13 +10,22 @@ import { readSave } from '@game/save';
 import styles from './RootLayout.module.css';
 
 const Layout = () => {
-  const { balanceCents, speed, canSpeedUp, canSlowDown, faster, slower } =
-    useGameContext();
+  const {
+    balanceCents,
+    calories,
+    fat,
+    speed,
+    canSpeedUp,
+    canSlowDown,
+    faster,
+    slower,
+  } = useGameContext();
 
   return (
     <main className={styles.main}>
       <header className={styles.header}>
         <h1 className={styles.title}>Clicker</h1>
+        <CaloriesGauge calories={calories} fat={fat} />
         <MoneyCounter cents={balanceCents} />
       </header>
       <div className={styles.controls}>

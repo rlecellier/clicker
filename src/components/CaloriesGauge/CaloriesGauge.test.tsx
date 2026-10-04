@@ -13,13 +13,19 @@ test('shows the calories and the fat', () => {
   expect(screen.getByText('Fat 3.2')).toBeInTheDocument();
 });
 
-test('flags calories outside of the 20%–80% range', () => {
+test('colors the gauge by level: low below 20%, high above 80%', () => {
   const { rerender } = render(<CaloriesGauge calories={50} fat={0} />);
-  expect(screen.getByText('50%')).toHaveAttribute('data-balanced');
+  expect(screen.getByText('50%')).toHaveAttribute('data-level', 'balanced');
 
   rerender(<CaloriesGauge calories={85} fat={0} />);
-  expect(screen.getByText('85%')).not.toHaveAttribute('data-balanced');
+  expect(screen.getByText('85%')).toHaveAttribute('data-level', 'high');
 
   rerender(<CaloriesGauge calories={10} fat={0} />);
-  expect(screen.getByText('10%')).not.toHaveAttribute('data-balanced');
+  expect(screen.getByText('10%')).toHaveAttribute('data-level', 'low');
+
+  rerender(<CaloriesGauge calories={20} fat={0} />);
+  expect(screen.getByText('20%')).toHaveAttribute('data-level', 'balanced');
+
+  rerender(<CaloriesGauge calories={80} fat={0} />);
+  expect(screen.getByText('80%')).toHaveAttribute('data-level', 'balanced');
 });
