@@ -42,12 +42,13 @@ const PERIOD_LABELS: Record<Period, { tab: string; current: string }> = {
 };
 
 export const BalancePage = () => {
-  const { balanceCents, elapsedHours, pendingPayCents } = useGameContext();
+  const { balanceCents, elapsedHours, pendingPayCents, job, schedule } =
+    useGameContext();
   const [period, setPeriod] = useState<Period>('week');
   const { from, to } = periodRange(period, elapsedHours);
-  const expenses = expensesBetween(from, to);
+  const expenses = expensesBetween(schedule, from, to);
   // what was paid out plus what the ongoing week has earned so far
-  const incomeCents = payBetween(from, to) + pendingPayCents;
+  const incomeCents = payBetween(job, from, to) + pendingPayCents;
   const costsCents = totalExpensesCents(expenses);
   const savingsCents = incomeCents - costsCents;
   const label = PERIOD_LABELS[period].current;

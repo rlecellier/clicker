@@ -16,6 +16,7 @@ const ACTIVITY_LABELS: Record<Activity, string> = {
   sleeping: 'Sleeping',
   working: 'Working',
   eating: 'Eating',
+  reading: 'Reading',
   relaxing: 'Relaxing',
 };
 
