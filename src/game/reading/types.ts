@@ -17,10 +17,8 @@ export type CatalogBook = Book & {
 export type Reading = {
   // book being read, none between two books
   bookId: string | undefined;
-  // free-time hours spent on that book so far, between 0 and its hours
+  // hours of reading events spent on that book so far, between 0 and its hours
   bookHours: number;
   // ids of the books read to the last page, in reading order
   readBookIds: string[];
-  // the player wants to read: the book moves on during free time only
-  isReading: boolean;
 };

@@ -1,6 +1,4 @@
-import { EVENTS } from '@game/calendar';
-import { isWorkHours } from '@game/earnings';
-import { HOURS_PER_DAY, HOURS_PER_WEEK } from '@game/time';
+import { eventAt, type Schedule } from '@game/calendar';
 
 import {
   CAKE_CALORIES,
@@ -25,21 +23,12 @@ export const INITIAL_NUTRITION: Nutrition = {
   cakeUntil: 0,
 };
 
-const MEALS = EVENTS.filter((event) => event.kind === 'meal');
-
-// Calories per game hour given by the meals running at this hour of the week.
-const mealIntake = (weekHour: number) => {
-  let intake = 0;
-  for (const meal of MEALS) {
-    const duration = meal.end - meal.start;
-    for (const day of meal.days) {
-      const start = day * HOURS_PER_DAY + meal.start;
-      if (weekHour >= start && weekHour < start + duration) {
-        intake += (meal.calories ?? 0) / duration;
-      }
-    }
-  }
-  return intake;
+// Calories per game hour given by the meal running at this game hour.
+const mealIntake = (schedule: Schedule, hour: number) => {
+  const event = eventAt(schedule, hour);
+  return event?.kind === 'meal'
+    ? (event.calories ?? 0) / (event.end - event.start)
+    : 0;
 };
 
 export const getCaloriesLevel = (calories: number): CaloriesLevel => {
@@ -79,7 +68,7 @@ export const isEnjoyingCake = (state: Nutrition, now: number) =>
 // Runs the game hours between `from` and `to`: calories go down, faster at
 // work, up during meals and cakes, and the excess over 80% turns into fat.
 export const stepNutrition = (
-  state: Nutrition,
+  state: Nutrition & Schedule,
   from: number,
   to: number,
 ): Nutrition => {
@@ -87,12 +76,12 @@ export const stepNutrition = (
   for (let time = from; time < to; time += STEP_HOURS) {
     const duration = Math.min(STEP_HOURS, to - time);
     const middle = time + duration / 2;
-    const weekHour = middle % HOURS_PER_WEEK;
-    const burn = isWorkHours(weekHour) ? WORK_BURN : IDLE_BURN;
+    const burn =
+      eventAt(state, middle)?.kind === 'work' ? WORK_BURN : IDLE_BURN;
     const cake =
       middle < state.cakeUntil ? CAKE_CALORIES / CAKE_DURATION_HOURS : 0;
 
-    calories += (mealIntake(weekHour) + cake - burn) * duration;
+    calories += (mealIntake(state, middle) + cake - burn) * duration;
     if (calories > CALORIES_MAX_TARGET) {
       const converted =
         (calories - CALORIES_MAX_TARGET) *

@@ -1,5 +1,4 @@
-import { eventAt } from '@game/calendar';
-import { HOURS_PER_WEEK } from '@game/time';
+import { eventAt, type Schedule } from '@game/calendar';
 
 import { BOOKS, getBook } from './books';
 import type { Reading } from './types';
@@ -8,7 +7,6 @@ export const INITIAL_READING: Reading = {
   bookId: undefined,
   bookHours: 0,
   readBookIds: [],
-  isReading: false,
 };
 
 // Books still to read.
@@ -18,54 +16,74 @@ export const unreadBooks = (state: Reading) =>
 export const isLibraryRead = (state: Reading) =>
   unreadBooks(state).length === 0;
 
-// Starts or pauses the reading. With no book on the go, a new one is drawn
-// among the unread ones: `roll` is a number in [0, 1) that picks it, so the
-// randomness stays out of the rules.
-export const toggleReading = (state: Reading, roll: number): Reading => {
-  if (state.isReading) return { ...state, isReading: false };
-  if (getBook(state.bookId)) return { ...state, isReading: true };
+// Whether a reading event runs at a given game hour.
+export const isReadingAt = (schedule: Schedule, hour: number) =>
+  eventAt(schedule, hour)?.kind === 'read';
+
+// Game hours of reading events between `from` and `to`. Events start and end
+// on half hours.
+const readingEventHoursBetween = (
+  schedule: Schedule,
+  from: number,
+  to: number,
+) => {
+  let hours = 0;
+  for (let time = from; time < to;) {
+    const end = Math.min(to, (Math.floor(time * 2) + 1) / 2);
+    if (isReadingAt(schedule, (time + end) / 2)) hours += end - time;
+    time = end;
+  }
+  return hours;
+};
+
+// Only the reading fields: the reducer spreads the result into the game state.
+const pickReading = ({ bookId, bookHours, readBookIds }: Reading): Reading => ({
+  bookId,
+  bookHours,
+  readBookIds,
+});
+
+// With no book on the go and a reading event between `from` and `to`, draws
+// a new book among the unread ones: `roll` is a number in [0, 1) that picks
+// it, so the randomness stays out of the rules.
+export const startBook = (
+  state: Reading & Schedule,
+  from: number,
+  to: number,
+  roll: number,
+): Reading => {
+  if (
+    getBook(state.bookId) ||
+    readingEventHoursBetween(state, from, to) === 0
+  ) {
+    return pickReading(state);
+  }
   const unread = unreadBooks(state);
   const book = unread[Math.floor(roll * unread.length)];
   return book
-    ? { ...state, bookId: book.id, bookHours: 0, isReading: true }
-    : state;
+    ? { ...pickReading(state), bookId: book.id, bookHours: 0 }
+    : pickReading(state);
 };
 
-// Free time: nothing is scheduled. Events start and end on half hours.
-export const isFreeTime = (weekHour: number) => !eventAt(weekHour);
-
-// Game hours between `from` and `to` that go to the book: the free hours,
-// while the player reads and the book is not finished. Reading starts at
-// `from` and goes on until the book is done.
+// Game hours between `from` and `to` that go to the book on the go: the hours
+// of the reading events, until the book is finished.
 export const readingHoursBetween = (
-  state: Reading,
+  state: Reading & Schedule,
   from: number,
   to: number,
 ) => {
   const book = getBook(state.bookId);
-  if (!book || !state.isReading) return 0;
-  const left = book.hours - state.bookHours;
-  let free = 0;
-  for (let time = from; time < to && free < left;) {
-    const end = Math.min(to, (Math.floor(time * 2) + 1) / 2);
-    if (isFreeTime(((time + end) / 2) % HOURS_PER_WEEK)) free += end - time;
-    time = end;
-  }
-  return Math.min(free, left);
+  return book
+    ? Math.min(
+        readingEventHoursBetween(state, from, to),
+        book.hours - state.bookHours,
+      )
+    : 0;
 };
 
-// Only the reading fields: the reducer spreads the result into the game state.
-const pickReading = ({
-  bookId,
-  bookHours,
-  readBookIds,
-  isReading,
-}: Reading): Reading => ({ bookId, bookHours, readBookIds, isReading });
-
-// A finished book goes to the read ones and leaves the player free to pick
-// another.
+// A finished book goes to the read ones; the next reading event draws another.
 export const stepReading = (
-  state: Reading,
+  state: Reading & Schedule,
   from: number,
   to: number,
 ): Reading => {
@@ -81,6 +99,5 @@ export const stepReading = (
         bookId: undefined,
         bookHours: 0,
         readBookIds: [...state.readBookIds, book.id],
-        isReading: false,
       };
 };
