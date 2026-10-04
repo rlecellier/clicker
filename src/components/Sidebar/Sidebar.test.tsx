@@ -35,7 +35,7 @@ test('contains the calories, brain, dream and body gauges', () => {
   expect(screen.getByRole('meter', { name: 'Calories' })).toBeInTheDocument();
   expect(screen.getByRole('meter', { name: 'Brain' })).toBeInTheDocument();
   expect(screen.getByRole('meter', { name: 'Dream' })).toBeInTheDocument();
-  expect(screen.getByRole('meter', { name: 'Body' })).toBeInTheDocument();
+  expect(screen.getByLabelText('Body fat')).toBeInTheDocument();
   expect(screen.getByText('Fat 20%')).toBeInTheDocument();
   expect(screen.getByText('Muscle 80%')).toBeInTheDocument();
 });

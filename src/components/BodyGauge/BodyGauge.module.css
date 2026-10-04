@@ -1,14 +1,24 @@
-/* Compact: it lives in the sidebar. */
-.root {
+.compact {
   width: 100px;
+  --header-size: 0.7rem;
+  --header-gap: 0.25rem;
+  --thumb-size: 0.75rem;
+}
+
+.full {
+  margin-top: 0.75rem;
+  --header-size: 1rem;
+  --header-gap: 0.5rem;
+  --thumb-size: 1rem;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   gap: 0.25rem;
-  margin-bottom: 0.25rem;
-  font-size: 0.7rem;
+  margin-bottom: var(--header-gap);
+  font-size: var(--header-size);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
@@ -20,15 +30,31 @@
   color: var(--color-muscle);
 }
 
+.control {
+  display: flex;
+  align-items: center;
+  height: 1.25rem;
+}
+
 /* the track is the muscle, the fat fills it from the left */
 .track {
+  position: relative;
+  width: 100%;
   height: 8px;
   background: var(--color-muscle);
   border-radius: 4px;
-  overflow: hidden;
 }
 
 .indicator {
   height: 100%;
   background: var(--color-fat);
+  border-radius: 4px;
+}
+
+.thumb {
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--color-fat);
 }
