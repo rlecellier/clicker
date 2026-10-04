@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { Button } from '@base-ui/react/button';
+import { Menu, X } from 'lucide-react';
+import { useCallback, useState } from 'react';
 import { Outlet } from 'react-router';
 
-import { CaloriesGauge } from '@component/CaloriesGauge';
+import { CaloriesAlert } from '@component/CaloriesAlert';
+import { CaloriesPanel } from '@component/CaloriesPanel';
 import { MoneyCounter } from '@component/MoneyCounter';
 import { TimeControls } from '@component/TimeControls';
 import { GameProvider, useGameContext } from '@context/GameContext';
+import { getCaloriesLevel } from '@game/nutrition';
 import { readSave } from '@game/save';
 
 import styles from './RootLayout.module.css';
@@ -20,13 +24,43 @@ const Layout = () => {
     faster,
     slower,
   } = useGameContext();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => {
+    setIsMenuOpen(false);
+  }, []);
 
   return (
     <main className={styles.main}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Clicker</h1>
-        <CaloriesGauge calories={calories} fat={fat} />
-        <MoneyCounter cents={balanceCents} />
+        <div className={styles.brand}>
+          <Button
+            className={styles.menuButton}
+            aria-label="Menu"
+            aria-expanded={isMenuOpen}
+            aria-controls="calories-panel"
+            onClick={() => {
+              setIsMenuOpen((isOpen) => !isOpen);
+            }}
+          >
+            {isMenuOpen ? (
+              <X aria-hidden size={18} />
+            ) : (
+              <Menu aria-hidden size={18} />
+            )}
+          </Button>
+          <h1 className={styles.title}>Clicker</h1>
+        </div>
+        <CaloriesPanel
+          id="calories-panel"
+          calories={calories}
+          fat={fat}
+          isOpen={isMenuOpen}
+          onClose={closeMenu}
+        />
+        <div className={styles.status}>
+          <CaloriesAlert level={getCaloriesLevel(calories)} />
+          <MoneyCounter cents={balanceCents} />
+        </div>
       </header>
       <div className={styles.controls}>
         <TimeControls

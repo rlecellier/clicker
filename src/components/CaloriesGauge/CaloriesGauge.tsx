@@ -1,6 +1,10 @@
 import { Meter } from '@base-ui/react/meter';
 
-import { CALORIES_MAX_TARGET, CALORIES_MIN_TARGET } from '@game/nutrition';
+import {
+  CALORIES_MAX_TARGET,
+  CALORIES_MIN_TARGET,
+  getCaloriesLevel,
+} from '@game/nutrition';
 
 import styles from './CaloriesGauge.module.css';
 
@@ -10,15 +14,8 @@ type CaloriesGaugeProps = {
   fat: number;
 };
 
-type Level = 'low' | 'balanced' | 'high';
-
-const getLevel = (calories: number): Level => {
-  if (calories < CALORIES_MIN_TARGET) return 'low';
-  return calories > CALORIES_MAX_TARGET ? 'high' : 'balanced';
-};
-
 export const CaloriesGauge = ({ calories, fat }: CaloriesGaugeProps) => {
-  const level = getLevel(calories);
+  const level = getCaloriesLevel(calories);
 
   return (
     <Meter.Root

@@ -7,9 +7,10 @@ export {
 } from './constants';
 export {
   eatSnack,
+  getCaloriesLevel,
   INITIAL_NUTRITION,
   isEnjoyingCake,
   startCake,
   stepNutrition,
 } from './nutrition';
-export type { Nutrition } from './types';
+export type { CaloriesLevel, Nutrition } from './types';

@@ -34,6 +34,20 @@ test('shows the calories gauge and the snack action', () => {
   expect(screen.getByRole('button', { name: /Eat a snack/ })).toBeEnabled();
 });
 
+test('the menu button opens and closes the calories sidebar', async () => {
+  const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+  renderApp();
+  const menu = screen.getByRole('button', { name: 'Menu' });
+  expect(menu).toHaveAttribute('aria-expanded', 'false');
+
+  await user.click(menu);
+  expect(menu).toHaveAttribute('aria-expanded', 'true');
+  expect(screen.getByRole('complementary')).toHaveAttribute('data-open');
+
+  await user.keyboard('{Escape}');
+  expect(menu).toHaveAttribute('aria-expanded', 'false');
+});
+
 test('unknown route shows the error page', () => {
   renderApp('/nope');
   expect(screen.getByText('404 Not Found')).toBeInTheDocument();
