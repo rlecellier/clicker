@@ -7,7 +7,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules'] },
+  { ignores: ['dist', 'node_modules', 'test-results', 'playwright-report'] },
   js.configs.recommended,
   tseslint.configs.recommended,
   eslintPluginUnicorn.configs.recommended,
@@ -43,7 +43,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['*.config.{js,ts}', 'scripts/*.mjs'],
+    files: ['*.config.{js,ts}'],
     languageOptions: { globals: globals.node },
     rules: { 'unicorn/no-top-level-side-effects': 'off' },
   },
