@@ -152,5 +152,7 @@ test('restarts a brand new game, whatever the current one', () => {
     type: 'eatSnack',
   });
   expect(played).not.toEqual(INITIAL_GAME_STATE);
-  expect(gameReducer(played, { type: 'restart' })).toEqual(INITIAL_GAME_STATE);
+  expect(
+    gameReducer(played, { type: 'restart', birthDate: '2008-10-04' }),
+  ).toEqual({ ...INITIAL_GAME_STATE, birthDate: '2008-10-04' });
 });

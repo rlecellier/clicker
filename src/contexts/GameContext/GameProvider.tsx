@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useReducer } from 'react';
 
-import { ageAt } from '@game/age';
+import { ageAt, birthDateOf } from '@game/age';
 import { getBody } from '@game/body';
 import {
   canSlowDown,
@@ -41,6 +41,7 @@ export const GameProvider = ({
       balanceCents: state.balanceCents,
       expenses: state.expenses,
       elapsedHours: state.elapsedHours,
+      birthDate: state.birthDate,
       age: ageAt(state.elapsedHours),
       week: weekOf(state),
       weekHour: weekHourOf(state),
@@ -70,7 +71,7 @@ export const GameProvider = ({
         dispatch({ type: 'enjoyCake' });
       },
       restart: () => {
-        dispatch({ type: 'restart' });
+        dispatch({ type: 'restart', birthDate: birthDateOf(new Date()) });
       },
     }),
     [state],

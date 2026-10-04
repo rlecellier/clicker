@@ -6,10 +6,12 @@ import type { GameState } from '@game/gameState';
 
 export const SAVE_KEY = 'clicker.save';
 // Bumped when the shape of `GameState` changes in a way old saves can't fit.
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 // The part of `Storage` the save needs, so it can be faked in tests.
 export type SaveStorage = Pick<Storage, 'getItem' | 'setItem'>;
+
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
 const isBetweenZeroAnd = (value: unknown, max: number) =>
   typeof value === 'number' &&
@@ -32,6 +34,8 @@ const isGameState = (value: unknown): value is GameState => {
   if (typeof value !== 'object' || value === null) return false;
   const state = value as Record<string, unknown>;
   return (
+    typeof state.birthDate === 'string' &&
+    ISO_DAY.test(state.birthDate) &&
     isBetweenZeroAnd(state.elapsedHours, Number.MAX_SAFE_INTEGER) &&
     Number.isSafeInteger(state.speedIndex) &&
     isBetweenZeroAnd(state.speedIndex, SPEEDS.length - 1) &&

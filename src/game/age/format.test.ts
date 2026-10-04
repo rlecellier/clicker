@@ -1,11 +1,13 @@
 import { expect, test } from 'vitest';
 
-import { BIRTH_DATE, lifeTimeAt } from './age';
+import { birthDateOf, lifeTimeAt } from './age';
 import { HOURS_PER_YEAR } from './constants';
 import { formatBirthDate, formatLifeTime } from './format';
 
-test('the player was born 18 years before the game starts', () => {
-  expect(formatBirthDate(BIRTH_DATE)).toBe('1 February 2009');
+test('the player was born 18 years before the day the game is launched', () => {
+  const birthDate = birthDateOf(new Date(2026, 9, 4));
+  expect(birthDate).toBe('2008-10-04');
+  expect(formatBirthDate(birthDate)).toBe('4 October 2008');
 });
 
 test('the life time is split in years and days', () => {

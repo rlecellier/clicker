@@ -10,6 +10,8 @@ export type GameContextValue = {
   expenses: Expenses;
   // game hours since Monday 00:00 of the first week
   elapsedHours: number;
+  // day the player was born, YYYY-MM-DD
+  birthDate: string;
   // age of the player in whole years
   age: number;
   week: number;

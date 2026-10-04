@@ -9,6 +9,8 @@ export type GameState = Nutrition &
   Sleep & {
     // game hours since Monday 00:00 of the first week
     elapsedHours: number;
+    // day the player was born, YYYY-MM-DD
+    birthDate: string;
     // index in SPEEDS
     speedIndex: number;
     // money in integer cents
@@ -21,7 +23,14 @@ export const INITIAL_GAME_STATE: GameState = {
   ...INITIAL_NUTRITION,
   ...INITIAL_SLEEP,
   elapsedHours: 0,
+  birthDate: '2009-02-01',
   speedIndex: DEFAULT_SPEED_INDEX,
   balanceCents: 0,
   expenses: INITIAL_EXPENSES,
 };
+
+// A brand new game for a player born on the given day.
+export const newGameState = (birthDate: string): GameState => ({
+  ...INITIAL_GAME_STATE,
+  birthDate,
+});

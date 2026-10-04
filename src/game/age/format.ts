@@ -5,8 +5,9 @@ const DATE = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'UTC',
 });
 
-// 1 February 2009
-export const formatBirthDate = (date: Date) => DATE.format(date);
+// 4 October 2008, from 2008-10-04
+export const formatBirthDate = (birthDate: string) =>
+  DATE.format(new Date(birthDate));
 
 // 2 y 14 d, the zero parts are left out.
 export const formatLifeTime = ({
