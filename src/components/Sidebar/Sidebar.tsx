@@ -8,10 +8,12 @@ import {
 import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
 
+import { BodyGauge } from '@component/BodyGauge';
 import { BrainGauge } from '@component/BrainGauge';
 import { CaloriesGauge } from '@component/CaloriesGauge';
 import { DreamGauge } from '@component/DreamGauge';
 import { PLACES } from '@component/PlaceInfo';
+import type { Body } from '@game/body';
 import { LOCATIONS, type Location } from '@game/location';
 
 import styles from './Sidebar.module.css';
@@ -19,7 +21,7 @@ import styles from './Sidebar.module.css';
 type SidebarProps = {
   id: string;
   calories: number;
-  fat: number;
+  body: Body;
   brain: number;
   dreamGauge: number;
   dreams: number;
@@ -44,7 +46,7 @@ const LINKS = [
 export const Sidebar = ({
   id,
   calories,
-  fat,
+  body,
   brain,
   dreamGauge,
   dreams,
@@ -83,7 +85,11 @@ export const Sidebar = ({
         aria-hidden
       />
       <aside id={id} className={styles.panel} data-open={isOpen || undefined}>
-        <CaloriesGauge calories={calories} fat={fat} />
+        <CaloriesGauge calories={calories} />
+        <BodyGauge
+          fatPercent={body.fatPercent}
+          musclePercent={body.musclePercent}
+        />
         <BrainGauge brain={brain} isSleeping={isSleeping} />
         <DreamGauge dreamGauge={dreamGauge} dreams={dreams} />
         <nav aria-label="Pages" className={styles.nav}>

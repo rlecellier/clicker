@@ -1,3 +1,4 @@
+import type { Body } from '@game/body';
 import type { Expenses } from '@game/expenses';
 import type { GameState } from '@game/gameState';
 import type { Location } from '@game/location';
@@ -18,7 +19,7 @@ export type GameContextValue = {
   isEarning: boolean;
   location: Location;
   calories: number;
-  fat: number;
+  body: Body;
   // gauge between 0 and 100
   brain: number;
   // gauge below 100: a dream is made each time it is full

@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { expect, test, vi } from 'vitest';
 
+import { getBody } from '@game/body';
+
 import { Sidebar } from './Sidebar';
 
 const renderPanel = (isOpen: boolean) => {
@@ -12,7 +14,7 @@ const renderPanel = (isOpen: boolean) => {
       <Sidebar
         id="panel"
         calories={50}
-        fat={1.5}
+        body={getBody(0)}
         brain={30}
         dreamGauge={20}
         dreams={2}
@@ -26,12 +28,14 @@ const renderPanel = (isOpen: boolean) => {
   return onClose;
 };
 
-test('contains the calories, brain and dream gauges and the fat', () => {
+test('contains the calories, brain, dream and body gauges', () => {
   renderPanel(false);
   expect(screen.getByRole('meter', { name: 'Calories' })).toBeInTheDocument();
   expect(screen.getByRole('meter', { name: 'Brain' })).toBeInTheDocument();
   expect(screen.getByRole('meter', { name: 'Dream' })).toBeInTheDocument();
-  expect(screen.getByText('Fat 1.5')).toBeInTheDocument();
+  expect(screen.getByRole('meter', { name: 'Body' })).toBeInTheDocument();
+  expect(screen.getByText('Fat 20%')).toBeInTheDocument();
+  expect(screen.getByText('Muscle 80%')).toBeInTheDocument();
 });
 
 test('is marked as open only when it is open', () => {
@@ -40,7 +44,7 @@ test('is marked as open only when it is open', () => {
       <Sidebar
         id="panel"
         calories={50}
-        fat={0}
+        body={getBody(0)}
         brain={30}
         dreamGauge={20}
         dreams={2}
@@ -129,7 +133,7 @@ test('is unfolded when a place is shown, and marks where the player is', () => {
       <Sidebar
         id="panel"
         calories={50}
-        fat={0}
+        body={getBody(0)}
         brain={30}
         dreamGauge={20}
         dreams={2}

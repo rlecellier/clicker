@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useReducer } from 'react';
 
+import { getBody } from '@game/body';
 import {
   canSlowDown,
   canSpeedUp,
@@ -48,7 +49,7 @@ export const GameProvider = ({
       isEarning: isEarning(state),
       location: locationOf(state),
       calories: state.calories,
-      fat: state.fat,
+      body: getBody(state.fat),
       brain: state.brain,
       dreamGauge: state.dreamGauge,
       dreams: state.dreams,
