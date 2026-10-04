@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { isWorking, pendingPayCents, weeklyPayCents } from './earnings';
+import { isWorkHours, pendingPayCents, weeklyPayCents } from './earnings';
 
 test('a week pays a quarter of the salary in a 28-day month', () => {
   expect(weeklyPayCents(0)).toBe(25_000);
@@ -27,9 +27,9 @@ test('a full working week earns the whole weekly pay', () => {
 });
 
 test('works from 8h to 12h and 13h to 18h on weekdays', () => {
-  expect(isWorking(8)).toBe(true);
-  expect(isWorking(12.5)).toBe(false);
-  expect(isWorking(13)).toBe(true);
-  expect(isWorking(18)).toBe(false);
-  expect(isWorking(5 * 24 + 9)).toBe(false);
+  expect(isWorkHours(8)).toBe(true);
+  expect(isWorkHours(12.5)).toBe(false);
+  expect(isWorkHours(13)).toBe(true);
+  expect(isWorkHours(18)).toBe(false);
+  expect(isWorkHours(5 * 24 + 9)).toBe(false);
 });

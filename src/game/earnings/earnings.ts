@@ -26,7 +26,7 @@ export const pendingPayCents = (week: number, weekHour: number) => {
   return Math.round((weeklyPayCents(week) * workedHours) / WORK_HOURS_PER_WEEK);
 };
 
-export const isWorking = (weekHour: number) =>
+export const isWorkHours = (weekHour: number) =>
   WORK_EVENTS.some((event) =>
     event.days.some((day) => {
       const start = day * HOURS_PER_DAY + event.start;
