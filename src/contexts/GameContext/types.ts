@@ -1,6 +1,8 @@
 import type { Body } from '@game/body';
+import type { CalendarEvent, Schedule } from '@game/calendar';
 import type { Expenses } from '@game/expenses';
 import type { GameState } from '@game/gameState';
+import type { Employment, JobId } from '@game/jobs';
 import type { Location } from '@game/location';
 import type { CatalogBook } from '@game/reading';
 
@@ -35,21 +37,29 @@ export type GameContextValue = {
   isEnjoyingCake: boolean;
   // book on the go, none between two books
   currentBook: CatalogBook | undefined;
-  // free-time hours spent on the current book so far
+  // hours of reading events spent on the current book so far
   bookHours: number;
   // books read to the last page, in reading order
   readBooks: CatalogBook[];
   // no book left to read
   isLibraryRead: boolean;
-  // the player reads and nothing is scheduled: the book moves on
+  // a reading event runs on a book: the book moves on
   isReadingNow: boolean;
-  // the player wants to read, in free time or not
-  isReading: boolean;
+  // what the player plans to do, and the occurrences they declined
+  schedule: Schedule;
+  // the job the player holds, if any
+  job?: Employment;
+  // what the job requires of the player, if they hold one
+  obligations: CalendarEvent[];
+  // the `ask` event the game waits on: the game is paused until it is answered
+  asking?: { event: CalendarEvent; day: number };
   faster: () => void;
   slower: () => void;
   snack: () => void;
   cake: () => void;
-  toggleReading: () => void;
+  takeJob: (jobId: JobId) => void;
+  planEvent: (event: Omit<CalendarEvent, 'id'>) => void;
+  answerAsk: (isAccepted: boolean) => void;
   restart: () => void;
 };
 

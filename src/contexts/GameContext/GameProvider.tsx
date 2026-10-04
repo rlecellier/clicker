@@ -3,6 +3,7 @@ import { useCallback, useMemo, useReducer } from 'react';
 import { ageAt, birthDateOf } from '@game/age';
 import { getBody } from '@game/body';
 import {
+  askingOf,
   canSlowDown,
   canSpeedUp,
   gameReducer,
@@ -17,6 +18,7 @@ import {
   weekHourOf,
   weekOf,
 } from '@game/gameState';
+import { JOBS } from '@game/jobs';
 import { getBook, isLibraryRead } from '@game/reading';
 import { useAutoSave } from '@hook/useAutoSave';
 import { useFrameLoop } from '@hook/useFrameLoop';
@@ -34,7 +36,7 @@ export const GameProvider = ({
 
   useFrameLoop(
     useCallback((seconds: number) => {
-      dispatch({ type: 'elapse', seconds });
+      dispatch({ type: 'elapse', seconds, roll: Math.random() });
     }, []),
   );
 
@@ -65,7 +67,10 @@ export const GameProvider = ({
       readBooks: state.readBookIds.flatMap((id) => getBook(id) ?? []),
       isLibraryRead: isLibraryRead(state),
       isReadingNow: isReadingNow(state),
-      isReading: state.isReading,
+      schedule: { plan: state.plan, declined: state.declined },
+      job: state.job,
+      obligations: state.job ? JOBS[state.job.id].obligations : [],
+      asking: askingOf(state),
       faster: () => {
         dispatch({ type: 'speedUp' });
       },
@@ -78,8 +83,14 @@ export const GameProvider = ({
       cake: () => {
         dispatch({ type: 'enjoyCake' });
       },
-      toggleReading: () => {
-        dispatch({ type: 'toggleReading', roll: Math.random() });
+      takeJob: (jobId) => {
+        dispatch({ type: 'takeJob', jobId });
+      },
+      planEvent: (event) => {
+        dispatch({ type: 'planEvent', event });
+      },
+      answerAsk: (isAccepted) => {
+        dispatch({ type: 'answerAsk', isAccepted });
       },
       restart: () => {
         dispatch({ type: 'restart', birthDate: birthDateOf(new Date()) });
