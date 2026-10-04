@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { getAJob } from './support';
+
 // The game runs eight times faster than real time by default.
 const HOUR_MS = 1000 / 8;
 const HOURS_PER_WEEK = 7 * 24;
@@ -11,6 +13,7 @@ test('work events pay the salary, banked at the end of the week', async ({
   await page.clock.install({ time: 0 });
   await page.clock.pauseAt(1000);
   await page.goto('/');
+  await getAJob(page);
 
   const money = page.getByText(/^-?\$\d/).first();
   const pending = page.getByText(/^\+\$/);
