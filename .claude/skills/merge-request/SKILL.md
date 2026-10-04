@@ -68,7 +68,7 @@ reviewer who has not seen the conversation.
 | 🎯 Why | The problem or need, in one or two sentences. Link the issue. |
 | ✨ What changed | Bullets grouped by theme, written as outcomes, not file lists. |
 | 🧪 How to test | Numbered, concrete steps and the expected result. |
-| 📸 Screenshots | Before / after for UI changes. Remove the section otherwise. |
+| 📸 Screenshots | UI changes only. Remove the section otherwise; the demo itself is added by the `/demo` comment (see below). |
 | ⚠️ Notes for reviewers | Trade-offs, risks, follow-ups, what is out of scope. |
 | ✅ Checklist | The items from the template, ticked only if true. |
 
@@ -111,7 +111,16 @@ The game needed a second way to earn money that trades clicking for waiting.
 - [x] Follows the project structure ADR
 ```
 
-## 5. Then
+## 5. Demo
+
+The demo is never automatic. After the MR is open, a collaborator comments
+`/demo` on it: the `MR demo` workflow (`.github/workflows/demo.yml`) builds the
+branch, records the week calendar with `npm run demo` (Playwright, screenshots
+plus a GIF) and posts the result as a comment. Comment `/demo` again to
+refresh it after new pushes. Locally, `npm run build && npm run demo` writes
+the same files to `demo-output/`.
+
+## 6. Then
 
 Push to the designated branch. Open the MR only if asked; when opening it, pass
 the title and the finished description, not the template.
