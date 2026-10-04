@@ -12,7 +12,7 @@ test('work events pay the salary, banked at the end of the week', async ({
   await page.clock.pauseAt(1000);
   await page.goto('/');
 
-  const money = page.getByText(/^\$\d/).first();
+  const money = page.getByText(/^-?\$\d/).first();
   const pending = page.getByText(/^\+\$/);
   await expect(money).toHaveText('$0');
   await expect(pending).toHaveText('+$0.00');
@@ -28,16 +28,18 @@ test('work events pay the salary, banked at the end of the week', async ({
   await expect(page.getByText('pay of the week')).toBeVisible();
   await page.waitForTimeout(500);
 
-  // Friday evening: the whole week is earned, but not paid yet.
+  // Friday evening: the whole week is earned, but not paid yet, and the meals
+  // eaten so far are already paid.
   await page.clock.fastForward((4 * 24 + 8) * HOUR_MS);
   await expect(pending).toHaveText('+$250.00');
-  await expect(money).toHaveText('$0');
+  await expect(money).toHaveText('-$92.50');
   await page.waitForTimeout(500);
 
-  // Sunday night: the week is over and the pay lands in the bank.
+  // Sunday night: the week is over, the pay lands in the bank and the rent and
+  // the meals of the week are paid out of it.
   await page.clock.fastForward(
     (HOURS_PER_WEEK - 4 * 24 - 20.5) * HOUR_MS + 100,
   );
-  await expect(money).toHaveText('$250');
+  await expect(money).toHaveText('$40.50');
   await expect(pending).toHaveText('+$0.00');
 });

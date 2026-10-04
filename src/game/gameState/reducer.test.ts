@@ -1,5 +1,10 @@
 import { expect, test } from 'vitest';
 
+import {
+  MEAL_PRICES_CENTS,
+  totalExpensesCents,
+  WEEKLY_RENT_CENTS,
+} from '@game/expenses';
 import { INITIAL_CALORIES, SNACK_CALORIES } from '@game/nutrition';
 import {
   DEFAULT_SPEED,
@@ -17,6 +22,10 @@ const hoursToSeconds = (hours: number) =>
 
 const run = (state: GameState, hours: number) =>
   gameReducer(state, { type: 'elapse', seconds: hoursToSeconds(hours) });
+
+// Salary banked so far: the balance before the bills were paid.
+const earnedCents = (state: GameState) =>
+  state.balanceCents + totalExpensesCents(state.expenses);
 
 test('starts on Monday midnight, at the default speed, with fifty percent', () => {
   expect(INITIAL_GAME_STATE).toMatchObject({
@@ -45,16 +54,16 @@ test('does not change the state it is given', () => {
 
 test('pays the weekly salary once the week is over, not before', () => {
   const midWeek = run(INITIAL_GAME_STATE, HOURS_PER_WEEK - 1);
-  expect(midWeek.balanceCents).toBe(0);
+  expect(earnedCents(midWeek)).toBe(0);
 
   const nextWeek = run(midWeek, 2);
-  expect(nextWeek.balanceCents).toBe(25_000);
+  expect(earnedCents(nextWeek)).toBe(25_000);
 });
 
 test('pays every week that went by in a long frame', () => {
   // Weeks 0 to 3 are in February, a 28-day month.
   const state = run(INITIAL_GAME_STATE, 4 * HOURS_PER_WEEK + 1);
-  expect(state.balanceCents).toBe(4 * 25_000);
+  expect(earnedCents(state)).toBe(4 * 25_000);
 });
 
 test('a long frame gives the same result as many short ones', () => {
@@ -117,4 +126,16 @@ test('the brain fills during the day and empties during the night', () => {
   // 16 hours awake fill it
   const evening = run(morning, 16);
   expect(evening.brain).toBeCloseTo(100, 5);
+});
+
+test('pays each meal when it starts', () => {
+  const state = run(INITIAL_GAME_STATE, 7.5);
+  expect(state.expenses.breakfast).toBe(MEAL_PRICES_CENTS.breakfast);
+  expect(state.balanceCents).toBe(-MEAL_PRICES_CENTS.breakfast);
+});
+
+test('pays the rent when the week ends and keeps the bills in the balance', () => {
+  const state = run(INITIAL_GAME_STATE, HOURS_PER_WEEK + 1);
+  expect(state.expenses.rent).toBe(WEEKLY_RENT_CENTS);
+  expect(state.balanceCents).toBe(25_000 - totalExpensesCents(state.expenses));
 });

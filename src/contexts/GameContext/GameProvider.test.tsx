@@ -2,11 +2,13 @@ import { act, renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
+import { totalExpensesCents } from '@game/expenses';
 import { INITIAL_CALORIES, SNACK_CALORIES } from '@game/nutrition';
 import { DEFAULT_SPEED, HOURS_PER_SECOND, HOURS_PER_WEEK } from '@game/time';
 import { gameStateFactory } from '@test/factories/gameStateFactory';
 
 import { GameProvider } from './GameProvider';
+import type { GameContextValue } from './types';
 import { useGameContext } from './useGameContext';
 
 // Real milliseconds needed for the game to run the given number of hours.
@@ -86,6 +88,10 @@ test('enjoying a cake lasts 30 game minutes', () => {
   expect(result.current.isEnjoyingCake).toBe(false);
 });
 
+// Salary banked so far: the balance before the bills were paid.
+const earnedCents = (game: GameContextValue) =>
+  game.balanceCents + totalExpensesCents(game.expenses);
+
 test('earns the weekly pay while working, banked once the week ends', () => {
   const { result } = renderGame();
 
@@ -94,12 +100,12 @@ test('earns the weekly pay while working, banked once the week ends', () => {
   });
   expect(result.current.isEarning).toBe(false);
   expect(result.current.pendingPayCents).toBeGreaterThan(0);
-  expect(result.current.balanceCents).toBe(0);
+  expect(earnedCents(result.current)).toBe(0);
 
   act(() => {
     vi.advanceTimersByTime(hoursToMs(HOURS_PER_WEEK - 18.5) + 100);
   });
-  expect(result.current.balanceCents).toBe(25_000);
+  expect(earnedCents(result.current)).toBe(25_000);
   expect(result.current.pendingPayCents).toBe(0);
 });
 
@@ -114,7 +120,7 @@ test('speeding up the time brings the end of the week closer', () => {
   });
 
   expect(result.current.speed).toBe(DEFAULT_SPEED * 2);
-  expect(result.current.balanceCents).toBe(25_000);
+  expect(earnedCents(result.current)).toBe(25_000);
 });
 
 test('slowing down stops at the slowest speed', () => {
