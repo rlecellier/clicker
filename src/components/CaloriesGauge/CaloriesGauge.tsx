@@ -10,9 +10,15 @@ type CaloriesGaugeProps = {
   fat: number;
 };
 
+type Level = 'low' | 'balanced' | 'high';
+
+const getLevel = (calories: number): Level => {
+  if (calories < CALORIES_MIN_TARGET) return 'low';
+  return calories > CALORIES_MAX_TARGET ? 'high' : 'balanced';
+};
+
 export const CaloriesGauge = ({ calories, fat }: CaloriesGaugeProps) => {
-  const isBalanced =
-    calories >= CALORIES_MIN_TARGET && calories <= CALORIES_MAX_TARGET;
+  const level = getLevel(calories);
 
   return (
     <Meter.Root
@@ -22,8 +28,7 @@ export const CaloriesGauge = ({ calories, fat }: CaloriesGaugeProps) => {
       aria-valuetext={`${Math.round(calories)}%`}
     >
       <div className={styles.header}>
-        <span className={styles.label}>Calories</span>
-        <span className={styles.value} data-balanced={isBalanced || undefined}>
+        <span className={styles.value} data-level={level}>
           {Math.round(calories)}%
         </span>
         <span className={styles.fat}>Fat {fat.toFixed(1)}</span>
@@ -36,10 +41,7 @@ export const CaloriesGauge = ({ calories, fat }: CaloriesGaugeProps) => {
             width: `${CALORIES_MAX_TARGET - CALORIES_MIN_TARGET}%`,
           }}
         />
-        <Meter.Indicator
-          className={styles.indicator}
-          data-balanced={isBalanced || undefined}
-        />
+        <Meter.Indicator className={styles.indicator} data-level={level} />
       </Meter.Track>
     </Meter.Root>
   );

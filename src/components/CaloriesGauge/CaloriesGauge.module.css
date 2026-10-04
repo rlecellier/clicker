@@ -1,41 +1,45 @@
+/* Compact: it lives in the header, next to the title and the money. */
 .root {
-  margin-bottom: 1.5rem;
+  width: 100px;
 }
 
 .header {
   display: flex;
   align-items: baseline;
-  gap: 0.6rem;
-  margin-bottom: 0.4rem;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
   font-variant-numeric: tabular-nums;
 }
 
-.label {
-  font-size: 0.8rem;
-  color: var(--color-muted);
-}
-
 .value {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: var(--color-warning);
 }
 
-.value[data-balanced] {
+/* below 20%: yellow, 20%–80%: balanced, above 80%: orange */
+.value[data-level='low'] {
+  color: var(--color-warning-light);
+}
+
+.value[data-level='balanced'] {
   color: var(--color-text);
 }
 
+.value[data-level='high'] {
+  color: var(--color-orange);
+}
+
 .fat {
-  margin-left: auto;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--color-fat);
 }
 
 .track {
   position: relative;
-  height: 12px;
+  height: 8px;
   background: var(--color-surface);
-  border-radius: 6px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
@@ -51,11 +55,18 @@
 .indicator {
   position: relative;
   height: 100%;
-  background: var(--color-warning);
-  border-radius: 6px;
+  border-radius: 4px;
   transition: background 0.3s;
 }
 
-.indicator[data-balanced] {
+.indicator[data-level='low'] {
+  background: var(--color-warning-light);
+}
+
+.indicator[data-level='balanced'] {
   background: var(--color-success);
+}
+
+.indicator[data-level='high'] {
+  background: var(--color-orange);
 }
