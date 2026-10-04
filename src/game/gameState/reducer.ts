@@ -20,7 +20,8 @@ export type GameAction =
   | { type: 'elapse'; seconds: number }
   | { type: 'eatSnack' }
   | { type: 'enjoyCake' }
-  | { type: 'toggleReading' }
+  // `roll` in [0, 1) draws the book when none is on the go
+  | { type: 'toggleReading'; roll: number }
   | { type: 'speedUp' }
   | { type: 'slowDown' }
   // a brand new game, whatever the current one
@@ -63,7 +64,7 @@ export const gameReducer = (
         : { ...state, ...startCake(state, state.elapsedHours) };
     }
     case 'toggleReading': {
-      return { ...state, ...toggleReading(state) };
+      return { ...state, ...toggleReading(state, action.roll) };
     }
     case 'speedUp': {
       return {

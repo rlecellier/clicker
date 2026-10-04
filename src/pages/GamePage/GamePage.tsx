@@ -8,7 +8,6 @@ import { PendingPay } from '@component/PendingPay';
 import { ScheduleBanners } from '@component/ScheduleBanners';
 import { useGameContext } from '@context/GameContext';
 import { SNACK_CALORIES } from '@game/nutrition';
-import { BOOK_HOURS } from '@game/reading';
 
 import styles from './GamePage.module.css';
 
@@ -21,8 +20,9 @@ export const GamePage = () => {
     isEnjoyingCake,
     snack,
     cake,
+    currentBook,
     bookHours,
-    isBookFinished,
+    isLibraryRead,
     isReading,
     isReadingNow,
     toggleReading,
@@ -45,19 +45,24 @@ export const GamePage = () => {
             <Cake aria-hidden size={18} />{' '}
             {isEnjoyingCake ? 'Enjoying a cake…' : 'Enjoy a cake (30 min)'}
           </Button>
-          <Button onClick={toggleReading} disabled={isBookFinished}>
+          <Button onClick={toggleReading} disabled={isLibraryRead}>
             <BookOpen aria-hidden size={18} />{' '}
-            {isBookFinished
-              ? 'Book read'
+            {isLibraryRead
+              ? 'Library read'
               : isReading
                 ? 'Stop reading'
-                : `Read a book (${BOOK_HOURS} h)`}
+                : currentBook
+                  ? 'Resume reading'
+                  : 'Read a book'}
           </Button>
-          <BookProgress
-            hoursRead={bookHours}
-            totalHours={BOOK_HOURS}
-            isReading={isReadingNow}
-          />
+          {currentBook && (
+            <BookProgress
+              title={currentBook.title}
+              hoursRead={bookHours}
+              totalHours={currentBook.hours}
+              isReading={isReadingNow}
+            />
+          )}
         </div>
       </div>
     </>

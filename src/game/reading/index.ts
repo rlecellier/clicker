@@ -1,10 +1,11 @@
-export { BOOK_HOURS, BRAIN_READING_FILL_PER_HOUR } from './constants';
+export { getBook } from './books';
+export { BRAIN_READING_FILL_PER_HOUR } from './constants';
 export {
   INITIAL_READING,
-  isBookFinished,
   isFreeTime,
+  isLibraryRead,
   readingHoursBetween,
   stepReading,
   toggleReading,
 } from './reading';
-export type { Reading } from './types';
+export type { CatalogBook, Reading } from './types';

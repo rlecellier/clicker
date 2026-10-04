@@ -4,6 +4,7 @@ import { BookOpen } from 'lucide-react';
 import styles from './BookProgress.module.css';
 
 type BookProgressProps = {
+  title: string;
   // free-time hours read so far
   hoursRead: number;
   totalHours: number;
@@ -11,6 +12,7 @@ type BookProgressProps = {
 };
 
 export const BookProgress = ({
+  title,
   hoursRead,
   totalHours,
   isReading,
@@ -22,7 +24,7 @@ export const BookProgress = ({
       value={hoursRead}
       max={totalHours}
       className={styles.root}
-      aria-label="Book"
+      aria-label={title}
       aria-valuetext={`${percent}%`}
     >
       <div className={styles.header}>

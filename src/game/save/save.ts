@@ -1,13 +1,13 @@
 import { EXPENSE_IDS } from '@game/expenses';
 import { CALORIES_CAP } from '@game/nutrition';
-import { BOOK_HOURS } from '@game/reading';
+import { getBook } from '@game/reading';
 import { BRAIN_CAP, DREAM_CAP } from '@game/sleep';
 import { SPEEDS } from '@game/time';
 import type { GameState } from '@game/gameState';
 
 export const SAVE_KEY = 'clicker.save';
 // Bumped when the shape of `GameState` changes in a way old saves can't fit.
-export const SAVE_VERSION = 4;
+export const SAVE_VERSION = 5;
 
 // The part of `Storage` the save needs, so it can be faked in tests.
 export type SaveStorage = Pick<Storage, 'getItem' | 'setItem'>;
@@ -19,6 +19,23 @@ const isBetweenZeroAnd = (value: unknown, max: number) =>
   Number.isFinite(value) &&
   value >= 0 &&
   value <= max;
+
+const isBookId = (value: unknown) => getBook(value as string) !== undefined;
+
+// Each book is read once: ids are known, distinct, and not the current one.
+const isReadBookIds = (value: unknown, currentId: unknown) =>
+  Array.isArray(value) &&
+  value.every(
+    (id, index) =>
+      isBookId(id) && id !== currentId && value.indexOf(id) === index,
+  );
+
+// The book on the go, with the hours read so far: no book, no hours.
+const isCurrentBook = (id: unknown, hours: unknown) =>
+  id === undefined
+    ? hours === 0
+    : isBookId(id) &&
+      isBetweenZeroAnd(hours, getBook(id as string)?.hours ?? 0);
 
 const isExpenses = (value: unknown) =>
   typeof value === 'object' &&
@@ -53,7 +70,9 @@ const isGameState = (value: unknown): value is GameState => {
     isBetweenZeroAnd(state.dreams, Number.MAX_SAFE_INTEGER) &&
     isBetweenZeroAnd(state.fat, Number.MAX_SAFE_INTEGER) &&
     isBetweenZeroAnd(state.cakeUntil, Number.MAX_SAFE_INTEGER) &&
-    isBetweenZeroAnd(state.bookHours, BOOK_HOURS) &&
+    isCurrentBook(state.bookId, state.bookHours) &&
+    isReadBookIds(state.readBookIds, state.bookId) &&
+    (state.bookId !== undefined || state.isReading === false) &&
     typeof state.isReading === 'boolean'
   );
 };

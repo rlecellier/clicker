@@ -8,8 +8,18 @@
 }
 
 .name {
-  margin: 0 0 0.5rem;
+  margin: 1rem 0 0.5rem;
   font-size: 1rem;
+}
+
+.author {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-muted);
 }
 
 .done {

@@ -2,6 +2,7 @@ import type { Body } from '@game/body';
 import type { Expenses } from '@game/expenses';
 import type { GameState } from '@game/gameState';
 import type { Location } from '@game/location';
+import type { CatalogBook } from '@game/reading';
 
 export type GameContextValue = {
   // money in integer cents
@@ -32,9 +33,14 @@ export type GameContextValue = {
   dreams: number;
   isSleeping: boolean;
   isEnjoyingCake: boolean;
-  // free-time hours spent on the book so far
+  // book on the go, none between two books
+  currentBook: CatalogBook | undefined;
+  // free-time hours spent on the current book so far
   bookHours: number;
-  isBookFinished: boolean;
+  // books read to the last page, in reading order
+  readBooks: CatalogBook[];
+  // no book left to read
+  isLibraryRead: boolean;
   // the player reads and nothing is scheduled: the book moves on
   isReadingNow: boolean;
   // the player wants to read, in free time or not
