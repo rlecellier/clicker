@@ -1,20 +1,19 @@
 import { Button } from '@base-ui/react/button';
 import { Cake, Cookie } from 'lucide-react';
-import { useOutletContext } from 'react-router';
 
 import { CaloriesGauge } from '@component/CaloriesGauge';
 import { MoneyCounter } from '@component/MoneyCounter';
 import { PendingPay } from '@component/PendingPay';
 import { TimeControls } from '@component/TimeControls';
 import { WeekCalendar } from '@component/WeekCalendar';
+import { useGameContext } from '@context/GameContext';
 import { SNACK_CALORIES } from '@game/nutrition';
-import type { UseGameResult } from '@hook/useGame';
 
 import styles from './GamePage.module.css';
 
 export const GamePage = () => {
   const {
-    money,
+    balanceCents,
     week,
     weekHour,
     speed,
@@ -22,19 +21,19 @@ export const GamePage = () => {
     canSlowDown,
     faster,
     slower,
-    pendingPay,
+    pendingPayCents,
     isEarning,
     calories,
     fat,
     isEnjoyingCake,
     snack,
     cake,
-  } = useOutletContext<UseGameResult>();
+  } = useGameContext();
 
   return (
     <>
-      <MoneyCounter amount={money} />
-      <PendingPay amount={pendingPay} isEarning={isEarning} />
+      <MoneyCounter cents={balanceCents} />
+      <PendingPay cents={pendingPayCents} isEarning={isEarning} />
       <WeekCalendar week={week} weekHour={weekHour} />
       <TimeControls
         speed={speed}

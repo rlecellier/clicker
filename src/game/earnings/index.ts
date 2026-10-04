@@ -1,1 +1,1 @@
-export { bankedPay, isWorking, pendingPay, weeklyPay } from './earnings';
+export { isWorking, pendingPayCents, weeklyPayCents } from './earnings';
