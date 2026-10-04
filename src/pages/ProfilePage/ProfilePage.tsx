@@ -1,17 +1,36 @@
 import { BodyGauge } from '@component/BodyGauge';
 import { BrainGauge } from '@component/BrainGauge';
 import { useGameContext } from '@context/GameContext';
+import {
+  BIRTH_DATE,
+  formatBirthDate,
+  formatLifeTime,
+  lifeTimeAt,
+} from '@game/age';
 import { formatMoney } from '@game/money';
 
 import styles from './ProfilePage.module.css';
 
 export const ProfilePage = () => {
-  const { balanceCents, dreams, body, brain, isSleeping } = useGameContext();
+  const { age, balanceCents, elapsedHours, dreams, body, brain, isSleeping } =
+    useGameContext();
 
   return (
     <section className={styles.root}>
       <h2 className={styles.title}>Profile</h2>
       <dl className={styles.stats}>
+        <div>
+          <dt>Age</dt>
+          <dd>{age} years</dd>
+        </div>
+        <div>
+          <dt>Born</dt>
+          <dd>{formatBirthDate(BIRTH_DATE)}</dd>
+        </div>
+        <div>
+          <dt>Played</dt>
+          <dd>{formatLifeTime(lifeTimeAt(elapsedHours))}</dd>
+        </div>
         <div>
           <dt>Cash</dt>
           <dd>{formatMoney(balanceCents)}</dd>
