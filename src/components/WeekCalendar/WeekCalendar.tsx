@@ -9,7 +9,7 @@ type WeekCalendarProps = {
   weekHour: number;
 };
 
-export function WeekCalendar({ weekHour }: WeekCalendarProps) {
+export const WeekCalendar = ({ weekHour }: WeekCalendarProps) => {
   const currentDay = Math.floor(weekHour / HOURS_PER_DAY);
   const dayRatio = (weekHour % HOURS_PER_DAY) / HOURS_PER_DAY;
   const hour = Math.floor(weekHour % HOURS_PER_DAY);
@@ -39,4 +39,4 @@ export function WeekCalendar({ weekHour }: WeekCalendarProps) {
       ))}
     </div>
   );
-}
+};

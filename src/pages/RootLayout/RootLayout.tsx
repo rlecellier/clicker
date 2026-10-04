@@ -4,7 +4,7 @@ import { useGame } from '@hook/useGame';
 
 import styles from './RootLayout.module.css';
 
-export function RootLayout() {
+export const RootLayout = () => {
   const game = useGame();
 
   return (
@@ -13,4 +13,4 @@ export function RootLayout() {
       <Outlet context={game} />
     </main>
   );
-}
+};

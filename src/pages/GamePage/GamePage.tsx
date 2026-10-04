@@ -13,7 +13,7 @@ import {
 
 import styles from './GamePage.module.css';
 
-export function GamePage() {
+export const GamePage = () => {
   const { money, weekHour, progress, isWorkingDay, work, startWorkingDay } =
     useOutletContext<UseGameResult>();
 
@@ -33,4 +33,4 @@ export function GamePage() {
       {isWorkingDay && <WorkingDayProgress progress={progress} />}
     </>
   );
-}
+};

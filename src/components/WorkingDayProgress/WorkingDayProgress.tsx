@@ -7,7 +7,7 @@ type WorkingDayProgressProps = {
   progress: number;
 };
 
-export function WorkingDayProgress({ progress }: WorkingDayProgressProps) {
+export const WorkingDayProgress = ({ progress }: WorkingDayProgressProps) => {
   return (
     <Progress.Root value={progress * 100} className={styles.root}>
       <Progress.Track className={styles.track}>
@@ -15,4 +15,4 @@ export function WorkingDayProgress({ progress }: WorkingDayProgressProps) {
       </Progress.Track>
     </Progress.Root>
   );
-}
+};

@@ -6,10 +6,10 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 
 import { routes } from './routes';
 
-function renderApp(path = '/') {
+const renderApp = (path = '/') => {
   const router = createMemoryRouter(routes, { initialEntries: [path] });
   return render(<RouterProvider router={router} />);
-}
+};
 
 beforeEach(() => {
   vi.useFakeTimers({ shouldAdvanceTime: true });

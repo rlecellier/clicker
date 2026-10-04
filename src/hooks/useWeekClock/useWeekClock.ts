@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { HOURS_PER_SECOND, HOURS_PER_WEEK } from './constants';
 
 // Hours elapsed since Monday 00:00, wrapping around every week.
-export function useWeekClock() {
+export const useWeekClock = () => {
   const [weekHour, setWeekHour] = useState(0);
 
   useEffect(() => {
@@ -22,4 +22,4 @@ export function useWeekClock() {
   }, []);
 
   return weekHour;
-}
+};
