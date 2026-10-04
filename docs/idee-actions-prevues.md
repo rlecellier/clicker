@@ -25,6 +25,12 @@ Chaque action prévue est taguée avec un mode :
 - **`ask`** : on demande au joueur « voulez-vous faire cette action ? » avant de
   la lancer. Sur desktop, une pop-up ; sur mobile, une page entière.
 
+## Création d'une action : récurrence
+
+À la création, en plus du mode `auto` / `ask`, on choisit si l'action est
+**récurrente** et, si oui, **à quelle récurrence**. Le modèle de référence est
+Google Calendar.
+
 ## À préciser (questions ouvertes, à venir)
 
 _À compléter par la suite de la description._
