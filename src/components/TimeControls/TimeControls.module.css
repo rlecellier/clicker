@@ -14,6 +14,6 @@
 .speed {
   min-width: 3.5ch;
   text-align: center;
-  color: #888;
+  color: var(--color-muted);
   font-variant-numeric: tabular-nums;
 }

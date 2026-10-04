@@ -12,29 +12,29 @@
 
 .label {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--color-muted);
 }
 
 .value {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .value[data-balanced] {
-  color: #eee;
+  color: var(--color-text);
 }
 
 .fat {
   margin-left: auto;
   font-size: 0.8rem;
-  color: #a78bfa;
+  color: var(--color-fat);
 }
 
 .track {
   position: relative;
   height: 12px;
-  background: #333;
+  background: var(--color-surface);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -51,11 +51,11 @@
 .indicator {
   position: relative;
   height: 100%;
-  background: #f59e0b;
+  background: var(--color-warning);
   border-radius: 6px;
   transition: background 0.3s;
 }
 
 .indicator[data-balanced] {
-  background: #22c55e;
+  background: var(--color-success);
 }
