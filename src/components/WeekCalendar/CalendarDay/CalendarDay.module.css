@@ -1,0 +1,75 @@
+.number {
+  font-weight: 600;
+}
+
+.day {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  width: calc(100% / 7);
+  padding: 0 0.25rem;
+  transition: transform 0.4s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.day[data-current] {
+  color: var(--color-text);
+}
+
+.bar {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  flex: none;
+  background: var(--color-surface);
+  border-radius: 4px;
+}
+
+.day[data-current] .bar {
+  background: var(--color-surface-raised);
+}
+
+.cursor {
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  height: 3px;
+  margin-top: -1px;
+  background: var(--color-success);
+  border-radius: 2px;
+}
+
+.event {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  box-sizing: border-box;
+  background: linear-gradient(
+    180deg,
+    var(--color-accent-light),
+    var(--color-accent)
+  );
+  border-left: 3px solid var(--color-accent-pale);
+  border-radius: 3px;
+  opacity: 0.85;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+}
+
+.cursor {
+  z-index: 1;
+}
+
+.event[data-kind='meal'] {
+  background: linear-gradient(
+    180deg,
+    var(--color-warning-light),
+    var(--color-warning)
+  );
+  border-left-color: var(--color-warning-pale);
+}
