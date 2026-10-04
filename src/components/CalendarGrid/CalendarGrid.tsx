@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 import { EVENTS } from '@game/calendar';
 import {
   dayOfMonth,
@@ -15,6 +17,8 @@ type CalendarGridProps = {
   currentDay: number;
   // ratio of the current day already gone, between 0 and 1
   dayRatio: number;
+  // 1 shows the whole day in the available height; more makes events taller
+  zoom?: number;
 };
 
 // The hours shown in the left margin.
@@ -33,11 +37,17 @@ export const CalendarGrid = ({
   days,
   currentDay,
   dayRatio,
+  zoom = 1,
 }: CalendarGridProps) => {
   return (
     <div
       className={styles.root}
-      style={{ gridTemplateColumns: `2.5rem repeat(${days.length}, 1fr)` }}
+      style={
+        {
+          gridTemplateColumns: `2.5rem repeat(${days.length}, 1fr)`,
+          '--zoom': zoom,
+        } as CSSProperties
+      }
     >
       <div className={styles.corner} />
       {days.map((day) => (
