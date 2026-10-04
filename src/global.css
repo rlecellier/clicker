@@ -22,7 +22,13 @@ body {
   color: var(--color-text);
   display: flex;
   justify-content: center;
-  padding-top: 10vh;
+  margin: 0;
+}
+
+/* The app fills the screen on mobile and stops at a phone-like width. */
+#root {
+  flex: 1;
+  max-width: 480px;
 }
 
 button {

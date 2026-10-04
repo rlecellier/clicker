@@ -1,7 +1,4 @@
 .root {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
