@@ -1,4 +1,6 @@
-import { EVENTS, HOURS_PER_DAY, HOURS_PER_WEEK } from '@hook/useWeekClock';
+import { EVENTS } from '@game/calendar';
+import { isWorking } from '@game/earnings';
+import { HOURS_PER_DAY, HOURS_PER_WEEK } from '@game/time';
 
 import {
   CAKE_CALORIES,
@@ -12,7 +14,6 @@ import {
   STEP_HOURS,
   WORK_BURN,
 } from './constants';
-import { isWorking } from './earnings';
 import type { Nutrition } from './types';
 
 export const INITIAL_NUTRITION: Nutrition = {

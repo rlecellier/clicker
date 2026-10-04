@@ -1,9 +1,3 @@
-export type GameState = {
-  money: number;
-};
-
-export const INITIAL_GAME_STATE: GameState = { money: 0 };
-
 export type Nutrition = {
   // gauge between 0 and 100, to keep between 20 and 80
   calories: number;

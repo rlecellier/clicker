@@ -17,6 +17,7 @@
       "@page/*": ["./src/pages/*"],
       "@component/*": ["./src/components/*"],
       "@hook/*": ["./src/hooks/*"],
+      "@game/*": ["./src/game/*"],
       "@context/*": ["./src/contexts/*"],
       "@test/*": ["./src/test/*"]
     },

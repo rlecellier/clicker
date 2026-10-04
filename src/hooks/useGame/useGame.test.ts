@@ -1,13 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
+import { INITIAL_CALORIES, SNACK_CALORIES } from '@game/nutrition';
+import { HOURS_PER_WEEK } from '@game/time';
+import { DEFAULT_SPEED, HOURS_PER_SECOND } from '@hook/useWeekClock';
 import { gameStateFactory } from '@test/factories/gameStateFactory';
-import { INITIAL_CALORIES, SNACK_CALORIES } from './constants';
-import {
-  DEFAULT_SPEED,
-  HOURS_PER_SECOND,
-  HOURS_PER_WEEK,
-} from '@hook/useWeekClock';
 import { useGame } from './useGame';
 
 // Real milliseconds needed for the game to run the given number of hours.

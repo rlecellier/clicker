@@ -1,7 +1,3 @@
-export const MONTHLY_SALARY = 1000;
-// Monday of the first game week; February 2027 has 28 days.
-export const GAME_START = Date.UTC(2027, 1, 1);
-
 // Calories are a gauge in % that the player keeps between 20 and 80.
 export const CALORIES_MIN_TARGET = 20;
 export const CALORIES_MAX_TARGET = 80;

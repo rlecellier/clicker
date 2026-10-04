@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import {
-  DEFAULT_SPEED_INDEX,
-  HOURS_PER_SECOND,
-  HOURS_PER_WEEK,
-  SPEEDS,
-} from './constants';
+import { HOURS_PER_WEEK } from '@game/time';
+
+import { DEFAULT_SPEED_INDEX, HOURS_PER_SECOND, SPEEDS } from './constants';
 
 type UseWeekClockOptions = {
   // called on every frame with the game hours the frame covers; a long frame

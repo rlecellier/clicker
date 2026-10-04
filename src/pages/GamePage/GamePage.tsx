@@ -7,7 +7,8 @@ import { MoneyCounter } from '@component/MoneyCounter';
 import { PendingPay } from '@component/PendingPay';
 import { TimeControls } from '@component/TimeControls';
 import { WeekCalendar } from '@component/WeekCalendar';
-import { SNACK_CALORIES, type UseGameResult } from '@hook/useGame';
+import { SNACK_CALORIES } from '@game/nutrition';
+import type { UseGameResult } from '@hook/useGame';
 
 import styles from './GamePage.module.css';
 
