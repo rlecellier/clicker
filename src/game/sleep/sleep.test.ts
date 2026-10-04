@@ -2,6 +2,7 @@ import { expect, test } from 'vitest';
 
 import { BRAIN_READING_FILL_PER_HOUR } from '@game/reading';
 import { HOURS_PER_DAY } from '@game/time';
+import { READING_SCHEDULE, WORKING_SCHEDULE } from '@test/schedules';
 
 import {
   AWAKE_HOURS_PER_DAY,
@@ -12,22 +13,23 @@ import {
   INITIAL_BRAIN,
 } from './constants';
 import { INITIAL_SLEEP, isSleeping, stepSleep } from './sleep';
-import type { Sleep } from './types';
+const SCHEDULE = WORKING_SCHEDULE;
 
 const at = (day: number, hour: number) => day * HOURS_PER_DAY + hour;
 
-const MORNING: Sleep = { brain: 0, dreamGauge: 0, dreams: 0 };
+const MORNING = { brain: 0, dreamGauge: 0, dreams: 0, ...SCHEDULE };
+const START = { ...INITIAL_SLEEP, ...SCHEDULE };
 
 test('sleeps from 23:00 to 7:00, every day', () => {
-  expect(isSleeping(at(2, 22.9))).toBe(false);
-  expect(isSleeping(at(2, 23))).toBe(true);
-  expect(isSleeping(at(3, 0))).toBe(true);
-  expect(isSleeping(at(3, 6.9))).toBe(true);
-  expect(isSleeping(at(3, 7))).toBe(false);
+  expect(isSleeping(SCHEDULE, at(2, 22.9))).toBe(false);
+  expect(isSleeping(SCHEDULE, at(2, 23))).toBe(true);
+  expect(isSleeping(SCHEDULE, at(3, 0))).toBe(true);
+  expect(isSleeping(SCHEDULE, at(3, 6.9))).toBe(true);
+  expect(isSleeping(SCHEDULE, at(3, 7))).toBe(false);
 });
 
 test('the first night empties the starting brain without making a dream', () => {
-  const morning = stepSleep(INITIAL_SLEEP, at(0, 0), at(0, 7));
+  const morning = stepSleep(START, at(0, 0), at(0, 7));
   expect(INITIAL_SLEEP.brain).toBe(INITIAL_BRAIN);
   expect(morning.brain).toBeCloseTo(0, 5);
   expect(morning.dreamGauge).toBeCloseTo(0, 5);
@@ -58,7 +60,7 @@ test('the brain never goes over its cap', () => {
 
 test('a night empties 80% of the brain, the rest goes to the dream gauge', () => {
   const evening = stepSleep(MORNING, at(0, 7), at(0, 23));
-  const morning = stepSleep(evening, at(0, 23), at(1, 7));
+  const morning = stepSleep({ ...MORNING, ...evening }, at(0, 23), at(1, 7));
   expect(morning.brain).toBe(0);
   expect(morning.dreamGauge).toBeCloseTo(BRAIN_SLEEP_DRAIN - evening.brain, 5);
   expect(morning.dreams).toBe(0);
@@ -72,7 +74,7 @@ test('the sleep empties the brain at an even pace', () => {
 
 test('a full dream gauge makes a dream and starts over', () => {
   const asleep = stepSleep(
-    { brain: 0, dreamGauge: DREAM_CAP - 5, dreams: 2 },
+    { ...SCHEDULE, brain: 0, dreamGauge: DREAM_CAP - 5, dreams: 2 },
     at(0, 23),
     at(1, 0),
   );
@@ -88,10 +90,10 @@ test('keeps the dreams made over several nights', () => {
 });
 
 test('one long run gives the same as many short ones', () => {
-  const long = stepSleep(INITIAL_SLEEP, at(0, 0), at(5, 0));
-  let short = INITIAL_SLEEP;
+  const long = stepSleep(START, at(0, 0), at(5, 0));
+  let short = START;
   for (let step = 0; step < 5 * 96; step += 1) {
-    short = stepSleep(short, step / 4, (step + 1) / 4);
+    short = { ...short, ...stepSleep(short, step / 4, (step + 1) / 4) };
   }
   expect(long.brain).toBeCloseTo(short.brain, 5);
   expect(long.dreams + long.dreamGauge / DREAM_CAP).toBeCloseTo(
@@ -100,12 +102,13 @@ test('one long run gives the same as many short ones', () => {
   );
 });
 
-test('reading fills the brain faster, during free time only', () => {
-  // 18:00 to 19:00 is a free hour
-  const idle = stepSleep(MORNING, at(0, 18), at(0, 19)).brain;
-  const read = stepSleep(MORNING, at(0, 18), at(0, 19), 1).brain;
+test('reading fills the brain faster, during a reading event only', () => {
+  const reader = { ...MORNING, ...READING_SCHEDULE };
+  // 20:00 to 21:00 is a reading event
+  const idle = stepSleep(reader, at(0, 20), at(0, 21)).brain;
+  const read = stepSleep(reader, at(0, 20), at(0, 21), 1).brain;
   expect(read - idle).toBeCloseTo(BRAIN_READING_FILL_PER_HOUR, 5);
-  // 8:00 to 9:00 is work: no free hour to read in
-  const work = stepSleep(MORNING, at(0, 8), at(0, 9)).brain;
-  expect(stepSleep(MORNING, at(0, 8), at(0, 9), 1).brain).toBe(work);
+  // 8:00 to 9:00 is work: no reading event to read in
+  const work = stepSleep(reader, at(0, 8), at(0, 9)).brain;
+  expect(stepSleep(reader, at(0, 8), at(0, 9), 1).brain).toBe(work);
 });

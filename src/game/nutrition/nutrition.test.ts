@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 
 import { HOURS_PER_DAY, HOURS_PER_WEEK } from '@game/time';
+import { WORKING_SCHEDULE } from '@test/schedules';
 
 import {
   CALORIES_CAP,
@@ -23,7 +24,7 @@ import {
 } from './nutrition';
 
 const at = (day: number, hour: number) => day * HOURS_PER_DAY + hour;
-const rested = { ...INITIAL_NUTRITION, calories: 50 };
+const rested = { ...INITIAL_NUTRITION, ...WORKING_SCHEDULE, calories: 50 };
 
 test('calories go down while resting', () => {
   // Saturday 22:00 to 23:00: no meal, no work
@@ -89,7 +90,7 @@ test('calories never go below zero', () => {
 });
 
 test('a cake adds calories for 30 game minutes, at work too', () => {
-  const cake = startCake(rested, at(0, 9));
+  const cake = { ...rested, ...startCake(rested, at(0, 9)) };
   expect(isEnjoyingCake(cake, at(0, 9.25))).toBe(true);
   expect(isEnjoyingCake(cake, at(0, 9.5))).toBe(false);
 
@@ -104,7 +105,7 @@ test('a long frame gives the same result as many short ones', () => {
   const long = stepNutrition(rested, at(0, 0), at(3, 0));
   let short = rested;
   for (let hour = 0; hour < 72; hour += 1) {
-    short = stepNutrition(short, hour, hour + 1);
+    short = { ...short, ...stepNutrition(short, hour, hour + 1) };
   }
   expect(long.calories).toBeCloseTo(short.calories, 5);
   expect(long.fat).toBeCloseTo(short.fat, 5);
@@ -130,13 +131,13 @@ test('status is green between 40% and 60%, yellow up to 20% and 80%, red beyond'
 });
 
 test('without any snack or cake, the meals and the burn cancel out each week', () => {
-  let state = INITIAL_NUTRITION;
+  let state = { ...INITIAL_NUTRITION, ...WORKING_SCHEDULE };
   for (let week = 0; week < 12; week += 1) {
     let low = state.calories;
     let high = state.calories;
     for (let hour = 0; hour < HOURS_PER_WEEK; hour += 0.25) {
       const from = week * HOURS_PER_WEEK + hour;
-      state = stepNutrition(state, from, from + 0.25);
+      state = { ...state, ...stepNutrition(state, from, from + 0.25) };
       low = Math.min(low, state.calories);
       high = Math.max(high, state.calories);
     }
