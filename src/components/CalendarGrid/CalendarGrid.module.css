@@ -73,7 +73,7 @@
 
 .event {
   position: absolute;
-  left: 2px;
+  left: 12px;
   right: 2px;
   box-sizing: border-box;
   overflow: hidden;
@@ -102,6 +102,19 @@
   border-left-color: var(--color-warning-pale);
 }
 
+.event[data-kind='read'] {
+  background: linear-gradient(
+    180deg,
+    var(--color-success),
+    var(--color-success-dark)
+  );
+  border-left-color: var(--color-success);
+}
+
+.event[data-mode='ask'] {
+  border-style: dashed;
+}
+
 .event[data-kind='sleep'] {
   background: linear-gradient(
     180deg,
@@ -109,6 +122,24 @@
     var(--color-sleep-dark)
   );
   border-left-color: var(--color-sleep);
+}
+
+.obligation {
+  position: absolute;
+  left: 2px;
+  width: 6px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-accent-pale);
+  border-radius: 3px;
+  background: transparent;
+}
+
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
 }
 
 .cursor {

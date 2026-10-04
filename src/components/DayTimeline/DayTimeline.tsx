@@ -1,10 +1,5 @@
-import { EVENTS } from '@game/calendar';
-import {
-  dayOfMonth,
-  HOURS_PER_DAY,
-  weekdayIndex,
-  weekdayLabel,
-} from '@game/time';
+import { eventsOnDay, type Schedule } from '@game/calendar';
+import { dayOfMonth, HOURS_PER_DAY, weekdayLabel } from '@game/time';
 
 import styles from './DayTimeline.module.css';
 
@@ -13,6 +8,8 @@ import styles from './DayTimeline.module.css';
 const DAYS_AROUND = 4;
 
 type DayTimelineProps = {
+  // what the player plans to do, drawn on each day
+  schedule: Schedule;
   // absolute day plus the fraction already gone, e.g. 3.5 is noon on day 3
   dayPosition: number;
   // accessible description of the current moment
@@ -20,7 +17,11 @@ type DayTimelineProps = {
 };
 
 // Days scroll from right to left under a fixed marker in the middle.
-export const DayTimeline = ({ dayPosition, label }: DayTimelineProps) => {
+export const DayTimeline = ({
+  schedule,
+  dayPosition,
+  label,
+}: DayTimelineProps) => {
   const currentDay = Math.floor(dayPosition);
   const days = Array.from(
     { length: 2 * DAYS_AROUND + 1 },
@@ -42,9 +43,7 @@ export const DayTimeline = ({ dayPosition, label }: DayTimelineProps) => {
             {weekdayLabel(day)} {dayOfMonth(day)}
           </span>
           <div className={styles.track}>
-            {EVENTS.filter((event) =>
-              event.days.includes(weekdayIndex(day)),
-            ).map((event) => (
+            {eventsOnDay(schedule, day).map((event) => (
               <div
                 key={event.id}
                 className={styles.event}

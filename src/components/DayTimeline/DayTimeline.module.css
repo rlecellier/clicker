@@ -51,6 +51,10 @@
   background: var(--color-warning);
 }
 
+.event[data-kind='read'] {
+  background: var(--color-success);
+}
+
 .event[data-kind='sleep'] {
   background: var(--color-sleep);
 }
