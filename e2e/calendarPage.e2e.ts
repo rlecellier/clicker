@@ -18,8 +18,9 @@ test('on mobile, the calendar page shows one day and swipes to the next', async 
   await expect(page.getByRole('list')).toHaveCount(1);
   const title = page.getByRole('heading', { level: 2 });
   await expect(title).toHaveText('Mon 1 Feb 2027');
-  const today = page.getByRole('button', { name: 'Today' });
-  await expect(today).toBeDisabled();
+  // Playing: the calendar follows the game and cannot be moved.
+  await expect(page.getByRole('button', { name: 'Next day' })).toBeDisabled();
+  await page.getByRole('button', { name: 'Pause' }).click();
 
   // Playwright has no swipe gesture: the touch events are sent by hand.
   const grid = page.getByRole('list').locator('..').locator('..');
@@ -31,7 +32,7 @@ test('on mobile, the calendar page shows one day and swipes to the next', async 
   });
   await expect(title).toHaveText('Tue 2 Feb 2027');
 
-  await today.click();
+  await page.getByRole('button', { name: 'Play' }).click();
   await expect(title).toHaveText('Mon 1 Feb 2027');
   await context.close();
 });
@@ -45,10 +46,9 @@ test('on desktop, the calendar page shows the week and can show a day', async ({
   await page.goto('/calendar');
   const title = page.getByRole('heading', { level: 2 });
   await expect(page.getByRole('list')).toHaveCount(7);
-  await expect(
-    page.getByRole('button', { name: 'Previous week' }),
-  ).toBeDisabled();
 
+  await expect(page.getByRole('button', { name: 'Next week' })).toBeDisabled();
+  await page.getByRole('button', { name: 'Pause' }).click();
   await page.getByRole('button', { name: 'Next week' }).click();
   await expect(title).toHaveText('8 – 14 Feb 2027');
   await page.getByRole('button', { name: 'Previous week' }).click();
@@ -58,7 +58,7 @@ test('on desktop, the calendar page shows the week and can show a day', async ({
   await expect(page.getByRole('list')).toHaveCount(1);
   await page.getByRole('button', { name: 'Next day' }).click();
   await expect(title).toHaveText('Tue 2 Feb 2027');
-  await page.getByRole('button', { name: 'Today' }).click();
+  await page.getByRole('button', { name: 'Play' }).click();
   await expect(title).toHaveText('Mon 1 Feb 2027');
 
   await page.getByRole('button', { name: 'Week', exact: true }).click();
@@ -100,6 +100,8 @@ test('on mobile, a pinch zooms in without changing the day', async ({
   const page = await context.newPage();
   await page.goto('/calendar');
   const lunch = page.getByTitle(/^Lunch/);
+  // the event has no box until the grid is laid out
+  await expect.poll(() => lunch.boundingBox()).not.toBeNull();
   const before = (await lunch.boundingBox())!;
 
   // Playwright has no pinch gesture: two fingers are moved apart by hand.

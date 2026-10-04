@@ -69,6 +69,7 @@ test('the view toggle switches between the week and the day', () => {
 test('the arrows move by a week in the week view, by a day in the day view', () => {
   useScreen(true);
   renderPage();
+  fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
   fireEvent.click(screen.getByRole('button', { name: 'Next week' }));
   expect(
     screen.getByRole('heading', { name: '8 – 14 Feb 2027' }),
@@ -88,6 +89,7 @@ test('has no previous week before the start of the game', () => {
       <CalendarPage />
     </GameProvider>,
   );
+  fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
   expect(screen.getByRole('button', { name: 'Previous week' })).toBeDisabled();
 });
 
@@ -102,6 +104,7 @@ test('shows a single day on mobile, without the view toggle', () => {
 test('swipes from one day to the next on mobile', () => {
   useScreen(false);
   renderPage();
+  fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
   swipe(250, 100);
   expect(screen.getByRole('list', { name: 'Thu 4' })).toBeInTheDocument();
   swipe(100, 250);
@@ -109,13 +112,20 @@ test('swipes from one day to the next on mobile', () => {
   expect(screen.getByRole('list', { name: 'Tue 2' })).toBeInTheDocument();
 });
 
-test('the today button comes back to the current day', () => {
+test('playing follows the current day and locks the navigation', () => {
   useScreen(false);
   renderPage();
-  const today = screen.getByRole('button', { name: 'Today' });
-  expect(today).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Next day' })).toBeDisabled();
   swipe(250, 100);
-  expect(today).toBeEnabled();
-  fireEvent.click(today);
+  expect(screen.getByRole('list', { name: 'Wed 3' })).toBeInTheDocument();
+});
+
+test('play comes back to the current day, pause frees the navigation', () => {
+  useScreen(false);
+  renderPage();
+  fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
+  swipe(250, 100);
+  expect(screen.getByRole('list', { name: 'Thu 4' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Play' }));
   expect(screen.getByRole('list', { name: 'Wed 3' })).toBeInTheDocument();
 });
