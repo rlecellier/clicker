@@ -1,0 +1,109 @@
+.root {
+  display: grid;
+  column-gap: 2px;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  padding: 0.25rem 0 0.5rem;
+  color: var(--color-muted);
+}
+
+.heading[data-current] {
+  color: var(--color-text);
+}
+
+.number {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.hours {
+  position: relative;
+  height: 720px;
+}
+
+.hour {
+  position: absolute;
+  right: 0.25rem;
+  transform: translateY(-50%);
+  color: var(--color-muted);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The first hour label would sit above the grid: keep it inside. */
+.hour:first-child {
+  transform: none;
+}
+
+/* One line every three hours, like the labels in the margin. */
+.day {
+  position: relative;
+  height: 720px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background-color: var(--color-surface);
+  background-image: linear-gradient(var(--color-bg) 1px, transparent 1px);
+  background-size: 100% calc(100% / 8);
+  border-radius: 4px;
+}
+
+.day[data-current] {
+  background-color: var(--color-surface-raised);
+}
+
+.event {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0.1rem 0.25rem;
+  border-left: 3px solid var(--color-accent-pale);
+  border-radius: 3px;
+  background: linear-gradient(
+    180deg,
+    var(--color-accent-light),
+    var(--color-accent)
+  );
+  color: var(--color-on-accent);
+  font-size: 0.7rem;
+  line-height: 1.2;
+  text-align: left;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.35);
+}
+
+.event[data-kind='meal'] {
+  background: linear-gradient(
+    180deg,
+    var(--color-warning-light),
+    var(--color-warning)
+  );
+  border-left-color: var(--color-warning-pale);
+}
+
+.event[data-kind='sleep'] {
+  background: linear-gradient(
+    180deg,
+    var(--color-sleep),
+    var(--color-sleep-dark)
+  );
+  border-left-color: var(--color-sleep);
+}
+
+.cursor {
+  position: absolute;
+  z-index: 1;
+  left: -2px;
+  right: -2px;
+  height: 3px;
+  margin-top: -1px;
+  background: var(--color-success);
+  border-radius: 2px;
+}
