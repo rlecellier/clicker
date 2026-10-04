@@ -17,6 +17,32 @@ export default tseslint.config(
     languageOptions: { globals: globals.browser },
   },
   {
+    rules: {
+      // React naming: MyComponent/, useMyHook/ (see .claude/adr/0001)
+      'unicorn/filename-case': [
+        'error',
+        { cases: { pascalCase: true, camelCase: true } },
+      ],
+      // `Props` / `props` are React standard names
+      'unicorn/name-replacements': [
+        'error',
+        { replacements: { props: false, prop: false, ref: false } },
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../*', './*/*'],
+              message:
+                'Use an alias (@page, @component, @hook, @context) or import the folder index.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['*.config.{js,ts}'],
     languageOptions: { globals: globals.node },
     rules: { 'unicorn/no-top-level-side-effects': 'off' },
