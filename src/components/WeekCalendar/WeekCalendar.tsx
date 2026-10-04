@@ -1,5 +1,7 @@
 import { DAYS_PER_WEEK, HOURS_PER_DAY } from '@hook/useWeekClock';
 
+import { EVENTS } from './events';
+
 import styles from './WeekCalendar.module.css';
 
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -28,6 +30,17 @@ export const WeekCalendar = ({ weekHour }: WeekCalendarProps) => {
         >
           <span className={styles.label}>{DAY_LABELS[day]}</span>
           <div className={styles.bar}>
+            {EVENTS.filter((event) => event.days.includes(day)).map((event) => (
+              <div
+                key={event.id}
+                className={styles.event}
+                style={{
+                  top: `${(event.start / HOURS_PER_DAY) * 100}%`,
+                  height: `${((event.end - event.start) / HOURS_PER_DAY) * 100}%`,
+                }}
+                title={`${event.title} ${event.start}:00–${event.end}:00`}
+              />
+            ))}
             {day === currentDay && (
               <div
                 className={styles.cursor}
