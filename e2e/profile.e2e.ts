@@ -25,3 +25,22 @@ test('the profile page shows the body of a new player', async ({ page }) => {
   ).toBeVisible();
   await demoShot(page, 'profile-brain');
 });
+
+test('the cash is shown in the sidebar, on the game page and in the profile', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1024, height: 700 });
+  await page.clock.install({ time: 0 });
+  await page.clock.pauseAt(1000);
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.clear();
+  });
+  await page.reload();
+
+  // Sidebar and game page.
+  await expect(page.getByText('$0', { exact: true })).toHaveCount(2);
+
+  await page.getByRole('link', { name: 'Profile' }).click();
+  await expect(page.getByText('Cash').locator('..')).toContainText('$0');
+});
