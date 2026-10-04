@@ -40,6 +40,7 @@ test('the cash is shown in the sidebar, on the game page and in the profile', as
 
   // Sidebar and game page.
   await expect(page.getByText('$0', { exact: true })).toHaveCount(2);
+  await demoShot(page, 'age-and-cash');
 
   await page.getByRole('link', { name: 'Profile' }).click();
   await expect(page.getByText('Cash').locator('..')).toContainText('$0');
@@ -68,4 +69,7 @@ test('the profile shows the age, the birth date and the time played', async ({
   await page.clock.fastForward((368 * 24 * 1000) / 8);
   await expect(page.getByText('Age').locator('..')).toContainText('19 years');
   await expect(page.getByText('Played').locator('..')).toContainText('1 y 3 d');
+  // The mobile menu is still sliding out after the navigation.
+  await expect(page.getByRole('complementary')).not.toBeInViewport();
+  await demoShot(page, 'profile-life');
 });
