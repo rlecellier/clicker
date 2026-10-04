@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
+import { gameStateFactory } from '@test/factories/gameStateFactory';
 import { CLICK_VALUE, WORKING_DAY_DURATION_MS } from './constants';
 import { useGame } from './useGame';
 
@@ -15,7 +16,7 @@ afterEach(() => {
 });
 
 test('starts with the given state', () => {
-  const state = { money: 42 };
+  const state = gameStateFactory.build();
   const { result } = renderHook(() => useGame(state));
   expect(result.current.money).toBe(state.money);
 });
@@ -26,7 +27,7 @@ test('starts broke by default', () => {
 });
 
 test('work adds one click value to the current money', () => {
-  const state = { money: 42 };
+  const state = gameStateFactory.build();
   const { result } = renderHook(() => useGame(state));
 
   act(() => {
@@ -37,7 +38,7 @@ test('work adds one click value to the current money', () => {
 });
 
 test('work is ignored during a working day', () => {
-  const state = { money: 0 };
+  const state = gameStateFactory.build({ traits: ['broke'] });
   const { result } = renderHook(() => useGame(state));
 
   act(() => {
@@ -52,7 +53,7 @@ test('work is ignored during a working day', () => {
 });
 
 test('a working day pays ten clicks once it ends', () => {
-  const state = { money: 42 };
+  const state = gameStateFactory.build();
   const { result } = renderHook(() => useGame(state));
 
   act(() => {
