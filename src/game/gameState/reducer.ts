@@ -12,7 +12,7 @@ import {
 } from '@game/nutrition';
 import { stepSleep } from '@game/sleep';
 import { HOURS_PER_SECOND, SPEEDS } from '@game/time';
-import type { GameState } from './types';
+import { INITIAL_GAME_STATE, type GameState } from './types';
 
 export type GameAction =
   // real seconds went by: the game runs at its current speed
@@ -20,7 +20,9 @@ export type GameAction =
   | { type: 'eatSnack' }
   | { type: 'enjoyCake' }
   | { type: 'speedUp' }
-  | { type: 'slowDown' };
+  | { type: 'slowDown' }
+  // a brand new game, whatever the current one
+  | { type: 'restart' };
 
 // Runs `hours` game hours, however many there are: a hidden tab comes back
 // with all the time that went by and the game catches up.
@@ -65,6 +67,9 @@ export const gameReducer = (
     }
     case 'slowDown': {
       return { ...state, speedIndex: Math.max(state.speedIndex - 1, 0) };
+    }
+    case 'restart': {
+      return INITIAL_GAME_STATE;
     }
   }
 };

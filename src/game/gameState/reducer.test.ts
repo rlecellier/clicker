@@ -146,3 +146,11 @@ test('pays the rent when the week ends and keeps the bills in the balance', () =
   expect(state.expenses.rent).toBe(WEEKLY_RENT_CENTS);
   expect(state.balanceCents).toBe(25_000 - totalExpensesCents(state.expenses));
 });
+
+test('restarts a brand new game, whatever the current one', () => {
+  const played = gameReducer(run(INITIAL_GAME_STATE, 100), {
+    type: 'eatSnack',
+  });
+  expect(played).not.toEqual(INITIAL_GAME_STATE);
+  expect(gameReducer(played, { type: 'restart' })).toEqual(INITIAL_GAME_STATE);
+});
