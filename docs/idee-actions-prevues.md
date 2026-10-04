@@ -31,6 +31,13 @@ Chaque action prévue est taguée avec un mode :
 **récurrente** et, si oui, **à quelle récurrence**. Le modèle de référence est
 Google Calendar.
 
+## Unification avec les événements existants
+
+« Action » et « événement » désignent la même chose. Les événements existants
+(`eat`, `sleep`, `work`) doivent suivre le **même pattern** que les actions
+prévues : un mode `auto` / `ask` et une récurrence. Il n'y a donc qu'un seul
+modèle pour les deux familles.
+
 ## À préciser (questions ouvertes, à venir)
 
 _À compléter par la suite de la description._
