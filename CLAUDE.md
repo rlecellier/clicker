@@ -18,6 +18,15 @@ Conventions du projet : voir `.claude/adr/0001-project-structure.md`.
   `git push --force-with-lease`), on ne merge pas `main` dedans.
 - On ne merge qu'une fois la CI verte sur le dernier commit.
 
+## Séparation visuel / logique
+
+- **Composants visuels** : ils affichent des props, sans état métier ni effet
+  de bord, et sont réutilisables au maximum.
+- **Hooks** : toute la logique (état, effets, calculs, appels au context) y est
+  encapsulée.
+- **Composants orchestrateurs** : au besoin, ils branchent un ou plusieurs
+  hooks sur des composants visuels et ne font rien d'autre.
+
 ## Politique de test
 
 - **Composant uniquement visuel : pas de test.** S'il n'a ni comportement ni
