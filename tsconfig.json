@@ -13,7 +13,14 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
-    "types": ["vite/client"]
+    "paths": {
+      "@page/*": ["./src/pages/*"],
+      "@component/*": ["./src/components/*"],
+      "@hook/*": ["./src/hooks/*"],
+      "@context/*": ["./src/contexts/*"],
+      "@test/*": ["./src/test/*"]
+    },
+    "types": ["node", "vite/client"]
   },
   "include": ["src", "vite.config.ts", "eslint.config.js"]
 }
