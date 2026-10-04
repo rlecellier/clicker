@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { demoShot } from './support';
 
 // The game runs eight times faster than real time by default.
 const HOUR_MS = 1000 / 8;
@@ -14,11 +15,13 @@ test('snacks and cakes feed the calories gauge', async ({ page }) => {
 
   await page.getByRole('button', { name: /Eat a snack/ }).click();
   await expect(calories).toHaveAttribute('aria-valuetext', '70%');
+  await demoShot(page, 'calories-snack');
   await page.waitForTimeout(500);
 
   // The night burns calories: six hours at two per hour.
   await page.clock.fastForward(6 * HOUR_MS);
   await expect(calories).toHaveAttribute('aria-valuetext', '58%');
+  await demoShot(page, 'calories-night');
   await page.waitForTimeout(500);
 
   // A cake lasts half an hour of game time, work or not.

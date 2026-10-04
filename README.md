@@ -33,8 +33,9 @@ adapt them to the screen. The conventions are written down in the ADRs of
 [`.claude/adr/`](.claude/adr/) (project structure, game architecture) and a
 review of the project is in [`docs/architecture-review.md`](docs/architecture-review.md).
 
-The e2e journeys (`e2e/`) are real tests; the `/demo` comment on a pull request
-replays them and posts a screenshot of each.
+The e2e journeys (`e2e/`) are real tests; on every pull request the
+`MR demo` workflow replays them and posts the screenshots listed in
+`e2e/demo.json`.
 
 ## Deployment
 

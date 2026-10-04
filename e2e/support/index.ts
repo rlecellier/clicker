@@ -1,0 +1,1 @@
+export { demoShot } from './demoShot';

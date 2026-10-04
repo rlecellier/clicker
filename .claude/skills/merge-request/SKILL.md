@@ -69,7 +69,7 @@ reviewer who has not seen the conversation.
 | 🎯 Why | The problem or need, in one or two sentences. Link the issue. |
 | ✨ What changed | Bullets grouped by theme, written as outcomes, not file lists. |
 | 🧪 How to test | Numbered, concrete steps and the expected result. |
-| 📸 Screenshots | UI changes only. Remove the section otherwise; the demo itself is added by the `/demo` comment (see below). |
+| 📸 Screenshots | UI changes only. Remove the section otherwise; the demo workflow posts its own comment (see below). |
 | ⚠️ Notes for reviewers | Trade-offs, risks, follow-ups, what is out of scope. |
 | ✅ Checklist | The items from the template, ticked only if true. |
 
@@ -114,18 +114,22 @@ The game needed a second way to earn money that trades clicking for waiting.
 
 ## 5. Demo
 
-The demo is never automatic, and it never adds demo-only code. It is the
-Playwright e2e journeys in `e2e/` (`*.e2e.ts`) played with screenshots on. A feature that needs a demo adds a journey that is a real test: it asserts
-the behavior and stays after the merge. Never commit a script that exists only
-to film a feature.
+The demo is automatic and never adds demo-only code. The `MR demo` workflow
+(`.github/workflows/demo.yml`) runs the Playwright e2e journeys (`e2e/*.e2e.ts`)
+on every push to the MR, and posts as a comment the screenshots that this MR
+lists in `e2e/demo.json`.
 
-After the MR is open, a collaborator comments `/demo`: the `MR demo` workflow
-(`.github/workflows/demo.yml`) runs the journeys with `DEMO=1` and posts a
-screenshot of each journey as a comment. Comment `/demo` again to refresh it. The
-files live on the `mr-assets` branch and are deleted, with the comment, when
+To show a feature, add `await demoShot(page, 'my-shot')` (from
+`e2e/support`) at the right step of a journey that is a real test:
+it asserts the behavior and stays after the merge. Then list `my-shot` in
+`e2e/demo.json`. Never commit a script that exists only to film a feature.
+`e2e/demo.json` belongs to the MR: set it to this MR's screenshots, and empty
+the list (`{ "screenshots": [] }`) when none applies.
+
+The files live on the `mr-assets` branch and are deleted, with the comment, when
 the MR is merged or closed.
 
-Locally: `DEMO=1 npm run e2e` writes the screenshots to `test-results/`.
+Locally: `DEMO=1 npm run e2e` writes the listed screenshots to `demo/`.
 
 ## 6. Then
 
