@@ -9,7 +9,9 @@ import './global.css';
 const root = document.querySelector('#root');
 if (!root) throw new Error('Root element not found');
 
-const router = createBrowserRouter(routes);
+const router = createBrowserRouter(routes, {
+  basename: import.meta.env.BASE_URL,
+});
 
 createRoot(root).render(
   <StrictMode>
