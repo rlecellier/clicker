@@ -135,6 +135,23 @@ Les alias sont déclarés à deux endroits, qui doivent rester synchronisés :
 Tout nouvel alias (par exemple pour un dossier `game/`) s'ajoute aux deux
 fichiers et à la table ci-dessus.
 
+### 7. Syntaxe : fonctions fléchées assignées à un `const`
+
+Composants, hooks et helpers s'écrivent `const Nom = () => {}`, jamais
+`function Nom() {}`.
+
+```tsx
+// ✅
+export const MoneyCounter = ({ amount }: MoneyCounterProps) => {
+  return <p>${amount}</p>;
+};
+
+// ❌
+export function MoneyCounter({ amount }: MoneyCounterProps) {
+  return <p>${amount}</p>;
+}
+```
+
 ## Conséquences
 
 - Un élément peut être déplacé ou renommé sans casser ses imports internes.
@@ -153,6 +170,8 @@ fichiers et à la table ci-dessus.
 - `no-restricted-imports` interdit `../*` et les imports qui traversent un
   dossier (`./MoneyCounter/MoneyCounter`) : il faut passer par un alias ou par
   le `index.ts` du dossier.
+- `func-style: expression` interdit les déclarations `function` : tout passe par
+  un `const` fléché.
 - Les alias sont déclarés dans `tsconfig.json` et `vite.config.ts`.
 
 ## Exceptions
