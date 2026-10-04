@@ -17,6 +17,7 @@ const renderPanel = (isOpen: boolean) => {
         dreamGauge={20}
         dreams={2}
         isSleeping={false}
+        location="home"
         isOpen={isOpen}
         onClose={onClose}
       />
@@ -44,6 +45,7 @@ test('is marked as open only when it is open', () => {
         dreamGauge={20}
         dreams={2}
         isSleeping={false}
+        location="home"
         isOpen
         onClose={vi.fn()}
       />
@@ -96,4 +98,53 @@ test('marks the current page and closes when a link is clicked', async () => {
   );
   await user.click(screen.getByRole('link', { name: 'Balance' }));
   expect(onClose).toHaveBeenCalled();
+});
+
+test('unfolds the places and links to each of them', async () => {
+  const user = userEvent.setup();
+  renderPanel(true);
+  const toggle = screen.getByRole('button', { name: /Places/ });
+  expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+  await user.click(toggle);
+  expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  for (const [name, place] of [
+    ['Home', 'home'],
+    ['Work', 'work'],
+    ['Restaurant', 'restaurant'],
+  ] as const) {
+    expect(
+      screen.getByRole('link', { name: new RegExp(name) }),
+    ).toHaveAttribute('href', `/places/${place}`);
+  }
+});
+
+test('is unfolded when a place is shown, and marks where the player is', () => {
+  render(
+    <MemoryRouter initialEntries={['/places/work']}>
+      <Sidebar
+        id="panel"
+        calories={50}
+        fat={0}
+        brain={30}
+        dreamGauge={20}
+        dreams={2}
+        isSleeping={false}
+        location="restaurant"
+        isOpen
+        onClose={vi.fn()}
+      />
+    </MemoryRouter>,
+  );
+  expect(screen.getByRole('button', { name: /Places/ })).toHaveAttribute(
+    'aria-expanded',
+    'true',
+  );
+  expect(screen.getByRole('link', { name: /Restaurant/ })).toHaveTextContent(
+    'you are here',
+  );
+  expect(screen.getByRole('link', { name: /Work/ })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
 });

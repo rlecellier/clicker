@@ -63,6 +63,23 @@ test('the sidebar opens the balance page, with the rent and the meals', async ()
   }
 });
 
+test('the sidebar unfolds the places and opens one with its banner', async () => {
+  const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+  renderApp();
+  await user.click(screen.getByRole('button', { name: /Places/ }));
+  await user.click(screen.getByRole('link', { name: /Restaurant/ }));
+  expect(
+    await screen.findByRole('heading', { name: 'Restaurant' }),
+  ).toBeInTheDocument();
+  // a new game starts asleep at home
+  expect(screen.getByText('You are not here')).toBeInTheDocument();
+});
+
+test('an unknown place shows the error page', async () => {
+  renderApp('/places/moon');
+  expect(await screen.findByText('404 Not Found')).toBeInTheDocument();
+});
+
 test('unknown route shows the error page', () => {
   renderApp('/nope');
   expect(screen.getByText('404 Not Found')).toBeInTheDocument();

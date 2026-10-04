@@ -5,7 +5,7 @@ import { LocationIndicator } from './LocationIndicator';
 
 test.each([
   ['home', 'Home'],
-  ['office', 'Office'],
+  ['work', 'Work'],
   ['restaurant', 'Restaurant'],
 ] as const)('shows %s', (location, label) => {
   render(<LocationIndicator location={location} />);
