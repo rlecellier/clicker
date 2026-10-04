@@ -1,0 +1,59 @@
+.root {
+  padding: 0 1rem 1rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.navigation,
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navigation button,
+.actions button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+.title {
+  margin: 0;
+  min-width: 9rem;
+  font-size: 1rem;
+}
+
+.views {
+  display: flex;
+  gap: 1px;
+}
+
+/* The pressed view stands out from the other one. */
+.views button {
+  border-radius: 0;
+  background: var(--color-surface);
+}
+
+.views button:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.views button:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.views button[aria-pressed='true'] {
+  background: var(--color-accent);
+}
+
+/* Vertical moves still scroll the page; horizontal ones are swipes. */
+.grid {
+  touch-action: pan-y;
+}

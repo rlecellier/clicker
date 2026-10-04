@@ -1,5 +1,6 @@
 import { data, type RouteObject } from 'react-router';
 
+import { CalendarPage } from '@page/CalendarPage';
 import { ErrorPage } from '@page/ErrorPage';
 import { BalancePage } from '@page/BalancePage';
 import { GamePage } from '@page/GamePage';
@@ -14,6 +15,7 @@ export const routes: RouteObject[] = [
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <GamePage /> },
+      { path: 'calendar', element: <CalendarPage /> },
       { path: 'balance', element: <BalancePage /> },
       {
         path: 'places/:place',
