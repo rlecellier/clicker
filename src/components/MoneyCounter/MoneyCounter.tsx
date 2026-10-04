@@ -5,5 +5,5 @@ type MoneyCounterProps = {
 };
 
 export const MoneyCounter = ({ amount }: MoneyCounterProps) => {
-  return <p className={styles.money}>${amount}</p>;
+  return <p className={styles.money}>${Number(amount.toFixed(2))}</p>;
 };

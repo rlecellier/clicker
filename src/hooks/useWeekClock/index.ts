@@ -4,4 +4,6 @@ export {
   HOURS_PER_SECOND,
   HOURS_PER_WEEK,
 } from './constants';
+export { EVENTS } from './events';
+export type { CalendarEvent } from './types';
 export { useWeekClock } from './useWeekClock';

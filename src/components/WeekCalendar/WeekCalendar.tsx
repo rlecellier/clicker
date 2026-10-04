@@ -1,6 +1,4 @@
-import { DAYS_PER_WEEK, HOURS_PER_DAY } from '@hook/useWeekClock';
-
-import { EVENTS } from './events';
+import { DAYS_PER_WEEK, EVENTS, HOURS_PER_DAY } from '@hook/useWeekClock';
 
 import styles from './WeekCalendar.module.css';
 
