@@ -1,5 +1,6 @@
 export {
   isWorkHours,
+  obligationHoursBetween,
   payBetween,
   pendingPayCents,
   weeklyPayCents,
