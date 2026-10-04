@@ -26,7 +26,8 @@ Go through every item. Fix what fails, do not push on a red item.
       pass; `npm run e2e` too when the change is visible in the browser.
 - [ ] `npm run build` succeeds when the change touches build config, routing or
       dependencies.
-- [ ] New behavior has tests; changed behavior has updated tests.
+- [ ] Every new or changed user action is covered by at least one Playwright
+      journey. Purely visual components have no test (see `CLAUDE.md`).
 - [ ] The code follows the project structure ADR (`.claude/adr/`): one folder
       per component / hook / context, `index.ts` per folder, aliases instead
       of `../`.
@@ -107,7 +108,7 @@ The game needed a second way to earn money that trades clicking for waiting.
 
 - [x] Unit commits with gitmoji messages, no intermediate commits
 - [x] `npm run lint`, `npx tsc --noEmit` and `npm test` pass
-- [x] Tests added or updated
+- [x] Each new user action is covered by a Playwright journey
 - [x] Follows the project structure ADR
 ```
 

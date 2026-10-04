@@ -26,5 +26,5 @@
 
 - [ ] Unit commits with gitmoji messages, no intermediate commits
 - [ ] `npm run lint`, `npx tsc --noEmit` and `npm test` pass
-- [ ] Tests added or updated
+- [ ] Each new user action is covered by a Playwright journey
 - [ ] Follows the project structure ADR (`.claude/adr/`)
