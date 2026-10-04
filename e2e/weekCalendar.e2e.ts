@@ -1,7 +1,16 @@
 import { expect, test } from '@playwright/test';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const HOURS_PER_DAY = 24;
+const HOURS_PER_WEEK = HOURS_PER_DAY * DAYS.length;
 const HOUR_MS = 1000;
+const STEP_HOURS = 3;
+
+function label(weekHour: number) {
+  const day = DAYS[Math.floor(weekHour / HOURS_PER_DAY) % DAYS.length];
+  const hour = String(weekHour % HOURS_PER_DAY).padStart(2, '0');
+  return `${day}, ${hour}:00`;
+}
 
 test('the calendar walks through the week, one hour per second', async ({
   page,
@@ -12,17 +21,13 @@ test('the calendar walks through the week, one hour per second', async ({
   await page.goto('/');
 
   const calendar = page.getByRole('img');
-  await expect(calendar).toHaveAccessibleName('Mon, 00:00');
+  await expect(calendar).toHaveAccessibleName(label(0));
 
-  for (const [index, day] of DAYS.entries()) {
-    // Noon of each day.
-    await page.clock.fastForward((index === 0 ? 12 : 24) * HOUR_MS);
-    await expect(calendar).toHaveAccessibleName(`${day}, 12:00`);
-    // Lets the recording show the cursor moving from day to day.
-    await page.waitForTimeout(250);
+  for (let hour = STEP_HOURS; hour <= HOURS_PER_WEEK; hour += STEP_HOURS) {
+    await page.clock.fastForward(STEP_HOURS * HOUR_MS);
+    // The week starts over on Monday after Sunday night.
+    await expect(calendar).toHaveAccessibleName(label(hour));
+    // Slows the recording down so the cursor can be followed.
+    await page.waitForTimeout(100);
   }
-
-  // Past Sunday night the week starts over on Monday.
-  await page.clock.fastForward(12 * HOUR_MS);
-  await expect(calendar).toHaveAccessibleName('Mon, 00:00');
 });
