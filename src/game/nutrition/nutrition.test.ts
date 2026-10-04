@@ -13,6 +13,7 @@ import {
 import {
   eatSnack,
   getCaloriesLevel,
+  getCaloriesStatus,
   INITIAL_NUTRITION,
   isEnjoyingCake,
   startCake,
@@ -113,4 +114,15 @@ test('calories are low below 20%, high above 80%, balanced in between', () => {
   expect(getCaloriesLevel(20)).toBe('balanced');
   expect(getCaloriesLevel(80)).toBe('balanced');
   expect(getCaloriesLevel(80.1)).toBe('high');
+});
+
+test('status is green between 40% and 60%, yellow up to 20% and 80%, red beyond', () => {
+  expect(getCaloriesStatus(19.9)).toBe('starving');
+  expect(getCaloriesStatus(20)).toBe('running-low');
+  expect(getCaloriesStatus(39.9)).toBe('running-low');
+  expect(getCaloriesStatus(40)).toBe('good');
+  expect(getCaloriesStatus(60)).toBe('good');
+  expect(getCaloriesStatus(60.1)).toBe('running-high');
+  expect(getCaloriesStatus(80)).toBe('running-high');
+  expect(getCaloriesStatus(80.1)).toBe('overflowing');
 });

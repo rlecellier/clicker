@@ -3,7 +3,7 @@ import { Meter } from '@base-ui/react/meter';
 import {
   CALORIES_MAX_TARGET,
   CALORIES_MIN_TARGET,
-  getCaloriesLevel,
+  getCaloriesStatus,
 } from '@game/nutrition';
 
 import styles from './CaloriesGauge.module.css';
@@ -15,7 +15,7 @@ type CaloriesGaugeProps = {
 };
 
 export const CaloriesGauge = ({ calories, fat }: CaloriesGaugeProps) => {
-  const level = getCaloriesLevel(calories);
+  const status = getCaloriesStatus(calories);
 
   return (
     <Meter.Root
@@ -25,7 +25,7 @@ export const CaloriesGauge = ({ calories, fat }: CaloriesGaugeProps) => {
       aria-valuetext={`${Math.round(calories)}%`}
     >
       <div className={styles.header}>
-        <span className={styles.value} data-level={level}>
+        <span className={styles.value} data-status={status}>
           {Math.round(calories)}%
         </span>
         <span className={styles.fat}>Fat {fat.toFixed(1)}</span>
@@ -38,7 +38,7 @@ export const CaloriesGauge = ({ calories, fat }: CaloriesGaugeProps) => {
             width: `${CALORIES_MAX_TARGET - CALORIES_MIN_TARGET}%`,
           }}
         />
-        <Meter.Indicator className={styles.indicator} data-level={level} />
+        <Meter.Indicator className={styles.indicator} data-status={status} />
       </Meter.Track>
     </Meter.Root>
   );

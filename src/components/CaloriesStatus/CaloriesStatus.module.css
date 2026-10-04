@@ -1,0 +1,56 @@
+/* The carrot is a small round icon button filled with the state color. */
+.trigger {
+  padding: 0.4rem;
+  color: #111;
+  background: var(--status-color);
+}
+
+.trigger:hover:not([disabled]) {
+  background: var(--status-color);
+  filter: brightness(1.1);
+}
+
+.trigger[data-status='good'],
+.popup[data-status='good'] {
+  --status-color: var(--color-success);
+}
+
+.trigger[data-status='running-low'],
+.trigger[data-status='running-high'],
+.popup[data-status='running-low'],
+.popup[data-status='running-high'] {
+  --status-color: var(--color-warning-light);
+}
+
+.trigger[data-status='starving'],
+.trigger[data-status='overflowing'],
+.popup[data-status='starving'],
+.popup[data-status='overflowing'] {
+  --status-color: var(--color-danger);
+}
+
+.positioner {
+  z-index: 50;
+}
+
+.popup {
+  box-sizing: border-box;
+  max-width: 16rem;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  background: var(--color-surface);
+  border-left: 4px solid var(--status-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.4);
+}
+
+.title {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+}
+
+.message {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}

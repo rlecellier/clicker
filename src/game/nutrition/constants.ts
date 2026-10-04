@@ -1,6 +1,9 @@
 // Calories are a gauge in % that the player keeps between 20 and 80.
 export const CALORIES_MIN_TARGET = 20;
 export const CALORIES_MAX_TARGET = 80;
+// Inside 20%–80%, the part that is comfortable (green) and the rest (yellow).
+export const CALORIES_GOOD_MIN = 40;
+export const CALORIES_GOOD_MAX = 60;
 export const CALORIES_CAP = 100;
 export const INITIAL_CALORIES = 50;
 // Calories burnt per game hour, resting and at work.

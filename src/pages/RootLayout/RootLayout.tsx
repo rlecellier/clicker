@@ -3,12 +3,12 @@ import { Menu, X } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Outlet } from 'react-router';
 
-import { CaloriesAlert } from '@component/CaloriesAlert';
+import { CaloriesStatus } from '@component/CaloriesStatus';
 import { CaloriesPanel } from '@component/CaloriesPanel';
 import { MoneyCounter } from '@component/MoneyCounter';
 import { TimeControls } from '@component/TimeControls';
 import { GameProvider, useGameContext } from '@context/GameContext';
-import { getCaloriesLevel } from '@game/nutrition';
+import { getCaloriesStatus } from '@game/nutrition';
 import { readSave } from '@game/save';
 
 import styles from './RootLayout.module.css';
@@ -58,7 +58,7 @@ const Layout = () => {
           onClose={closeMenu}
         />
         <div className={styles.status}>
-          <CaloriesAlert level={getCaloriesLevel(calories)} />
+          <CaloriesStatus status={getCaloriesStatus(calories)} />
           <MoneyCounter cents={balanceCents} />
         </div>
       </header>
