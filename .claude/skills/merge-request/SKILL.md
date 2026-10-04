@@ -115,18 +115,17 @@ The game needed a second way to earn money that trades clicking for waiting.
 ## 5. Demo
 
 The demo is never automatic, and it never adds demo-only code. It is the
-Playwright e2e journeys in `e2e/` (`*.e2e.ts`) played with video and screenshots
-on. A feature that needs a demo adds a journey that is a real test: it asserts
+Playwright e2e journeys in `e2e/` (`*.e2e.ts`) played with screenshots on. A feature that needs a demo adds a journey that is a real test: it asserts
 the behavior and stays after the merge. Never commit a script that exists only
 to film a feature.
 
 After the MR is open, a collaborator comments `/demo`: the `MR demo` workflow
-(`.github/workflows/demo.yml`) runs the journeys with `DEMO=1` and posts the
-GIF and screenshots as a comment. Comment `/demo` again to refresh it. The
+(`.github/workflows/demo.yml`) runs the journeys with `DEMO=1` and posts a
+screenshot of each journey as a comment. Comment `/demo` again to refresh it. The
 files live on the `mr-assets` branch and are deleted, with the comment, when
 the MR is merged or closed.
 
-Locally: `DEMO=1 npm run e2e` writes the recordings to `test-results/`.
+Locally: `DEMO=1 npm run e2e` writes the screenshots to `test-results/`.
 
 ## 6. Then
 
