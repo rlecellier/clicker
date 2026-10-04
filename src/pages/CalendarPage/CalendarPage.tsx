@@ -2,6 +2,7 @@ import { Button } from '@base-ui/react/button';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { useState } from 'react';
 
+import { AddEvent } from '@component/AddEvent';
 import { CalendarGrid } from '@component/CalendarGrid';
 import { useGameContext } from '@context/GameContext';
 import { useCalendarFollow } from '@hook/useCalendarFollow';
@@ -23,7 +24,7 @@ const VIEWS: { view: CalendarView; label: string }[] = [
 // chosen), a single day on mobile, with a swipe to go to the next one. The
 // whole day fits the screen; ctrl + wheel or a pinch zooms in on the hours.
 export const CalendarPage = () => {
-  const { week, weekHour } = useGameContext();
+  const { week, weekHour, schedule, obligations } = useGameContext();
   const currentDay =
     week * DAYS_PER_WEEK + Math.floor(weekHour / HOURS_PER_DAY);
   const dayRatio = (weekHour % HOURS_PER_DAY) / HOURS_PER_DAY;
@@ -75,6 +76,7 @@ export const CalendarPage = () => {
           </Button>
         </div>
         <div className={styles.actions}>
+          <AddEvent shownDay={selectedDay} />
           <Button aria-label={isPlaying ? 'Pause' : 'Play'} onClick={toggle}>
             {isPlaying ? (
               <Pause aria-hidden size={18} />
@@ -102,6 +104,8 @@ export const CalendarPage = () => {
       <div className={styles.grid} ref={scroller} {...swipe}>
         <CalendarGrid
           days={days}
+          schedule={schedule}
+          obligations={obligations}
           currentDay={currentDay}
           dayRatio={dayRatio}
           zoom={zoom}
