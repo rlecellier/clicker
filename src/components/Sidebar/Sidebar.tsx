@@ -1,24 +1,31 @@
+import { Receipt, Utensils } from 'lucide-react';
 import { useEffect } from 'react';
+import { NavLink } from 'react-router';
 
 import { BrainGauge } from '@component/BrainGauge';
 import { CaloriesGauge } from '@component/CaloriesGauge';
 
-import styles from './GaugesPanel.module.css';
+import styles from './Sidebar.module.css';
 
-type GaugesPanelProps = {
+type SidebarProps = {
   id: string;
   calories: number;
   fat: number;
   brain: number;
   isSleeping: boolean;
-  // only matters on mobile: from tablet up the panel is always in the header
+  // only matters on mobile: from tablet up the sidebar is always shown
   isOpen: boolean;
   onClose: () => void;
 };
 
-// The calories, fat and brain gauges: a sidebar on mobile, part of the header from
+const LINKS = [
+  { to: '/', label: 'Game', Icon: Utensils },
+  { to: '/expenses', label: 'Expenses', Icon: Receipt },
+];
+
+// The gauges and the pages menu: slides in on mobile, always shown from
 // tablet up.
-export const GaugesPanel = ({
+export const Sidebar = ({
   id,
   calories,
   fat,
@@ -26,7 +33,7 @@ export const GaugesPanel = ({
   isSleeping,
   isOpen,
   onClose,
-}: GaugesPanelProps) => {
+}: SidebarProps) => {
   useEffect(() => {
     if (!isOpen) return;
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -49,6 +56,19 @@ export const GaugesPanel = ({
       <aside id={id} className={styles.panel} data-open={isOpen || undefined}>
         <CaloriesGauge calories={calories} fat={fat} />
         <BrainGauge brain={brain} isSleeping={isSleeping} />
+        <nav aria-label="Pages" className={styles.nav}>
+          {LINKS.map(({ to, label, Icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end
+              className={styles.link}
+              onClick={onClose}
+            >
+              <Icon aria-hidden size={18} /> {label}
+            </NavLink>
+          ))}
+        </nav>
       </aside>
     </>
   );

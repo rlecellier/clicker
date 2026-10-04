@@ -1,21 +1,24 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router';
 import { expect, test, vi } from 'vitest';
 
-import { GaugesPanel } from './GaugesPanel';
+import { Sidebar } from './Sidebar';
 
 const renderPanel = (isOpen: boolean) => {
   const onClose = vi.fn();
   render(
-    <GaugesPanel
-      id="panel"
-      calories={50}
-      fat={1.5}
-      brain={30}
-      isSleeping={false}
-      isOpen={isOpen}
-      onClose={onClose}
-    />,
+    <MemoryRouter>
+      <Sidebar
+        id="panel"
+        calories={50}
+        fat={1.5}
+        brain={30}
+        isSleeping={false}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
+    </MemoryRouter>,
   );
   return onClose;
 };
@@ -29,15 +32,17 @@ test('contains the calories and brain gauges and the fat', () => {
 
 test('is marked as open only when it is open', () => {
   const { container } = render(
-    <GaugesPanel
-      id="panel"
-      calories={50}
-      fat={0}
-      brain={30}
-      isSleeping={false}
-      isOpen
-      onClose={vi.fn()}
-    />,
+    <MemoryRouter>
+      <Sidebar
+        id="panel"
+        calories={50}
+        fat={0}
+        brain={30}
+        isSleeping={false}
+        isOpen
+        onClose={vi.fn()}
+      />
+    </MemoryRouter>,
   );
   expect(container.querySelector('#panel')).toHaveAttribute('data-open');
 });
@@ -63,4 +68,27 @@ test('ignores Escape when it is closed', async () => {
   const onClose = renderPanel(false);
   await user.keyboard('{Escape}');
   expect(onClose).not.toHaveBeenCalled();
+});
+
+test('links to the game and to the expenses', () => {
+  renderPanel(false);
+  expect(screen.getByRole('link', { name: 'Game' })).toHaveAttribute(
+    'href',
+    '/',
+  );
+  expect(screen.getByRole('link', { name: 'Expenses' })).toHaveAttribute(
+    'href',
+    '/expenses',
+  );
+});
+
+test('marks the current page and closes when a link is clicked', async () => {
+  const user = userEvent.setup();
+  const onClose = renderPanel(true);
+  expect(screen.getByRole('link', { name: 'Game' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await user.click(screen.getByRole('link', { name: 'Expenses' }));
+  expect(onClose).toHaveBeenCalled();
 });

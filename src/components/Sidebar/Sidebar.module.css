@@ -21,7 +21,7 @@
   left: 0;
   z-index: 2;
   box-sizing: border-box;
-  width: 180px;
+  width: 200px;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -36,20 +36,43 @@
   transform: none;
 }
 
-/* Tablet and up: no sidebar, the gauge sits in the header. */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
+.link:hover {
+  background: var(--color-surface);
+}
+
+.link[aria-current='page'] {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+/* Tablet and up: the sidebar is always there, next to the page. */
 @media (min-width: 640px) {
   .backdrop {
     display: none;
   }
 
   .panel {
-    position: static;
-    flex-direction: row;
-    gap: 1rem;
-    width: auto;
-    padding: 0;
-    background: none;
-    border: 0;
+    position: sticky;
+    top: 0;
+    flex-shrink: 0;
+    height: 100vh;
+    padding-top: 1rem;
     transform: none;
     transition: none;
   }

@@ -35,6 +35,13 @@ body {
   max-width: 480px;
 }
 
+/* The sidebar sits beside the phone-like column from tablet up. */
+@media (min-width: 640px) {
+  #root {
+    max-width: 720px;
+  }
+}
+
 button {
   display: inline-flex;
   align-items: center;
