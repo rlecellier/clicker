@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   CLICK_VALUE,
@@ -6,6 +6,7 @@ import {
   WORKING_DAY_REWARD,
 } from './constants';
 import { useWeekClock } from '@hook/useWeekClock';
+import { bankedPay, isWorking, pendingPay } from './earnings';
 import { INITIAL_GAME_STATE } from './types';
 
 export const useGame = (initialState = INITIAL_GAME_STATE) => {
@@ -13,7 +14,8 @@ export const useGame = (initialState = INITIAL_GAME_STATE) => {
   const [workingDayStart, setWorkingDayStart] = useState<number | undefined>();
   const [progress, setProgress] = useState(0);
 
-  const weekHour = useWeekClock();
+  const { week, weekHour } = useWeekClock();
+  const salary = useMemo(() => bankedPay(week), [week]);
 
   const isWorkingDay = workingDayStart !== undefined;
 
@@ -50,7 +52,17 @@ export const useGame = (initialState = INITIAL_GAME_STATE) => {
     };
   }, [workingDayStart]);
 
-  return { money, weekHour, progress, isWorkingDay, work, startWorkingDay };
+  return {
+    // clicks and working days, plus the salary of every finished week
+    money: money + salary,
+    weekHour,
+    pendingPay: pendingPay(week, weekHour),
+    isEarning: isWorking(weekHour),
+    progress,
+    isWorkingDay,
+    work,
+    startWorkingDay,
+  };
 };
 
 export type UseGameResult = ReturnType<typeof useGame>;

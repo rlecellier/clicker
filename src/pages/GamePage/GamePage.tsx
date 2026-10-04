@@ -3,6 +3,7 @@ import { Briefcase, Hammer } from 'lucide-react';
 import { useOutletContext } from 'react-router';
 
 import { MoneyCounter } from '@component/MoneyCounter';
+import { PendingPay } from '@component/PendingPay';
 import { WeekCalendar } from '@component/WeekCalendar';
 import { WorkingDayProgress } from '@component/WorkingDayProgress';
 import {
@@ -14,12 +15,21 @@ import {
 import styles from './GamePage.module.css';
 
 export const GamePage = () => {
-  const { money, weekHour, progress, isWorkingDay, work, startWorkingDay } =
-    useOutletContext<UseGameResult>();
+  const {
+    money,
+    weekHour,
+    pendingPay,
+    isEarning,
+    progress,
+    isWorkingDay,
+    work,
+    startWorkingDay,
+  } = useOutletContext<UseGameResult>();
 
   return (
     <>
       <MoneyCounter amount={money} />
+      <PendingPay amount={pendingPay} isEarning={isEarning} />
       <WeekCalendar weekHour={weekHour} />
       <div className={styles.actions}>
         <Button onClick={work} disabled={isWorkingDay}>
