@@ -66,3 +66,17 @@ côté « prévu »), présents **par défaut**.
 ## À préciser (questions ouvertes, à venir)
 
 _À compléter par la suite de la description._
+
+## Première tranche livrée
+
+- **Statut** : première tranche développée, à tester (voir ADR 0003).
+- Fait : modèle unique d'événement (`mode` `auto` / `ask`, récurrence), « Get a
+  Job » avec le vendeur de vêtements, obligations et prévu dans le calendrier,
+  `eat` / `sleep` par défaut dans le prévu, ajout d'un événement « Lire un livre »
+  (heure, récurrence, mode), pop-up / page entière pour `ask`.
+- Pas encore fait :
+  - modifier ou supprimer un événement du prévu (y compris eat / sleep / work) ;
+  - un prévu qui diffère de l'obligation (le salaire suit l'obligation, pas la
+    présence réelle) ;
+  - récurrence à la Google Calendar complète (jours au choix, fin de série) ;
+  - d'autres activités que la lecture, d'autres jobs, démission.
