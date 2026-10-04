@@ -46,10 +46,14 @@ provider.
 
 Aujourd'hui il y a **deux horloges** :
 
-| Quoi                     | Temps utilisé                                       |
-| ------------------------ | --------------------------------------------------- |
-| Calendrier, salaire      | temps de jeu (`useWeekClock`, accéléré ×0,25 → ×32) |
-| Journée de travail (5 s) | temps réel (`performance.now()` dans `useGame`)     |
+| Quoi | Temps utilisé |
+| ------------------------ | --------------------------------------------------- | --- |
+| Calendrier, salaire | temps de jeu (`useWeekClock`, accéléré ×0,25 → ×32) |
+| Journée de travail (5 s) | temps réel (`performance.now()` dans `useGame`) |
+
+> **Décision** : on gardera bien **deux horloges** (temps de jeu et temps réel)
+> pour certaines actions. Les événements en cours (repas, cake) se déroulent en
+> temps de jeu.
 
 Quand on ajoutera des durées (trajets, cooldowns, upgrades temporisés), chaque
 feature devra choisir. Le plus simple est une règle : **le temps de jeu est la
@@ -148,11 +152,15 @@ le choix du point 1.1 (un ou plusieurs contexts) le conditionne.
 
 ### 🟠 2.1 Trois sens du mot « work »
 
-| Nom                                      | Sens                               |
-| ---------------------------------------- | ---------------------------------- |
-| `work()` / bouton « Work »               | un clic qui rapporte 1 $           |
-| `startWorkingDay` / `isWorkingDay`       | le bouton de 5 s qui rapporte 10 $ |
-| `kind: 'work'`, `isWorking`, `isEarning` | les plages horaires du calendrier  |
+> **Décision** : les actions de démo « Work » (clic) et « Journée de travail »
+> (5 s) sont supprimées, on passe à de vraies actions (calories, ci-dessous).
+> Il ne reste que le sens « plage horaire du calendrier ».
+
+| Nom | Sens |
+| ---------------------------------------- | ---------------------------------- | --- |
+| `work()` / bouton « Work » | un clic qui rapporte 1 $ |
+| `startWorkingDay` / `isWorkingDay` | le bouton de 5 s qui rapporte 10 $ |
+| `kind: 'work'`, `isWorking`, `isEarning` | les plages horaires du calendrier |
 
 Le gameplay « clic » et le gameplay « calendrier » se recouvrent par le
 vocabulaire. Quelques renommages suffiraient (`work` → `click`, `isWorking` →
@@ -236,15 +244,15 @@ quand l'interface grossira (upgrades, panneaux).
 
 ## 4. Décisions à prendre
 
-| #   | Décision                                       | Recommandation                                                                                                                                                                |
-| --- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| D1  | Où vit l'état du jeu ?                         | `GameContext` selon l'ADR §3 (1.1), à la place de `useOutletContext`.                                                                                                         |
-| D2  | Modèle d'état                                  | Un `GameState` complet sérialisable + reducer pur (1.3), avec le temps de jeu comme seule horloge (1.2). Fait d'un seul bloc, c'est aussi ce qui rend la sauvegarde triviale. |
-| D3  | Où range-t-on la logique pure ?                | `src/game/` avec alias `@game/*` (1.4), documenté dans un ADR 0002.                                                                                                           |
-| D4  | Que devient la « journée de travail » de 5 s ? | À trancher côté produit : supprimée (le calendrier la remplace), ou convertie en événement/action en temps de jeu. Conditionne le vocabulaire (2.1).                          |
-| D5  | Onglet en arrière-plan                         | Plafonner le delta (et pause) ou progression hors-ligne assumée (1.7).                                                                                                        |
-| D6  | Argent                                         | Centimes entiers (1.6), à faire en même temps que D2.                                                                                                                         |
-| D7  | CI                                             | Ajouter `ci.yml` sur les PR (3.1), indépendant des autres, à faire en premier.                                                                                                |
+| #   | Décision                                       | Recommandation                                                                                                                                                                | Décision                                                                                                                                           |
+| --- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | Où vit l'état du jeu ?                         | `GameContext` selon l'ADR §3 (1.1), à la place de `useOutletContext`.                                                                                                         | ✅ Accepté.                                                                                                                                        |
+| D2  | Modèle d'état                                  | Un `GameState` complet sérialisable + reducer pur (1.3), avec le temps de jeu comme seule horloge (1.2). Fait d'un seul bloc, c'est aussi ce qui rend la sauvegarde triviale. | ✅ Accepté.                                                                                                                                        |
+| D3  | Où range-t-on la logique pure ?                | `src/game/` avec alias `@game/*` (1.4), documenté dans un ADR 0002.                                                                                                           | ✅ Accepté.                                                                                                                                        |
+| D4  | Que devient la « journée de travail » de 5 s ? | À trancher côté produit : supprimée (le calendrier la remplace), ou convertie en événement/action en temps de jeu. Conditionne le vocabulaire (2.1).                          | ✅ Supprimée : les actions de démo « Work » et « Journée de travail » sont retirées, remplacées par les actions calories (fait).                   |
+| D5  | Onglet en arrière-plan                         | Plafonner le delta (et pause) ou progression hors-ligne assumée (1.7).                                                                                                        | ✅ Le jeu continue de progresser quand l'onglet est en arrière-plan : pas de plafond de delta (déjà le cas, le delta est rejoué par pas de 3 min). |
+| D6  | Argent                                         | Centimes entiers (1.6), à faire en même temps que D2.                                                                                                                         | ✅ Accepté.                                                                                                                                        |
+| D7  | CI                                             | Ajouter `ci.yml` sur les PR (3.1), indépendant des autres, à faire en premier.                                                                                                | ✅ Accepté.                                                                                                                                        |
 
 ## 5. Ordre proposé
 
@@ -258,3 +266,21 @@ Une MR par ligne, chacune petite et mergeable seule :
 5. ✨ **Sauvegarde locale**, puis traitement du plafond de delta (1.7).
 6. ♻️ **Lisibilité** : `WeekCalendar` découpé, `Intl`, renommages, variables CSS
    (2.x, 3.4) — indépendant, peut passer à tout moment.
+
+## 6. Mécanique des calories (décidée en revue)
+
+Premier vrai gameplay, qui remplace les actions de démo :
+
+- Jauge de **calories** en %, à maintenir entre **20 % et 80 %**.
+- Elles **baissent** au fil de la journée (2 %/h), **plus vite pendant le travail**
+  (4 %/h).
+- Événements **Breakfast** (7h–7h30, +15 %), **Lunch** (12h–13h, +25 %) et
+  **Dinner** (19h–20h, +25 %) tous les jours : ils ajoutent leurs calories
+  pendant qu'ils se déroulent.
+- Action **Eat a snack** : +10 % en une fois.
+- Action **Enjoy a cake** : 30 minutes de temps de jeu, +20 % réparties sur sa
+  durée, possible pendant le travail.
+- Tout excédent au-delà de **80 %** devient du **gras**. La conversion réduit
+  les calories, et elle est d'autant plus rapide que l'excédent est grand
+  (≈ 1,5 × l'excédent par heure de jeu). Au-delà de 100 %, le surplus devient
+  du gras immédiatement.
