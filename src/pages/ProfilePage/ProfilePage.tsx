@@ -1,5 +1,6 @@
 import { BodyGauge } from '@component/BodyGauge';
 import { BrainGauge } from '@component/BrainGauge';
+import { GaugeList } from '@component/GaugeList';
 import { useGameContext } from '@context/GameContext';
 import {
   BIRTH_DATE,
@@ -48,12 +49,14 @@ export const ProfilePage = () => {
           <dd>{body.weightKg.toFixed(1)} kg</dd>
         </div>
       </dl>
-      <BrainGauge brain={brain} isSleeping={isSleeping} />
-      <BodyGauge
-        size="full"
-        fatPercent={body.fatPercent}
-        musclePercent={body.musclePercent}
-      />
+      <GaugeList>
+        <BrainGauge size="full" brain={brain} isSleeping={isSleeping} />
+        <BodyGauge
+          size="full"
+          fatPercent={body.fatPercent}
+          musclePercent={body.musclePercent}
+        />
+      </GaugeList>
     </section>
   );
 };
