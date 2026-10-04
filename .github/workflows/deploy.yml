@@ -21,9 +21,11 @@ permissions:
   pages: write
   id-token: write
 
+# A burst of merges deploys once: a newer push cancels the deploy still running
+# for an older commit, so only the latest `main` ends up published.
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
