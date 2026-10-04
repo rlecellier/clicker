@@ -110,7 +110,14 @@
   cursor: pointer;
 }
 
-.tab[aria-selected='true'] {
+/* Keep the hover from turning the tab blue (global button:hover), so a click
+   looks the same as a swipe. */
+.tab:hover:not([disabled]) {
+  background: transparent;
+}
+
+.tab[aria-selected='true'],
+.tab[aria-selected='true']:hover:not([disabled]) {
   background: var(--color-surface-raised);
   color: var(--color-text);
 }
