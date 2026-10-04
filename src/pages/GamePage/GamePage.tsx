@@ -4,6 +4,7 @@ import { useOutletContext } from 'react-router';
 
 import { MoneyCounter } from '@component/MoneyCounter';
 import { PendingPay } from '@component/PendingPay';
+import { TimeControls } from '@component/TimeControls';
 import { WeekCalendar } from '@component/WeekCalendar';
 import { WorkingDayProgress } from '@component/WorkingDayProgress';
 import {
@@ -18,6 +19,11 @@ export const GamePage = () => {
   const {
     money,
     weekHour,
+    speed,
+    canSpeedUp,
+    canSlowDown,
+    faster,
+    slower,
     pendingPay,
     isEarning,
     progress,
@@ -31,6 +37,13 @@ export const GamePage = () => {
       <MoneyCounter amount={money} />
       <PendingPay amount={pendingPay} isEarning={isEarning} />
       <WeekCalendar weekHour={weekHour} />
+      <TimeControls
+        speed={speed}
+        canSpeedUp={canSpeedUp}
+        canSlowDown={canSlowDown}
+        onFaster={faster}
+        onSlower={slower}
+      />
       <div className={styles.actions}>
         <Button onClick={work} disabled={isWorkingDay}>
           <Hammer aria-hidden size={18} /> Work (+${CLICK_VALUE})

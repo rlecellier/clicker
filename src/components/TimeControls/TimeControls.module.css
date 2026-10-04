@@ -1,0 +1,13 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.speed {
+  min-width: 3.5ch;
+  text-align: center;
+  color: #888;
+  font-variant-numeric: tabular-nums;
+}

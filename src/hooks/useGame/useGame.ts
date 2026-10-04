@@ -14,7 +14,8 @@ export const useGame = (initialState = INITIAL_GAME_STATE) => {
   const [workingDayStart, setWorkingDayStart] = useState<number | undefined>();
   const [progress, setProgress] = useState(0);
 
-  const { week, weekHour } = useWeekClock();
+  const { week, weekHour, speed, canSpeedUp, canSlowDown, faster, slower } =
+    useWeekClock();
   const salary = useMemo(() => bankedPay(week), [week]);
 
   const isWorkingDay = workingDayStart !== undefined;
@@ -56,6 +57,11 @@ export const useGame = (initialState = INITIAL_GAME_STATE) => {
     // clicks and working days, plus the salary of every finished week
     money: money + salary,
     weekHour,
+    speed,
+    canSpeedUp,
+    canSlowDown,
+    faster,
+    slower,
     pendingPay: pendingPay(week, weekHour),
     isEarning: isWorking(weekHour),
     progress,
