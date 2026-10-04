@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
-const HOUR_MS = 1000;
+// The game runs eight times faster than real time by default.
+const HOUR_MS = 1000 / 8;
 const HOURS_PER_WEEK = 7 * 24;
 
 test('work events pay the salary, banked at the end of the week', async ({

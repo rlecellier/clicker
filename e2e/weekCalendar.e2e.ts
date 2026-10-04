@@ -3,7 +3,8 @@ import { expect, test } from '@playwright/test';
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const HOURS_PER_DAY = 24;
 const HOURS_PER_WEEK = HOURS_PER_DAY * DAYS.length;
-const HOUR_MS = 1000;
+// The game runs eight times faster than real time by default.
+const HOUR_MS = 1000 / 8;
 const STEP_HOURS = 3;
 
 const label = (weekHour: number) => {
@@ -12,7 +13,7 @@ const label = (weekHour: number) => {
   return `${day}, ${hour}:00`;
 };
 
-test('the calendar walks through the week, one hour per second', async ({
+test('the calendar walks through the week at the default speed', async ({
   page,
 }) => {
   // Paused, so that only the steps below make the game time move.

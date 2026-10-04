@@ -3,8 +3,16 @@ import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
 import { gameStateFactory } from '@test/factories/gameStateFactory';
 import { CLICK_VALUE, WORKING_DAY_DURATION_MS } from './constants';
-import { HOURS_PER_WEEK } from '@hook/useWeekClock';
+import {
+  DEFAULT_SPEED,
+  HOURS_PER_SECOND,
+  HOURS_PER_WEEK,
+} from '@hook/useWeekClock';
 import { useGame } from './useGame';
+
+// Real milliseconds needed for the game to run the given number of hours.
+const hoursToMs = (hours: number) =>
+  (hours * 1000) / (HOURS_PER_SECOND * DEFAULT_SPEED);
 
 beforeEach(() => {
   vi.useFakeTimers({
@@ -72,14 +80,14 @@ test('earns the weekly pay while working, banked once the week ends', () => {
   const { result } = renderHook(() => useGame({ money: 0 }));
 
   act(() => {
-    vi.advanceTimersByTime(18.5 * 1000);
+    vi.advanceTimersByTime(hoursToMs(18.5));
   });
   expect(result.current.isEarning).toBe(false);
   expect(result.current.pendingPay).toBeGreaterThan(0);
   expect(result.current.money).toBe(0);
 
   act(() => {
-    vi.advanceTimersByTime((HOURS_PER_WEEK - 18.5) * 1000 + 100);
+    vi.advanceTimersByTime(hoursToMs(HOURS_PER_WEEK - 18.5) + 100);
   });
   expect(result.current.money).toBe(250);
   expect(result.current.pendingPay).toBe(0);
@@ -92,7 +100,7 @@ test('speeding up the time brings the end of the week closer', () => {
     result.current.faster();
   });
   act(() => {
-    vi.advanceTimersByTime((HOURS_PER_WEEK / 2) * 1000 + 100);
+    vi.advanceTimersByTime(hoursToMs(HOURS_PER_WEEK / 2) + 100);
   });
 
   expect(result.current.money).toBe(250);
