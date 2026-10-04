@@ -23,4 +23,6 @@ export type GameProviderProps = {
   children: React.ReactNode;
   // game to resume, a new game when omitted
   initialState?: GameState;
+  // keep the game in the browser, off by default so tests stay isolated
+  persist?: boolean;
 };
