@@ -5,24 +5,10 @@ import { DAYS_PER_WEEK, HOURS_PER_DAY, dateOfDay } from '@game/time';
 export const COLUMNS_BEFORE = 1;
 export const COLUMNS_AFTER = 2;
 
-const weekday = new Intl.DateTimeFormat('en', {
-  weekday: 'short',
-  timeZone: 'UTC',
-});
 const month = new Intl.DateTimeFormat('en', {
   month: 'short',
   timeZone: 'UTC',
 });
-
-export const weekdayLabel = (absoluteDay: number) =>
-  weekday.format(dateOfDay(absoluteDay));
-
-export const dayOfMonth = (absoluteDay: number) =>
-  dateOfDay(absoluteDay).getUTCDate();
-
-// Index of the weekday of a day of the game, 0 = Monday.
-export const weekdayIndex = (absoluteDay: number) =>
-  absoluteDay % DAYS_PER_WEEK;
 
 export const calendarWindow = (week: number, weekHour: number) => {
   const firstDay = week * DAYS_PER_WEEK + Math.floor(weekHour / HOURS_PER_DAY);

@@ -1,12 +1,12 @@
-import { HOURS_PER_DAY } from '@game/time';
-
-import { CalendarDay } from './CalendarDay';
 import {
-  calendarWindow,
   dayOfMonth,
+  HOURS_PER_DAY,
   weekdayIndex,
   weekdayLabel,
-} from './calendarWindow';
+} from '@game/time';
+
+import { CalendarDay } from './CalendarDay';
+import { calendarWindow } from './calendarWindow';
 import styles from './WeekCalendar.module.css';
 
 type WeekCalendarProps = {

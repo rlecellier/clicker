@@ -9,4 +9,10 @@ export {
   MS_PER_DAY,
   SPEEDS,
 } from './constants';
-export { dateOfDay, daysInMonthOfWeek } from './dates';
+export {
+  dateOfDay,
+  dayOfMonth,
+  daysInMonthOfWeek,
+  weekdayIndex,
+  weekdayLabel,
+} from './dates';
