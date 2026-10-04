@@ -16,7 +16,11 @@ export const useSwipe = ({ onSwipeLeft, onSwipeRight }: SwipeOptions) => {
   return {
     onTouchStart: (event: TouchEvent) => {
       const touch = event.touches[0];
-      start.current = touch && { x: touch.clientX, y: touch.clientY };
+      // a second finger makes it a pinch, not a swipe
+      start.current =
+        touch && event.touches.length === 1
+          ? { x: touch.clientX, y: touch.clientY }
+          : undefined;
     },
     onTouchEnd: (event: TouchEvent) => {
       const touch = event.changedTouches[0];
