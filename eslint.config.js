@@ -18,6 +18,8 @@ export default tseslint.config(
   },
   {
     rules: {
+      // Components, hooks and helpers are `const x = () => {}` (ADR 0001, §7)
+      'func-style': ['error', 'expression'],
       // React naming: MyComponent/, useMyHook/ (see .claude/adr/0001)
       'unicorn/filename-case': [
         'error',

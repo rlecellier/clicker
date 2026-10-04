@@ -8,7 +8,7 @@ import {
 import { useWeekClock } from '@hook/useWeekClock';
 import { INITIAL_GAME_STATE } from './types';
 
-export function useGame(initialState = INITIAL_GAME_STATE) {
+export const useGame = (initialState = INITIAL_GAME_STATE) => {
   const [money, setMoney] = useState(initialState.money);
   const [workingDayStart, setWorkingDayStart] = useState<number | undefined>();
   const [progress, setProgress] = useState(0);
@@ -51,6 +51,6 @@ export function useGame(initialState = INITIAL_GAME_STATE) {
   }, [workingDayStart]);
 
   return { money, weekHour, progress, isWorkingDay, work, startWorkingDay };
-}
+};
 
 export type UseGameResult = ReturnType<typeof useGame>;

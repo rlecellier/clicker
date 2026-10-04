@@ -6,11 +6,11 @@ const HOURS_PER_WEEK = HOURS_PER_DAY * DAYS.length;
 const HOUR_MS = 1000;
 const STEP_HOURS = 3;
 
-function label(weekHour: number) {
+const label = (weekHour: number) => {
   const day = DAYS[Math.floor(weekHour / HOURS_PER_DAY) % DAYS.length];
   const hour = String(weekHour % HOURS_PER_DAY).padStart(2, '0');
   return `${day}, ${hour}:00`;
-}
+};
 
 test('the calendar walks through the week, one hour per second', async ({
   page,

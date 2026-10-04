@@ -1,6 +1,6 @@
 import { isRouteErrorResponse, Link, useRouteError } from 'react-router';
 
-export function ErrorPage() {
+export const ErrorPage = () => {
   const error = useRouteError();
 
   const message = isRouteErrorResponse(error)
@@ -13,4 +13,4 @@ export function ErrorPage() {
       <Link to="/">Back to the game</Link>
     </main>
   );
-}
+};
