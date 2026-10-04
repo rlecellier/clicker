@@ -1,0 +1,8 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #1b1d23;
+  color: #eee;
+  display: flex;
+  justify-content: center;
+  padding-top: 10vh;
+}
