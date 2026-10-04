@@ -1,7 +1,7 @@
 import { Button } from '@base-ui/react/button';
 import { Menu, X } from 'lucide-react';
 import { useCallback, useState } from 'react';
-import { Outlet } from 'react-router';
+import { Link, Outlet } from 'react-router';
 
 import { AgeCounter } from '@component/AgeCounter';
 import { CaloriesStatus } from '@component/CaloriesStatus';
@@ -55,7 +55,11 @@ const Layout = () => {
               <Menu aria-hidden size={18} />
             )}
           </Button>
-          <h1 className={styles.title}>Clicker</h1>
+          <h1 className={styles.title}>
+            <Link to="/" className={styles.titleLink}>
+              Clicker
+            </Link>
+          </h1>
         </div>
         <div className={styles.status}>
           <CaloriesStatus status={getCaloriesStatus(calories)} />
