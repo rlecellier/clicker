@@ -12,6 +12,7 @@ import {
 } from './constants';
 import {
   eatSnack,
+  getCaloriesLevel,
   INITIAL_NUTRITION,
   isEnjoyingCake,
   startCake,
@@ -105,4 +106,11 @@ test('a long frame gives the same result as many short ones', () => {
   expect(long.calories).toBeCloseTo(short.calories, 5);
   expect(long.fat).toBeCloseTo(short.fat, 5);
   expect(long.calories).toBeLessThanOrEqual(CALORIES_MAX_TARGET + 1);
+});
+
+test('calories are low below 20%, high above 80%, balanced in between', () => {
+  expect(getCaloriesLevel(19.9)).toBe('low');
+  expect(getCaloriesLevel(20)).toBe('balanced');
+  expect(getCaloriesLevel(80)).toBe('balanced');
+  expect(getCaloriesLevel(80.1)).toBe('high');
 });
