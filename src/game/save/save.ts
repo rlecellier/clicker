@@ -1,3 +1,4 @@
+import { EXPENSE_IDS } from '@game/expenses';
 import { CALORIES_CAP } from '@game/nutrition';
 import { BRAIN_CAP } from '@game/sleep';
 import { SPEEDS } from '@game/time';
@@ -16,6 +17,16 @@ const isBetweenZeroAnd = (value: unknown, max: number) =>
   value >= 0 &&
   value <= max;
 
+const isExpenses = (value: unknown) =>
+  typeof value === 'object' &&
+  value !== null &&
+  EXPENSE_IDS.every((id) =>
+    isBetweenZeroAnd(
+      (value as Record<string, unknown>)[id],
+      Number.MAX_SAFE_INTEGER,
+    ),
+  );
+
 // A save comes from outside: it is checked before it becomes a game.
 const isGameState = (value: unknown): value is GameState => {
   if (typeof value !== 'object' || value === null) return false;
@@ -25,7 +36,9 @@ const isGameState = (value: unknown): value is GameState => {
     Number.isSafeInteger(state.speedIndex) &&
     isBetweenZeroAnd(state.speedIndex, SPEEDS.length - 1) &&
     Number.isSafeInteger(state.balanceCents) &&
-    isBetweenZeroAnd(state.balanceCents, Number.MAX_SAFE_INTEGER) &&
+    // bills can push the balance below zero
+    Math.abs(state.balanceCents as number) <= Number.MAX_SAFE_INTEGER &&
+    isExpenses(state.expenses) &&
     isBetweenZeroAnd(state.calories, CALORIES_CAP) &&
     isBetweenZeroAnd(state.brain, BRAIN_CAP) &&
     isBetweenZeroAnd(state.fat, Number.MAX_SAFE_INTEGER) &&

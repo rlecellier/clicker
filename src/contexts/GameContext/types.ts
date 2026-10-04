@@ -1,8 +1,11 @@
+import type { Expenses } from '@game/expenses';
 import type { GameState } from '@game/gameState';
 
 export type GameContextValue = {
   // money in integer cents
   balanceCents: number;
+  // total paid so far, per kind of expense
+  expenses: Expenses;
   week: number;
   weekHour: number;
   speed: number;

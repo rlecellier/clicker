@@ -62,9 +62,16 @@ test('refuses a save of another version', () => {
   expect(parseSave(other)).toBeUndefined();
 });
 
+test('keeps a balance below zero: the bills are paid anyway', () => {
+  expect(broken({ balanceCents: -1500 })).toMatchObject({
+    balanceCents: -1500,
+  });
+});
+
 test('refuses a save with a missing or invalid field', () => {
   expect(broken({ balanceCents: 12.5 })).toBeUndefined();
-  expect(broken({ balanceCents: -1 })).toBeUndefined();
+  expect(broken({ expenses: undefined })).toBeUndefined();
+  expect(broken({ expenses: { ...state.expenses, rent: -1 } })).toBeUndefined();
   expect(broken({ elapsedHours: '10' })).toBeUndefined();
   expect(broken({ elapsedHours: [] })).toBeUndefined();
   expect(broken({ calories: 101 })).toBeUndefined();

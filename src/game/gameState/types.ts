@@ -1,3 +1,4 @@
+import { INITIAL_EXPENSES, type Expenses } from '@game/expenses';
 import { INITIAL_NUTRITION, type Nutrition } from '@game/nutrition';
 import { INITIAL_SLEEP, type Sleep } from '@game/sleep';
 import { DEFAULT_SPEED_INDEX } from '@game/time';
@@ -12,6 +13,8 @@ export type GameState = Nutrition &
     speedIndex: number;
     // money in integer cents
     balanceCents: number;
+    // total paid so far, per kind of expense
+    expenses: Expenses;
   };
 
 export const INITIAL_GAME_STATE: GameState = {
@@ -20,4 +23,5 @@ export const INITIAL_GAME_STATE: GameState = {
   elapsedHours: 0,
   speedIndex: DEFAULT_SPEED_INDEX,
   balanceCents: 0,
+  expenses: INITIAL_EXPENSES,
 };

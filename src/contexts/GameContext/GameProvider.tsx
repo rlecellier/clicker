@@ -36,6 +36,7 @@ export const GameProvider = ({
   const value = useMemo<GameContextValue>(
     () => ({
       balanceCents: state.balanceCents,
+      expenses: state.expenses,
       week: weekOf(state),
       weekHour: weekHourOf(state),
       speed: speedOf(state),

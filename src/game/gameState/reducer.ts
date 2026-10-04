@@ -1,5 +1,10 @@
 import { weeklyPayCents } from '@game/earnings';
 import {
+  addExpenses,
+  expensesBetween,
+  totalExpensesCents,
+} from '@game/expenses';
+import {
   eatSnack,
   isEnjoyingCake,
   startCake,
@@ -36,12 +41,16 @@ const paySince = (from: number, to: number) => {
 const advance = (state: GameState, hours: number): GameState => {
   const from = state.elapsedHours;
   const to = from + hours;
+  const paid = expensesBetween(from, to);
   return {
     ...state,
     ...stepNutrition(state, from, to),
     ...stepSleep(state, from, to),
     elapsedHours: to,
-    balanceCents: state.balanceCents + paySince(from, to),
+    // the balance can go below zero: the bills are paid anyway
+    balanceCents:
+      state.balanceCents + paySince(from, to) - totalExpensesCents(paid),
+    expenses: addExpenses(state.expenses, paid),
   };
 };
 
