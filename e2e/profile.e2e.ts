@@ -15,4 +15,7 @@ test('the profile page shows the body of a new player', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Profile' })).toBeVisible();
   await expect(page.getByText('1.70 m')).toBeVisible();
   await expect(page.getByText('70.0 kg')).toBeVisible();
+  await expect(
+    page.getByRole('main').getByRole('slider', { name: 'Body fat' }),
+  ).toBeVisible();
 });

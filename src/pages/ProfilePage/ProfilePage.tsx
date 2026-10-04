@@ -1,3 +1,4 @@
+import { BodyGauge } from '@component/BodyGauge';
 import { useGameContext } from '@context/GameContext';
 
 import styles from './ProfilePage.module.css';
@@ -21,15 +22,12 @@ export const ProfilePage = () => {
           <dt>Weight</dt>
           <dd>{body.weightKg.toFixed(1)} kg</dd>
         </div>
-        <div>
-          <dt>Fat</dt>
-          <dd className={styles.fat}>{Math.round(body.fatPercent)}%</dd>
-        </div>
-        <div>
-          <dt>Muscle</dt>
-          <dd className={styles.muscle}>{Math.round(body.musclePercent)}%</dd>
-        </div>
       </dl>
+      <BodyGauge
+        size="full"
+        fatPercent={body.fatPercent}
+        musclePercent={body.musclePercent}
+      />
     </section>
   );
 };

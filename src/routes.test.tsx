@@ -68,9 +68,11 @@ test('the sidebar opens the profile page, with the stats of the player', async (
   renderApp();
   await user.click(screen.getByRole('link', { name: 'Profile' }));
   expect(screen.getByRole('heading', { name: 'Profile' })).toBeInTheDocument();
-  for (const name of ['Dreams', 'Height', 'Weight', 'Fat', 'Muscle']) {
+  for (const name of ['Dreams', 'Height', 'Weight']) {
     expect(screen.getByText(name)).toBeInTheDocument();
   }
+  // the sidebar has its own body gauge, the profile page a second one
+  expect(screen.getAllByLabelText('Body fat')).toHaveLength(2);
 });
 
 test('the sidebar unfolds the places and opens one with its banner', async () => {
