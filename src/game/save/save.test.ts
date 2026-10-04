@@ -31,6 +31,8 @@ const state = {
   calories: 61.2,
   fat: 4.5,
   brain: 33.3,
+  dreamGauge: 42.5,
+  dreams: 3,
   cakeUntil: 120,
 };
 
@@ -78,6 +80,10 @@ test('refuses a save with a missing or invalid field', () => {
   expect(broken({ speedIndex: 99 })).toBeUndefined();
   expect(broken({ brain: 101 })).toBeUndefined();
   expect(broken({ brain: undefined })).toBeUndefined();
+  expect(broken({ dreamGauge: 100 })).toBeUndefined();
+  expect(broken({ dreamGauge: undefined })).toBeUndefined();
+  expect(broken({ dreams: -1 })).toBeUndefined();
+  expect(broken({ dreams: 1.5 })).toBeUndefined();
   expect(broken({ fat: undefined })).toBeUndefined();
 });
 

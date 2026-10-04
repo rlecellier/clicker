@@ -122,10 +122,17 @@ test('the brain fills during the day and empties during the night', () => {
   // Monday 00:00 to 07:00: the rest of the night empties the gauge
   const morning = run(INITIAL_GAME_STATE, 7);
   expect(morning.brain).toBeCloseTo(0, 5);
+  expect(morning.dreams).toBe(0);
 
-  // 16 hours awake fill it
+  // a working day fills about a third of it
   const evening = run(morning, 16);
-  expect(evening.brain).toBeCloseTo(100, 5);
+  expect(evening.brain).toBeGreaterThan(25);
+  expect(evening.brain).toBeLessThan(40);
+
+  // the night empties it and what is left over fills the dream gauge
+  const nextMorning = run(evening, 8);
+  expect(nextMorning.brain).toBeCloseTo(0, 5);
+  expect(nextMorning.dreamGauge).toBeCloseTo(80 - evening.brain, 5);
 });
 
 test('pays each meal when it starts', () => {

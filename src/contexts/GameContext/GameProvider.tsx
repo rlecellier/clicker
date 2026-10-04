@@ -47,6 +47,8 @@ export const GameProvider = ({
       calories: state.calories,
       fat: state.fat,
       brain: state.brain,
+      dreamGauge: state.dreamGauge,
+      dreams: state.dreams,
       isSleeping: isSleepingNow(state),
       isEnjoyingCake: isEnjoyingCakeNow(state),
       faster: () => {

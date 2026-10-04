@@ -19,6 +19,8 @@ const Layout = () => {
     calories,
     fat,
     brain,
+    dreamGauge,
+    dreams,
     isSleeping,
     speed,
     canSpeedUp,
@@ -38,6 +40,8 @@ const Layout = () => {
         calories={calories}
         fat={fat}
         brain={brain}
+        dreamGauge={dreamGauge}
+        dreams={dreams}
         isSleeping={isSleeping}
         isOpen={isMenuOpen}
         onClose={closeMenu}

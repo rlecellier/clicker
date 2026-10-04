@@ -1,6 +1,7 @@
 export {
   AWAKE_HOURS_PER_DAY,
   BRAIN_CAP,
+  DREAM_CAP,
   INITIAL_BRAIN,
   SLEEP_HOURS_PER_DAY,
 } from './constants';

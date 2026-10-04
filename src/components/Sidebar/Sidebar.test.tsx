@@ -14,6 +14,8 @@ const renderPanel = (isOpen: boolean) => {
         calories={50}
         fat={1.5}
         brain={30}
+        dreamGauge={20}
+        dreams={2}
         isSleeping={false}
         isOpen={isOpen}
         onClose={onClose}
@@ -23,10 +25,11 @@ const renderPanel = (isOpen: boolean) => {
   return onClose;
 };
 
-test('contains the calories and brain gauges and the fat', () => {
+test('contains the calories, brain and dream gauges and the fat', () => {
   renderPanel(false);
   expect(screen.getByRole('meter', { name: 'Calories' })).toBeInTheDocument();
   expect(screen.getByRole('meter', { name: 'Brain' })).toBeInTheDocument();
+  expect(screen.getByRole('meter', { name: 'Dream' })).toBeInTheDocument();
   expect(screen.getByText('Fat 1.5')).toBeInTheDocument();
 });
 
@@ -38,6 +41,8 @@ test('is marked as open only when it is open', () => {
         calories={50}
         fat={0}
         brain={30}
+        dreamGauge={20}
+        dreams={2}
         isSleeping={false}
         isOpen
         onClose={vi.fn()}
