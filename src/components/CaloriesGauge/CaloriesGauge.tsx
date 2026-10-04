@@ -1,6 +1,6 @@
 import { Meter } from '@base-ui/react/meter';
 
-import { CALORIES_MAX_TARGET, CALORIES_MIN_TARGET } from '@hook/useGame';
+import { CALORIES_MAX_TARGET, CALORIES_MIN_TARGET } from '@game/nutrition';
 
 import styles from './CaloriesGauge.module.css';
 

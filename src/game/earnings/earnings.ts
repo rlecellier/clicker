@@ -1,8 +1,7 @@
-import { DAYS_PER_WEEK, EVENTS, HOURS_PER_DAY } from '@hook/useWeekClock';
+import { EVENTS } from '@game/calendar';
+import { DAYS_PER_WEEK, HOURS_PER_DAY, daysInMonthOfWeek } from '@game/time';
 
-import { GAME_START, MONTHLY_SALARY } from './constants';
-
-const MS_PER_DAY = HOURS_PER_DAY * 3600 * 1000;
+import { MONTHLY_SALARY } from './constants';
 
 const WORK_EVENTS = EVENTS.filter((event) => event.kind === 'work');
 
@@ -13,17 +12,9 @@ const WORK_HOURS_PER_WEEK = WORK_EVENTS.reduce(
 
 const roundCents = (amount: number) => Math.round(amount * 100) / 100;
 
-// Days in the month of the week's Monday.
-const daysInMonth = (week: number) => {
-  const monday = new Date(GAME_START + week * DAYS_PER_WEEK * MS_PER_DAY);
-  return new Date(
-    Date.UTC(monday.getUTCFullYear(), monday.getUTCMonth() + 1, 0),
-  ).getUTCDate();
-};
-
 // A week is worth 7/N of the monthly salary in a month of N days.
 export const weeklyPay = (week: number) =>
-  roundCents((MONTHLY_SALARY * DAYS_PER_WEEK) / daysInMonth(week));
+  roundCents((MONTHLY_SALARY * DAYS_PER_WEEK) / daysInMonthOfWeek(week));
 
 // Pay of every week finished before the given one.
 export const bankedPay = (week: number) => {

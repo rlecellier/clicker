@@ -1,5 +1,5 @@
-import { GAME_START } from '@hook/useGame';
-import { DAYS_PER_WEEK, EVENTS, HOURS_PER_DAY } from '@hook/useWeekClock';
+import { EVENTS } from '@game/calendar';
+import { DAYS_PER_WEEK, HOURS_PER_DAY, dateOfDay } from '@game/time';
 
 import styles from './WeekCalendar.module.css';
 
@@ -18,7 +18,6 @@ const MONTH_LABELS = [
   'Nov',
   'Dec',
 ];
-const MS_PER_DAY = HOURS_PER_DAY * 3600 * 1000;
 // One column is kept on each side of the visible week so that days can slide
 // in and out of view.
 const COLUMNS_BEFORE = 1;
@@ -31,9 +30,6 @@ type WeekCalendarProps = {
   weekHour: number;
 };
 
-const dateOf = (absoluteDay: number) =>
-  new Date(GAME_START + absoluteDay * MS_PER_DAY);
-
 export const WeekCalendar = ({ week, weekHour }: WeekCalendarProps) => {
   const currentDay = Math.floor(weekHour / HOURS_PER_DAY);
   const firstDay = week * DAYS_PER_WEEK + currentDay;
@@ -41,9 +37,9 @@ export const WeekCalendar = ({ week, weekHour }: WeekCalendarProps) => {
   const dayRatio = (weekHour % HOURS_PER_DAY) / HOURS_PER_DAY;
 
   // The calendar always starts on the current day and shows the next seven.
-  const firstMonth = MONTH_LABELS[dateOf(firstDay).getUTCMonth()];
+  const firstMonth = MONTH_LABELS[dateOfDay(firstDay).getUTCMonth()];
   const lastMonth =
-    MONTH_LABELS[dateOf(firstDay + DAYS_PER_WEEK - 1).getUTCMonth()];
+    MONTH_LABELS[dateOfDay(firstDay + DAYS_PER_WEEK - 1).getUTCMonth()];
   const monthLabel =
     firstMonth === lastMonth ? firstMonth : `${firstMonth} – ${lastMonth}`;
 
@@ -72,7 +68,7 @@ export const WeekCalendar = ({ week, weekHour }: WeekCalendarProps) => {
               }}
             >
               <span className={styles.number}>
-                {dateOf(absoluteDay).getUTCDate()}
+                {dateOfDay(absoluteDay).getUTCDate()}
               </span>
               <span className={styles.label}>{DAY_LABELS[weekday]}</span>
               <div className={styles.bar}>

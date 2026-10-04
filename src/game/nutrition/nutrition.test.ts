@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { HOURS_PER_DAY } from '@hook/useWeekClock';
+import { HOURS_PER_DAY } from '@game/time';
 
 import {
   CALORIES_CAP,

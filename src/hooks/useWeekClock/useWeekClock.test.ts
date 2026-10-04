@@ -1,12 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
-import {
-  DEFAULT_SPEED,
-  HOURS_PER_SECOND,
-  HOURS_PER_WEEK,
-  SPEEDS,
-} from './constants';
+import { HOURS_PER_WEEK } from '@game/time';
+
+import { DEFAULT_SPEED, HOURS_PER_SECOND, SPEEDS } from './constants';
 import { useWeekClock } from './useWeekClock';
 
 // Real milliseconds needed for the game to run the given number of hours.

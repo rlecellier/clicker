@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { createFactory } from 'factory-kit';
 
-import type { GameState } from '@hook/useGame';
+import type { GameState } from '@game/gameState';
 
 export const gameStateFactory = createFactory<GameState>()
   .define({

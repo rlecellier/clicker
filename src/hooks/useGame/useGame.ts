@@ -1,15 +1,15 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
-import { useWeekClock } from '@hook/useWeekClock';
-import { bankedPay, isWorking, pendingPay } from './earnings';
+import { bankedPay, isWorking, pendingPay } from '@game/earnings';
+import { INITIAL_GAME_STATE } from '@game/gameState';
 import {
   eatSnack,
   INITIAL_NUTRITION,
   isEnjoyingCake,
   startCake,
   stepNutrition,
-} from './nutrition';
-import { INITIAL_GAME_STATE } from './types';
+} from '@game/nutrition';
+import { useWeekClock } from '@hook/useWeekClock';
 
 export const useGame = (initialState = INITIAL_GAME_STATE) => {
   const [nutrition, setNutrition] = useState(INITIAL_NUTRITION);

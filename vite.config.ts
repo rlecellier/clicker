@@ -14,6 +14,7 @@ export default defineConfig({
       '@page': fromSource('pages'),
       '@component': fromSource('components'),
       '@hook': fromSource('hooks'),
+      '@game': fromSource('game'),
       '@context': fromSource('contexts'),
       '@test': fromSource('test'),
     },
