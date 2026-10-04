@@ -1,6 +1,7 @@
 import { Button } from '@base-ui/react/button';
 import { Cake, Cookie } from 'lucide-react';
 
+import { LocationIndicator } from '@component/LocationIndicator';
 import { PendingPay } from '@component/PendingPay';
 import { WeekCalendar } from '@component/WeekCalendar';
 import { useGameContext } from '@context/GameContext';
@@ -14,6 +15,7 @@ export const GamePage = () => {
     weekHour,
     pendingPayCents,
     isEarning,
+    location,
     isEnjoyingCake,
     snack,
     cake,
@@ -25,6 +27,7 @@ export const GamePage = () => {
         <WeekCalendar week={week} weekHour={weekHour} />
       </div>
       <div className={styles.content}>
+        <LocationIndicator location={location} />
         <PendingPay cents={pendingPayCents} isEarning={isEarning} />
         <div className={styles.actions}>
           <Button onClick={snack}>

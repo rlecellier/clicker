@@ -1,5 +1,6 @@
 import type { Expenses } from '@game/expenses';
 import type { GameState } from '@game/gameState';
+import type { Location } from '@game/location';
 
 export type GameContextValue = {
   // money in integer cents
@@ -13,6 +14,7 @@ export type GameContextValue = {
   canSlowDown: boolean;
   pendingPayCents: number;
   isEarning: boolean;
+  location: Location;
   calories: number;
   fat: number;
   // gauge between 0 and 100

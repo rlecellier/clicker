@@ -1,0 +1,10 @@
+.root {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0 0 0.75rem;
+}
+
+.caption {
+  color: var(--color-muted);
+}

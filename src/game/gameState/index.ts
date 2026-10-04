@@ -6,6 +6,7 @@ export {
   isEarning,
   isEnjoyingCakeNow,
   isSleepingNow,
+  locationOf,
   pendingPayOf,
   speedOf,
   weekHourOf,
