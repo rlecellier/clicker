@@ -1,0 +1,47 @@
+.root {
+  --kind-color: var(--color-muted);
+
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  column-gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  background: var(--color-surface);
+  border-left: 4px solid var(--kind-color);
+}
+
+.root[data-kind='work'] {
+  --kind-color: var(--color-accent);
+}
+
+.root[data-kind='meal'] {
+  --kind-color: var(--color-warning);
+}
+
+.root[data-kind='sleep'] {
+  --kind-color: var(--color-sleep);
+}
+
+.label {
+  grid-row: span 2;
+  align-self: center;
+  min-width: 3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-muted);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--kind-color);
+}
+
+.detail {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}

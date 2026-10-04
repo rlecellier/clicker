@@ -13,7 +13,7 @@ const label = (weekHour: number) => {
   return `${day}, ${hour}:00`;
 };
 
-test('the calendar walks through the week at the default speed', async ({
+test('the banners follow the schedule through the week at the default speed', async ({
   page,
 }) => {
   // Paused, so that only the steps below make the game time move.
@@ -23,6 +23,12 @@ test('the calendar walks through the week at the default speed', async ({
 
   const calendar = page.getByRole('img');
   await expect(calendar).toHaveAccessibleName(label(0));
+  await expect(page.getByRole('region', { name: 'Now' })).toContainText(
+    'Sleep',
+  );
+  await expect(page.getByRole('region', { name: 'Next' })).toContainText(
+    'Breakfast',
+  );
 
   for (let hour = STEP_HOURS; hour <= HOURS_PER_WEEK; hour += STEP_HOURS) {
     await page.clock.fastForward(STEP_HOURS * HOUR_MS);
@@ -31,4 +37,19 @@ test('the calendar walks through the week at the default speed', async ({
     // Slows the recording down so the cursor can be followed.
     await page.waitForTimeout(100);
   }
+});
+
+test('the banners show the work task and the one after it', async ({
+  page,
+}) => {
+  await page.clock.install({ time: 0 });
+  await page.clock.pauseAt(1000);
+  await page.goto('/');
+
+  // Monday 09:00
+  await page.clock.fastForward(9 * HOUR_MS);
+  await expect(page.getByRole('region', { name: 'Now' })).toContainText('Work');
+  await expect(page.getByRole('region', { name: 'Next' })).toContainText(
+    'Lunch',
+  );
 });

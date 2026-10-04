@@ -3,29 +3,19 @@ import { Cake, Cookie } from 'lucide-react';
 
 import { LocationIndicator } from '@component/LocationIndicator';
 import { PendingPay } from '@component/PendingPay';
-import { WeekCalendar } from '@component/WeekCalendar';
+import { ScheduleBanners } from '@component/ScheduleBanners';
 import { useGameContext } from '@context/GameContext';
 import { SNACK_CALORIES } from '@game/nutrition';
 
 import styles from './GamePage.module.css';
 
 export const GamePage = () => {
-  const {
-    week,
-    weekHour,
-    pendingPayCents,
-    isEarning,
-    location,
-    isEnjoyingCake,
-    snack,
-    cake,
-  } = useGameContext();
+  const { pendingPayCents, isEarning, location, isEnjoyingCake, snack, cake } =
+    useGameContext();
 
   return (
     <>
-      <div className={styles.calendar}>
-        <WeekCalendar week={week} weekHour={weekHour} />
-      </div>
+      <ScheduleBanners />
       <div className={styles.content}>
         <LocationIndicator location={location} />
         <PendingPay cents={pendingPayCents} isEarning={isEarning} />
