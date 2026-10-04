@@ -1,1 +1,6 @@
-export { isWorkHours, pendingPayCents, weeklyPayCents } from './earnings';
+export {
+  isWorkHours,
+  payBetween,
+  pendingPayCents,
+  weeklyPayCents,
+} from './earnings';
