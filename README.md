@@ -2,7 +2,7 @@
 
 A small clicker app built with React, TypeScript and Vite.
 
-**Live demo:** https://rlecellier.github.io/clicker/
+[Essayer le POC](https://rlecellier.github.io/clicker/)
 
 ## Getting started
 

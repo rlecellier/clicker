@@ -46,6 +46,6 @@ test('a broken save is ignored and a new game starts', async ({ page }) => {
   await expect(page.getByRole('img')).toHaveAccessibleName('Mon, 00:00');
   await expect(page.getByRole('meter', { name: 'Calories' })).toHaveAttribute(
     'aria-valuetext',
-    '50%',
+    '60%',
   );
 });

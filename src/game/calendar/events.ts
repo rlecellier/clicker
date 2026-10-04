@@ -38,7 +38,7 @@ export const EVENTS: CalendarEvent[] = [
     days: EVERY_DAY,
     start: 12,
     end: 13,
-    calories: 25,
+    calories: 21,
   },
   {
     id: 'work-afternoon',
@@ -55,7 +55,7 @@ export const EVENTS: CalendarEvent[] = [
     days: EVERY_DAY,
     start: 19,
     end: 20,
-    calories: 25,
+    calories: 21,
   },
   {
     id: 'sleep-evening',
