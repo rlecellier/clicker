@@ -34,7 +34,12 @@ test('shows the calories gauge and the snack action', () => {
   expect(screen.getByRole('button', { name: /Eat a snack/ })).toBeEnabled();
 });
 
-test('the menu button opens and closes the calories sidebar', async () => {
+test('shows the brain gauge', () => {
+  renderApp();
+  expect(screen.getByRole('meter', { name: 'Brain' })).toBeInTheDocument();
+});
+
+test('the menu button opens and closes the gauges sidebar', async () => {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
   renderApp();
   const menu = screen.getByRole('button', { name: 'Menu' });

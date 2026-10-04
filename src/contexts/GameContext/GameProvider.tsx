@@ -7,6 +7,7 @@ import {
   INITIAL_GAME_STATE,
   isEarning,
   isEnjoyingCakeNow,
+  isSleepingNow,
   pendingPayOf,
   speedOf,
   weekHourOf,
@@ -44,6 +45,8 @@ export const GameProvider = ({
       isEarning: isEarning(state),
       calories: state.calories,
       fat: state.fat,
+      brain: state.brain,
+      isSleeping: isSleepingNow(state),
       isEnjoyingCake: isEnjoyingCakeNow(state),
       faster: () => {
         dispatch({ type: 'speedUp' });

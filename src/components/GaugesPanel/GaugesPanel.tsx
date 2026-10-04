@@ -1,27 +1,32 @@
 import { useEffect } from 'react';
 
+import { BrainGauge } from '@component/BrainGauge';
 import { CaloriesGauge } from '@component/CaloriesGauge';
 
-import styles from './CaloriesPanel.module.css';
+import styles from './GaugesPanel.module.css';
 
-type CaloriesPanelProps = {
+type GaugesPanelProps = {
   id: string;
   calories: number;
   fat: number;
+  brain: number;
+  isSleeping: boolean;
   // only matters on mobile: from tablet up the panel is always in the header
   isOpen: boolean;
   onClose: () => void;
 };
 
-// The calories and fat gauge: a sidebar on mobile, part of the header from
+// The calories, fat and brain gauges: a sidebar on mobile, part of the header from
 // tablet up.
-export const CaloriesPanel = ({
+export const GaugesPanel = ({
   id,
   calories,
   fat,
+  brain,
+  isSleeping,
   isOpen,
   onClose,
-}: CaloriesPanelProps) => {
+}: GaugesPanelProps) => {
   useEffect(() => {
     if (!isOpen) return;
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -43,6 +48,7 @@ export const CaloriesPanel = ({
       />
       <aside id={id} className={styles.panel} data-open={isOpen || undefined}>
         <CaloriesGauge calories={calories} fat={fat} />
+        <BrainGauge brain={brain} isSleeping={isSleeping} />
       </aside>
     </>
   );

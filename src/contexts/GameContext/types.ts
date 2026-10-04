@@ -12,6 +12,9 @@ export type GameContextValue = {
   isEarning: boolean;
   calories: number;
   fat: number;
+  // gauge between 0 and 100
+  brain: number;
+  isSleeping: boolean;
   isEnjoyingCake: boolean;
   faster: () => void;
   slower: () => void;

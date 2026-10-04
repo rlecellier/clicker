@@ -1,1 +1,0 @@
-export { CaloriesPanel } from './CaloriesPanel';

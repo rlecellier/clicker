@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { Outlet } from 'react-router';
 
 import { CaloriesStatus } from '@component/CaloriesStatus';
-import { CaloriesPanel } from '@component/CaloriesPanel';
+import { GaugesPanel } from '@component/GaugesPanel';
 import { MoneyCounter } from '@component/MoneyCounter';
 import { TimeControls } from '@component/TimeControls';
 import { GameProvider, useGameContext } from '@context/GameContext';
@@ -18,6 +18,8 @@ const Layout = () => {
     balanceCents,
     calories,
     fat,
+    brain,
+    isSleeping,
     speed,
     canSpeedUp,
     canSlowDown,
@@ -37,7 +39,7 @@ const Layout = () => {
             className={styles.menuButton}
             aria-label="Menu"
             aria-expanded={isMenuOpen}
-            aria-controls="calories-panel"
+            aria-controls="gauges-panel"
             onClick={() => {
               setIsMenuOpen((isOpen) => !isOpen);
             }}
@@ -50,10 +52,12 @@ const Layout = () => {
           </Button>
           <h1 className={styles.title}>Clicker</h1>
         </div>
-        <CaloriesPanel
-          id="calories-panel"
+        <GaugesPanel
+          id="gauges-panel"
           calories={calories}
           fat={fat}
+          brain={brain}
+          isSleeping={isSleeping}
           isOpen={isMenuOpen}
           onClose={closeMenu}
         />

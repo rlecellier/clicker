@@ -1,10 +1,11 @@
 import { CALORIES_CAP } from '@game/nutrition';
+import { BRAIN_CAP } from '@game/sleep';
 import { SPEEDS } from '@game/time';
 import type { GameState } from '@game/gameState';
 
 export const SAVE_KEY = 'clicker.save';
 // Bumped when the shape of `GameState` changes in a way old saves can't fit.
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 // The part of `Storage` the save needs, so it can be faked in tests.
 export type SaveStorage = Pick<Storage, 'getItem' | 'setItem'>;
@@ -26,6 +27,7 @@ const isGameState = (value: unknown): value is GameState => {
     Number.isSafeInteger(state.balanceCents) &&
     isBetweenZeroAnd(state.balanceCents, Number.MAX_SAFE_INTEGER) &&
     isBetweenZeroAnd(state.calories, CALORIES_CAP) &&
+    isBetweenZeroAnd(state.brain, BRAIN_CAP) &&
     isBetweenZeroAnd(state.fat, Number.MAX_SAFE_INTEGER) &&
     isBetweenZeroAnd(state.cakeUntil, Number.MAX_SAFE_INTEGER)
   );

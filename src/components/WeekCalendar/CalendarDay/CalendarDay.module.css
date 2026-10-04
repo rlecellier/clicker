@@ -74,3 +74,12 @@
   );
   border-left-color: var(--color-warning-pale);
 }
+
+.event[data-kind='sleep'] {
+  background: linear-gradient(
+    180deg,
+    var(--color-sleep),
+    var(--color-sleep-dark)
+  );
+  border-left-color: var(--color-sleep);
+}
