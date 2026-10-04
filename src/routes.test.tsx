@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
@@ -78,6 +78,14 @@ test('the sidebar unfolds the places and opens one with its banner', async () =>
 test('an unknown place shows the error page', async () => {
   renderApp('/places/moon');
   expect(await screen.findByText('404 Not Found')).toBeInTheDocument();
+});
+
+test('the sidebar opens the calendar page, one day at a time on mobile', async () => {
+  const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+  renderApp();
+  await user.click(screen.getByRole('link', { name: 'Calendar' }));
+  const calendar = screen.getByRole('region', { name: 'Calendar' });
+  expect(within(calendar).getAllByRole('list')).toHaveLength(1);
 });
 
 test('unknown route shows the error page', () => {

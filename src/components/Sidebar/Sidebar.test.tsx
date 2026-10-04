@@ -77,11 +77,15 @@ test('ignores Escape when it is closed', async () => {
   expect(onClose).not.toHaveBeenCalled();
 });
 
-test('links to the game and to the balance', () => {
+test('links to the game, the calendar and the balance', () => {
   renderPanel(false);
   expect(screen.getByRole('link', { name: 'Game' })).toHaveAttribute(
     'href',
     '/',
+  );
+  expect(screen.getByRole('link', { name: 'Calendar' })).toHaveAttribute(
+    'href',
+    '/calendar',
   );
   expect(screen.getByRole('link', { name: 'Balance' })).toHaveAttribute(
     'href',

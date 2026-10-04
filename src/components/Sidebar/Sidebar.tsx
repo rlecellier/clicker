@@ -1,4 +1,10 @@
-import { ChevronDown, MapPin, Utensils, Wallet } from 'lucide-react';
+import {
+  CalendarDays,
+  ChevronDown,
+  MapPin,
+  Utensils,
+  Wallet,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
 
@@ -29,6 +35,7 @@ const PLACES_PATH = '/places/';
 
 const LINKS = [
   { to: '/', label: 'Game', Icon: Utensils },
+  { to: '/calendar', label: 'Calendar', Icon: CalendarDays },
   { to: '/balance', label: 'Balance', Icon: Wallet },
 ];
 
