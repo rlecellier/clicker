@@ -7,8 +7,8 @@ type AgeCounterProps = {
 
 export const AgeCounter = ({ years }: AgeCounterProps) => {
   return (
-    <p className={styles.age}>
-      {years} {years === 1 ? 'year' : 'years'} old
+    <p className={styles.age} title="Age in years">
+      {years} yo
     </p>
   );
 };
