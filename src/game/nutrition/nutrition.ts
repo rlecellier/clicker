@@ -1,5 +1,5 @@
 import { EVENTS } from '@game/calendar';
-import { isWorking } from '@game/earnings';
+import { isWorkHours } from '@game/earnings';
 import { HOURS_PER_DAY, HOURS_PER_WEEK } from '@game/time';
 
 import {
@@ -73,7 +73,7 @@ export const stepNutrition = (
     const duration = Math.min(STEP_HOURS, to - time);
     const middle = time + duration / 2;
     const weekHour = middle % HOURS_PER_WEEK;
-    const burn = isWorking(weekHour) ? WORK_BURN : IDLE_BURN;
+    const burn = isWorkHours(weekHour) ? WORK_BURN : IDLE_BURN;
     const cake =
       middle < state.cakeUntil ? CAKE_CALORIES / CAKE_DURATION_HOURS : 0;
 
