@@ -1,4 +1,5 @@
 :root {
+  --header-height: 3.5rem;
   --color-bg: #1b1d23;
   --color-text: #eee;
   --color-muted: #888;

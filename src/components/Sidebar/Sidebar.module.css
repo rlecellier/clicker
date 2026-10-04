@@ -1,7 +1,7 @@
 /* Mobile: a sidebar that slides in from the left, under the menu button. */
 .backdrop {
   position: fixed;
-  inset: 0;
+  inset: var(--header-height) 0 0;
   z-index: 1;
   background: rgb(0 0 0 / 0.5);
   opacity: 0;
@@ -16,7 +16,7 @@
 
 .panel {
   position: fixed;
-  top: 0;
+  top: var(--header-height);
   bottom: 0;
   left: 0;
   z-index: 2;
@@ -25,7 +25,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  padding: 4rem 1rem 1rem;
+  padding: 1rem;
   background: var(--color-bg);
   border-right: 1px solid var(--color-surface);
   transform: translateX(-100%);
@@ -165,10 +165,9 @@
 
   .panel {
     position: sticky;
-    top: 0;
+    top: var(--header-height);
     flex-shrink: 0;
-    height: 100vh;
-    padding-top: 1rem;
+    height: calc(100vh - var(--header-height));
     transform: none;
     transition: none;
   }

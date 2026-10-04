@@ -1,5 +1,10 @@
 .layout {
   display: flex;
+  flex-direction: column;
+}
+
+.body {
+  display: flex;
   align-items: flex-start;
 }
 
@@ -11,10 +16,17 @@
 }
 
 .header {
+  position: sticky;
+  top: 0;
+  /* Above the sidebar panel and its backdrop. */
+  z-index: 4;
+  box-sizing: border-box;
+  height: var(--header-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1rem;
+  padding: 0 1rem;
+  background: var(--color-bg);
   border-bottom: 1px solid var(--color-surface);
 }
 
