@@ -13,15 +13,28 @@ npm run dev
 
 ## Scripts
 
-| Command              | Description                   |
-| -------------------- | ----------------------------- |
-| `npm run dev`        | Start the Vite dev server     |
-| `npm run build`      | Type-check and build for prod |
-| `npm run preview`    | Preview the production build  |
-| `npm test`           | Run the tests once (Vitest)   |
-| `npm run test:watch` | Run the tests in watch mode   |
-| `npm run lint`       | Lint with ESLint              |
-| `npm run format`     | Format with Prettier          |
+| Command                | Description                   |
+| ---------------------- | ----------------------------- |
+| `npm run dev`          | Start the Vite dev server     |
+| `npm run build`        | Type-check and build for prod |
+| `npm run preview`      | Preview the production build  |
+| `npm test`             | Run the tests once (Vitest)   |
+| `npm run test:watch`   | Run the tests in watch mode   |
+| `npm run lint`         | Lint with ESLint              |
+| `npm run format`       | Format with Prettier          |
+| `npm run format:check` | Check the formatting          |
+| `npm run e2e`          | Run the Playwright journeys   |
+
+## Architecture
+
+The pure game rules (time, calendar, salary, calories, state and reducer) live
+in `src/game/` and know nothing about React; hooks, contexts and components
+adapt them to the screen. The conventions are written down in the ADRs of
+[`.claude/adr/`](.claude/adr/) (project structure, game architecture) and a
+review of the project is in [`docs/architecture-review.md`](docs/architecture-review.md).
+
+The e2e journeys (`e2e/`) are real tests; the `/demo` comment on a pull request
+replays them as a video.
 
 ## Deployment
 

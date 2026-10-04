@@ -93,7 +93,7 @@ pas exporté.
   styles propres** : `<Component>.module.css`, dans le dossier du composant.
 - Il n'est importé que par le composant qui le possède.
 - Les styles globaux (reset, variables, typographie) restent dans un fichier
-  global distinct (`src/styles.css`).
+  global distinct (`src/global.css`).
 
 ### 5. Un `index.ts` par dossier
 
