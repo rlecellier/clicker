@@ -1,6 +1,7 @@
 import { isWorkHours, pendingPayCents } from '@game/earnings';
 import { locationAt } from '@game/location';
 import { isEnjoyingCake } from '@game/nutrition';
+import { isFreeTime } from '@game/reading';
 import { isSleeping } from '@game/sleep';
 import { HOURS_PER_WEEK, SPEEDS } from '@game/time';
 import type { GameState } from './types';
@@ -30,3 +31,7 @@ export const isSleepingNow = (state: GameState) =>
   isSleeping(weekHourOf(state));
 
 export const locationOf = (state: GameState) => locationAt(weekHourOf(state));
+
+// Reading right now: the player reads and nothing is scheduled.
+export const isReadingNow = (state: GameState) =>
+  state.isReading && isFreeTime(weekHourOf(state));

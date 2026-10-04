@@ -1,4 +1,5 @@
 import { EVENTS } from '@game/calendar';
+import { BRAIN_READING_FILL_PER_HOUR } from '@game/reading';
 import { HOURS_PER_DAY, HOURS_PER_WEEK } from '@game/time';
 
 import {
@@ -31,8 +32,16 @@ export const isSleeping = (weekHour: number) =>
 // Runs the game hours between `from` and `to`. Awake, the brain fills slowly
 // and faster during an activity. Asleep it empties, and what it has no more
 // to empty goes to the dream gauge. Events start and end on half hours, so
-// the time is cut at each of them and every piece is a single event.
-export const stepSleep = (state: Sleep, from: number, to: number): Sleep => {
+// the time is cut at each of them and every piece is a single event. The
+// `readingHours` of the interval are free hours spent reading, from its start:
+// they fill the brain faster.
+export const stepSleep = (
+  state: Sleep,
+  from: number,
+  to: number,
+  readingHours = 0,
+): Sleep => {
+  let reading = readingHours;
   let { brain, dreamGauge } = state;
   for (let time = from; time < to;) {
     const end = Math.min(to, (Math.floor(time * 2) + 1) / 2);
@@ -44,10 +53,16 @@ export const stepSleep = (state: Sleep, from: number, to: number): Sleep => {
       brain -= drained;
       dreamGauge += drain - drained;
     } else {
-      const fill =
-        BRAIN_IDLE_FILL_PER_HOUR +
-        (event ? BRAIN_ACTIVITY_FILL_PER_HOUR[event.kind] : 0);
-      brain = Math.min(brain + fill * hours, BRAIN_CAP);
+      let fill =
+        (BRAIN_IDLE_FILL_PER_HOUR +
+          (event ? BRAIN_ACTIVITY_FILL_PER_HOUR[event.kind] : 0)) *
+        hours;
+      if (!event) {
+        const read = Math.min(hours, reading);
+        reading -= read;
+        fill += BRAIN_READING_FILL_PER_HOUR * read;
+      }
+      brain = Math.min(brain + fill, BRAIN_CAP);
     }
     time = end;
   }

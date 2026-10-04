@@ -1,12 +1,14 @@
 import { INITIAL_EXPENSES, type Expenses } from '@game/expenses';
 import { INITIAL_NUTRITION, type Nutrition } from '@game/nutrition';
+import { INITIAL_READING, type Reading } from '@game/reading';
 import { INITIAL_SLEEP, type Sleep } from '@game/sleep';
 import { DEFAULT_SPEED_INDEX } from '@game/time';
 
 // Everything needed to resume a game: plain JSON, no function, no instant of
 // the browser (ADR 0002).
 export type GameState = Nutrition &
-  Sleep & {
+  Sleep &
+  Reading & {
     // game hours since Monday 00:00 of the first week
     elapsedHours: number;
     // day the player was born, YYYY-MM-DD
@@ -22,6 +24,7 @@ export type GameState = Nutrition &
 export const INITIAL_GAME_STATE: GameState = {
   ...INITIAL_NUTRITION,
   ...INITIAL_SLEEP,
+  ...INITIAL_READING,
   elapsedHours: 0,
   birthDate: '2009-02-01',
   speedIndex: DEFAULT_SPEED_INDEX,

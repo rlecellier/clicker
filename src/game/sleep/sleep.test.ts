@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest';
 
+import { BRAIN_READING_FILL_PER_HOUR } from '@game/reading';
 import { HOURS_PER_DAY } from '@game/time';
 
 import {
@@ -97,4 +98,14 @@ test('one long run gives the same as many short ones', () => {
     short.dreams + short.dreamGauge / DREAM_CAP,
     5,
   );
+});
+
+test('reading fills the brain faster, during free time only', () => {
+  // 18:00 to 19:00 is a free hour
+  const idle = stepSleep(MORNING, at(0, 18), at(0, 19)).brain;
+  const read = stepSleep(MORNING, at(0, 18), at(0, 19), 1).brain;
+  expect(read - idle).toBeCloseTo(BRAIN_READING_FILL_PER_HOUR, 5);
+  // 8:00 to 9:00 is work: no free hour to read in
+  const work = stepSleep(MORNING, at(0, 8), at(0, 9)).brain;
+  expect(stepSleep(MORNING, at(0, 8), at(0, 9), 1).brain).toBe(work);
 });

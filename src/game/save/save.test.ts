@@ -34,6 +34,8 @@ const state = {
   dreamGauge: 42.5,
   dreams: 3,
   cakeUntil: 120,
+  bookHours: 12.5,
+  isReading: true,
 };
 
 const broken = (patch: Record<string, unknown>) =>
@@ -87,6 +89,9 @@ test('refuses a save with a missing or invalid field', () => {
   expect(broken({ dreams: -1 })).toBeUndefined();
   expect(broken({ dreams: 1.5 })).toBeUndefined();
   expect(broken({ fat: undefined })).toBeUndefined();
+  expect(broken({ bookHours: 49 })).toBeUndefined();
+  expect(broken({ bookHours: undefined })).toBeUndefined();
+  expect(broken({ isReading: 'yes' })).toBeUndefined();
 });
 
 test('writes then reads the save in the storage', () => {
