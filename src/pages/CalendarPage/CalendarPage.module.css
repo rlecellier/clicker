@@ -53,7 +53,13 @@
   background: var(--color-accent);
 }
 
-/* Vertical moves still scroll the page; horizontal ones are swipes. */
+/* The grid scrolls on its own once zoomed in. Vertical moves scroll it,
+   horizontal ones are swipes, and the pinch is handled by the page. */
 .grid {
+  /* the screen below the header, the time controls and the toolbar */
+  --calendar-height: max(24rem, calc(100dvh - 12rem));
+  height: var(--calendar-height);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   touch-action: pan-y;
 }
