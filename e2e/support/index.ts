@@ -4,6 +4,7 @@ export {
   elapse,
   SUNDAY_EVENING,
   openPage,
+  moveTo,
   openSite,
   perform,
   startGame,

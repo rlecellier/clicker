@@ -26,7 +26,9 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
     'home',
   );
   await expect(fridge).toHaveAttribute('aria-valuetext', '10 / 10');
-  await expect(page.getByRole('button', { name: /Go to work/ })).toHaveCount(0);
+  await expect(page.getByRole('combobox', { name: 'Destination' })).toHaveCount(
+    0,
+  );
   await openPage(page, 'Calendar');
   await expect(page.getByRole('main').getByRole('listitem')).toHaveCount(0);
   await demoShot(page, 'empty-calendar');

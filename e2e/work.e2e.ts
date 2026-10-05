@@ -4,6 +4,7 @@ import {
   demoShot,
   elapse,
   getAJob,
+  moveTo,
   openPage,
   perform,
   startGame,
@@ -44,12 +45,14 @@ test('look for a job, work a morning, eat out and come back home', async ({
   await openPage(page, 'Game');
 
   // Going to work takes no time; the pay comes in as the hours go by.
-  await page.getByRole('button', { name: 'Go to work' }).click();
+  await moveTo(page, 'Work');
   await expect(location).toHaveAttribute('data-location', 'work');
   await expect(clock).toContainText('09:00');
   await expect(coins(page)).toHaveText('1,000');
   await page.getByRole('button', { name: /^Work/ }).click();
-  await expect(page.getByRole('button', { name: 'Go home' })).toBeDisabled();
+  await expect(
+    page.getByRole('button', { name: 'Go', exact: true }),
+  ).toBeDisabled();
   await elapse(page, 0.5);
   await expect(coins(page)).toHaveText('1,005');
   await demoShot(page, 'working');
@@ -89,10 +92,10 @@ test('look for a job, work a morning, eat out and come back home', async ({
   await expect(coins(page)).toHaveText('1,027');
 
   // Leaving costs no time; thinking is possible at work too.
-  await page.getByRole('button', { name: 'Go home' }).click();
+  await moveTo(page, 'Home');
   await expect(location).toHaveAttribute('data-location', 'home');
   await expect(clock).toContainText('13:30');
-  await page.getByRole('button', { name: 'Go to work' }).click();
+  await moveTo(page, 'Work');
   await perform(page, 'Think 1h', 1);
   await expect(clock).toContainText('14:30');
   await expect(location).toHaveAttribute('data-location', 'work');
@@ -107,7 +110,7 @@ test('look for a job, work a morning, eat out and come back home', async ({
   await expect(queue).toContainText('Have a meal');
   await expect(clock).toContainText('14:30');
   await openPage(page, 'Game');
-  await page.getByRole('button', { name: 'Go home' }).click();
+  await moveTo(page, 'Home');
   await expect(
     page.getByRole('meter', { name: 'Action in progress' }),
   ).toHaveAttribute('aria-valuetext', 'Snack, 0%');

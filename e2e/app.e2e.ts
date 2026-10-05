@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import {
   elapse,
   getAJob,
+  moveTo,
   openPage,
   openSite,
   perform,
@@ -84,7 +85,7 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   // The game is saved and resumed when the page is reloaded.
   await perform(page, /Have a snack/, 0.5);
   await getAJob(page);
-  await page.getByRole('button', { name: 'Go to work' }).click();
+  await moveTo(page, 'Work');
   await expect(clock).toContainText('09:30');
   await page.reload();
   await expect(clock).toContainText('09:30');
@@ -92,10 +93,12 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
     'aria-valuetext',
     '9 / 10',
   );
-  await expect(page.getByRole('button', { name: 'Go home' })).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Destination' })).toHaveValue(
+    'home',
+  );
 
   // An action that is not over is not saved: the game resumes before it.
-  await page.getByRole('button', { name: 'Go home' }).click();
+  await moveTo(page, 'Home');
   await page.getByRole('button', { name: /Sleep 8h/ }).click();
   await elapse(page, 3);
   await page.reload();
