@@ -68,14 +68,19 @@
   color: var(--color-text);
 }
 
-/* Pushed to the bottom of the panel, away from the navigation. */
+/* Pushed to the bottom of the panel, and stuck there while the content scrolls. */
 .panel button.restart {
+  position: sticky;
+  bottom: 1rem;
+  flex-shrink: 0;
+  background: var(--color-bg);
+  /* Hides what scrolls under it, down to the screen edge. */
+  box-shadow: 0 1rem 0 var(--color-bg);
   justify-content: flex-start;
   gap: 0.6rem;
   margin-top: auto;
   padding: 0.6rem 0.75rem;
   border-radius: 8px;
-  background: transparent;
   color: var(--color-muted);
   font-size: inherit;
 }
@@ -202,9 +207,14 @@
 
   .panel:not([data-open]) .link,
   .panel:not([data-open]) .sublink,
+  .panel:not([data-open]) .nav button.group {
+    position: relative;
+  }
+
+  .panel:not([data-open]) .link,
+  .panel:not([data-open]) .sublink,
   .panel:not([data-open]) .nav button.group,
   .panel:not([data-open]) button.restart {
-    position: relative;
     justify-content: center;
     padding: 0.6rem;
   }
