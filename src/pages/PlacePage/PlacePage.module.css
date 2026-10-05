@@ -1,3 +1,20 @@
 .root {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   padding: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  align-self: flex-start;
+  color: var(--color-muted);
+  font-size: 0.9rem;
 }

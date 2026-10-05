@@ -6,9 +6,11 @@ import { ActivityProgress } from '@component/ActivityProgress';
 import { BookProgress } from '@component/BookProgress';
 import { GetJob } from '@component/GetJob';
 import { JobStatus } from '@component/JobStatus';
+import { QueueList } from '@component/QueueList';
 import { LocationIndicator } from '@component/LocationIndicator';
 import { useGameContext } from '@context/GameContext';
 import { useGamePanel } from '@hook/useGamePanel';
+import { useQueue } from '@hook/useQueue';
 
 import styles from './GamePage.module.css';
 
@@ -16,6 +18,7 @@ export const GamePage = () => {
   const { currentBook, bookHours } = useGameContext();
   const { location, activity, job, travel, rows, perform, goTo } =
     useGamePanel();
+  const queue = useQueue();
 
   return (
     <div className={styles.content}>
@@ -40,6 +43,7 @@ export const GamePage = () => {
         <GetJob />
         {activity && <ActivityProgress {...activity} />}
         <ActionList rows={rows} onPerform={perform} />
+        <QueueList items={queue.items} onRemove={queue.remove} />
         {currentBook && (
           <BookProgress
             title={currentBook.title}
