@@ -4,6 +4,8 @@
   --strip-height: 3.5rem;
   /* what the header and the strip take at the top of the page */
   --top-height: calc(var(--header-height) + var(--strip-height));
+  /* Width of the folded sidebar on mobile: icons only. */
+  --rail-width: 3.5rem;
   --color-bg: #1b1d23;
   --color-text: #eee;
   --color-muted: #888;
