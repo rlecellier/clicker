@@ -98,7 +98,7 @@ test('links to the game, the calendar and the balance', () => {
   );
 });
 
-test('marks the current page and closes when a link is clicked', async () => {
+test('marks the current page and stays open when a link is clicked', async () => {
   const user = userEvent.setup();
   const { onClose } = renderPanel(true);
   expect(screen.getByRole('link', { name: 'Game' })).toHaveAttribute(
@@ -106,7 +106,7 @@ test('marks the current page and closes when a link is clicked', async () => {
     'page',
   );
   await user.click(screen.getByRole('link', { name: 'Balance' }));
-  expect(onClose).toHaveBeenCalled();
+  expect(onClose).not.toHaveBeenCalled();
 });
 
 test('links to the places page', () => {

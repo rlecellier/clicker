@@ -71,10 +71,14 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   await page.mouse.click(470, 300);
   await expect(sidebar).not.toBeInViewport();
 
-  // The balance, the title, and a page that does not exist.
+  // The balance, the title, and a page that does not exist. Changing page
+  // leaves the menu as it is: open until the player closes it.
   await menu.click();
   await page.getByRole('link', { name: 'Balance' }).click();
   await expect(page.getByRole('heading', { name: 'Balance' })).toBeVisible();
+  await expect(sidebar).toBeInViewport();
+  await menu.click();
+  await expect(sidebar).not.toBeInViewport();
   await page.getByRole('link', { name: 'Clicker' }).click();
   await expect(lookForAJob).toBeVisible();
   await page.goto('/places/nowhere');

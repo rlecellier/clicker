@@ -95,7 +95,6 @@ export const Sidebar = ({
                 end={to === '/'}
                 className={styles.link}
                 title={label}
-                onClick={onClose}
               >
                 <Icon aria-hidden size={18} />
                 <span className={styles.label}>{label}</span>
