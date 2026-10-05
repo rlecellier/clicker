@@ -3,84 +3,30 @@
   flex-direction: column;
 }
 
-.body {
-  display: flex;
-  align-items: flex-start;
-}
-
-.main {
-  flex: 1;
-  /* leaves room for the folded sidebar, fixed on the left on mobile */
-  margin-left: var(--rail-width);
-  min-width: 0;
-  box-sizing: border-box;
-  /* every page has the same margin around it */
-  padding: 1rem;
-  text-align: center;
-}
-
 .header {
   position: sticky;
   top: 0;
-  /* Above the sidebar panel and its backdrop. */
-  z-index: 4;
-  box-sizing: border-box;
-  height: var(--header-height);
+  /* above the sidebar panel and its backdrop */
+  z-index: var(--z-header);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1rem;
-  background: var(--color-bg);
+  height: var(--header-height);
+  padding: 0 0.5rem;
   border-bottom: 1px solid var(--color-surface);
+  background: var(--color-bg);
 }
 
 .brand,
 .status {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-}
-
-/* Mobile only: opens the sidebar, above the sidebar and backdrop. */
-.menuButton {
-  position: relative;
-  z-index: 3;
-  padding: 0.4rem;
-  background: var(--color-surface);
-  color: var(--color-text);
-}
-
-.menuButton:hover:not([disabled]) {
-  background: var(--color-surface-raised);
-}
-
-/* Mobile only: the game time, between the header and the days strip. */
-.clockBar {
-  position: sticky;
-  top: var(--header-height);
-  z-index: 3;
-  box-sizing: border-box;
-  height: var(--clock-height);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-bg);
-  border-bottom: 1px solid var(--color-surface);
-}
-
-@media (min-width: 640px) {
-  .main {
-    margin-left: 0;
-  }
-
-  .menuButton {
-    display: none;
-  }
+  gap: 0.5rem;
 }
 
 .title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
 }
 
 .titleLink {
@@ -88,18 +34,62 @@
   text-decoration: none;
 }
 
-/* On a narrow phone the header must fit: tighter, with smaller figures. */
-@media (max-width: 639px) {
+/* Mobile only: opens the sidebar. */
+.menuButton {
+  --button-bg: var(--color-surface);
+  --button-bg-hover: var(--color-surface-raised);
+  --button-color: var(--color-text);
+
+  padding: 0.4rem;
+}
+
+/* Mobile only: the game time, between the header and the days strip. */
+.clockBar {
+  position: sticky;
+  top: var(--header-height);
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--clock-height);
+  border-bottom: 1px solid var(--color-surface);
+  background: var(--color-bg);
+}
+
+.body {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Every page has the same margin around it. */
+.main {
+  flex: 1;
+  min-width: 0;
+  /* leaves room for the folded sidebar, fixed on the left on mobile */
+  margin-left: var(--rail-width);
+  padding: 1rem;
+  text-align: center;
+}
+
+@media (width >= 640px) {
   .header {
-    padding: 0 0.5rem;
+    padding: 0 1rem;
   }
 
   .brand,
   .status {
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
 
   .title {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
+  }
+
+  .menuButton {
+    display: none;
+  }
+
+  .main {
+    margin-left: 0;
   }
 }

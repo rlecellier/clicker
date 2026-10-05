@@ -1,31 +1,41 @@
+/* Three days on mobile, four from tablet up. */
 .root {
   --day-width: 33.333%;
 
   /* stays under the header while the page scrolls */
   position: sticky;
   top: calc(var(--header-height) + var(--clock-height));
-  z-index: 3;
-  overflow: hidden;
+  z-index: var(--z-sticky);
   height: var(--strip-height);
-  box-sizing: border-box;
-  background: var(--color-bg);
+  overflow: hidden;
   border-bottom: 1px solid var(--color-surface);
+  background: var(--color-bg);
+}
+
+@media (width >= 640px) {
+  .root {
+    --day-width: 25%;
+  }
 }
 
 .day {
   position: absolute;
   top: 0;
   bottom: 0;
-  box-sizing: border-box;
   width: var(--day-width);
   padding: 0.4rem 0.25rem 0;
   border-left: 1px solid var(--color-surface);
-  font-size: 0.8rem;
   color: var(--color-muted);
+  font-size: 0.8rem;
 }
 
 .day[data-current] {
   color: var(--color-text);
+}
+
+/* The days before the game began are empty. */
+.day[data-before-start] {
+  opacity: 0.4;
 }
 
 .name {
@@ -38,16 +48,16 @@
 .track {
   position: relative;
   height: 0.6rem;
-  background: var(--color-surface);
   border-radius: 3px;
+  background: var(--color-surface);
 }
 
 .event {
   position: absolute;
   top: 0;
   bottom: 0;
-  background: var(--color-accent);
   border-radius: 2px;
+  background: var(--color-accent);
   opacity: 0.85;
 }
 
@@ -59,8 +69,21 @@
   background: var(--color-success);
 }
 
+.event[data-kind='search'] {
+  background: var(--color-orange);
+}
+
 .event[data-kind='sleep'] {
   background: var(--color-sleep);
+}
+
+/* What the job requires, outlined over the track. */
+.obligation {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  border: 1px solid var(--color-accent-pale);
+  border-radius: 2px;
 }
 
 .marker {
@@ -70,31 +93,6 @@
   left: 50%;
   width: 3px;
   margin-left: -1px;
+  border-radius: 2px;
   background: var(--color-success);
-  border-radius: 2px;
-}
-
-@media (min-width: 640px) {
-  .root {
-    --day-width: 25%;
-  }
-}
-
-.event[data-kind='search'] {
-  background: var(--color-orange);
-}
-
-/* What the job requires, outlined over the track. */
-.obligation {
-  position: absolute;
-  top: -2px;
-  bottom: -2px;
-  box-sizing: border-box;
-  border: 1px solid var(--color-accent-pale);
-  border-radius: 2px;
-}
-
-/* The days before the game began are empty. */
-.day[data-before-start] {
-  opacity: 0.4;
 }

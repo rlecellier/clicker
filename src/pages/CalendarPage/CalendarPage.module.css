@@ -21,13 +21,13 @@
 }
 
 .title {
-  margin: 0;
   min-width: 9rem;
+  margin: 0;
   font-size: 1rem;
 }
 
 /* On the narrowest phones, the title gives way so the toolbar still fits. */
-@media (max-width: 319px) {
+@media (width < 320px) {
   .title {
     min-width: 6rem;
   }
@@ -40,37 +40,41 @@
 
 /* The pressed view stands out from the other one. */
 .views button {
+  --button-bg: var(--color-surface);
+  --button-bg-hover: var(--color-surface-raised);
+
   border-radius: 0;
-  background: var(--color-surface);
-}
-
-.views button:first-child {
-  border-radius: 8px 0 0 8px;
-}
-
-.views button:last-child {
-  border-radius: 0 8px 8px 0;
 }
 
 .views button[aria-pressed='true'] {
-  background: var(--color-accent);
+  --button-bg: var(--color-accent);
+  --button-bg-hover: var(--color-accent-hover);
+}
+
+.views button:first-child {
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+.views button:last-child {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
 /* The grid scrolls on its own once zoomed in. Vertical moves scroll it,
    horizontal ones are swipes, and the pinch is handled by the page. */
 .grid {
-  /* the screen below the header, the time controls and the toolbar */
-  --calendar-height: max(24rem, calc(100dvh - 15.5rem - var(--clock-height)));
+  /* the screen below the top bars, the page margin and the toolbar */
+  --below-top: calc(100dvh - var(--top-height) - 8.5rem);
+  --calendar-height: max(24rem, var(--below-top));
+
   height: var(--calendar-height);
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden auto;
   overscroll-behavior: contain;
   touch-action: pan-y;
 }
 
 /* On a large screen, the day does not stretch to the whole page. */
-@media (min-width: 640px) {
+@media (width >= 640px) {
   .grid {
-    --calendar-height: clamp(24rem, calc(100dvh - 15.5rem), 34rem);
+    --calendar-height: clamp(24rem, var(--below-top), 34rem);
   }
 }

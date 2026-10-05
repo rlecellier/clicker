@@ -5,7 +5,7 @@ import type { Body } from '@game/body';
 
 import styles from './BodyGauge.module.css';
 
-const bodyGauge = cva(styles.root, {
+const bodyGauge = cva('', {
   variants: {
     // compact lives in the sidebar, full takes the width of its container
     size: {

@@ -1,6 +1,5 @@
 .root {
   min-height: 100dvh;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;

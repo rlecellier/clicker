@@ -2,8 +2,8 @@
 .backdrop {
   position: fixed;
   inset: var(--top-height) 0 0;
-  z-index: 1;
-  background: rgb(0 0 0 / 0.5);
+  z-index: var(--z-sidebar-backdrop);
+  background: var(--color-backdrop);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s;
@@ -19,17 +19,16 @@
   top: var(--top-height);
   bottom: 0;
   left: 0;
-  z-index: 2;
-  box-sizing: border-box;
-  width: var(--rail-width);
+  z-index: var(--z-sidebar);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  width: var(--rail-width);
   padding: 1rem;
   /* On a short screen the content scrolls instead of leaving the screen. */
   overflow: hidden auto;
-  background: var(--color-bg);
   border-right: 1px solid var(--color-surface);
+  background: var(--color-bg);
   transition: width 0.2s ease-in-out;
 }
 
@@ -49,13 +48,17 @@
   gap: 0.25rem;
 }
 
-.link {
+.link,
+.restart {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   padding: 0.6rem 0.75rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--color-muted);
+}
+
+.link {
   text-decoration: none;
 }
 
@@ -69,32 +72,29 @@
 }
 
 /* Pushed to the bottom of the panel, and stuck there while the content scrolls. */
-.panel button.restart {
+.restart {
+  --button-bg: var(--color-bg);
+  --button-bg-hover: var(--color-surface);
+
   position: sticky;
   bottom: 1rem;
   flex-shrink: 0;
-  background: var(--color-bg);
-  /* Hides what scrolls under it, down to the screen edge. */
-  box-shadow: 0 1rem 0 var(--color-bg);
   justify-content: flex-start;
-  gap: 0.6rem;
   margin-top: auto;
-  padding: 0.6rem 0.75rem;
-  border-radius: 8px;
-  color: var(--color-muted);
+  /* hides what scrolls under it, down to the screen edge */
+  box-shadow: 0 1rem 0 var(--color-bg);
   font-size: inherit;
 }
 
-.panel button.restart:hover:not([disabled]) {
-  background: var(--color-surface);
+.restart:hover {
   color: var(--color-text);
 }
 
 /* Mobile, folded: only the icons are left, the gauges give way to them. */
-@media (max-width: 639px) {
+@media (width < 640px) {
   .panel:not([data-open]) {
-    padding: 0.5rem;
     gap: 0.5rem;
+    padding: 0.5rem;
   }
 
   /* Off screen rather than removed, so they stay readable by assistive tech. */
@@ -102,6 +102,11 @@
     position: absolute;
     left: -100vw;
     width: 160px;
+  }
+
+  /* keeps the hidden label inside its link */
+  .panel:not([data-open]) .link {
+    position: relative;
   }
 
   .panel:not([data-open]) .label {
@@ -112,25 +117,14 @@
     clip-path: inset(50%);
   }
 
-  .panel:not([data-open]) .link {
-    position: relative;
-  }
-
-  .panel:not([data-open]) .link,
-  .panel:not([data-open]) button.restart {
+  .panel:not([data-open]) :is(.link, .restart) {
     justify-content: center;
     padding: 0.6rem;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .panel {
-    transition: none;
-  }
-}
-
 /* Tablet and up: the sidebar is always there, next to the page. */
-@media (min-width: 640px) {
+@media (width >= 640px) {
   .backdrop {
     display: none;
   }
@@ -140,7 +134,13 @@
     top: var(--top-height);
     flex-shrink: 0;
     width: 240px;
-    height: calc(100vh - var(--top-height));
+    height: calc(100dvh - var(--top-height));
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
     transition: none;
   }
 }

@@ -17,7 +17,6 @@
   position: sticky;
   top: 0;
   z-index: 2;
-  box-sizing: border-box;
   height: var(--heading-height);
   display: flex;
   flex-direction: column;
@@ -64,7 +63,7 @@
   background-color: var(--color-surface);
   background-image: linear-gradient(var(--color-bg) 1px, transparent 1px);
   background-size: 100% calc(100% / 8);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .day[data-current] {
@@ -75,7 +74,6 @@
   position: absolute;
   left: calc(50% + 1px);
   right: 2px;
-  box-sizing: border-box;
   overflow: hidden;
   padding: 0.1rem 0.25rem;
   border-left: 3px solid var(--color-accent-pale);
@@ -134,13 +132,12 @@
   position: absolute;
   left: 2px;
   width: calc(50% - 3px);
-  box-sizing: border-box;
   border: 1px solid var(--color-accent-pale);
   border-radius: 3px;
   background: repeating-linear-gradient(
     135deg,
     transparent 0 4px,
-    rgb(147 197 253 / 0.25) 4px 8px
+    color-mix(in srgb, var(--color-accent-pale) 25%, transparent) 4px 8px
   );
 }
 

@@ -47,7 +47,7 @@
 }
 
 /* On a very narrow phone, the choices of a group go under its name. */
-@media (max-width: 359px) {
+@media (width < 360px) {
   .row {
     flex-wrap: wrap;
   }

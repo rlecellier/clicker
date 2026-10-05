@@ -3,6 +3,22 @@
   width: 100%;
 }
 
+/* green 40%–60%, yellow 20%–40% and 60%–80%, red beyond */
+.value[data-status='good'],
+.indicator[data-status='good'] {
+  --status-color: var(--color-success);
+}
+
+.value:is([data-status='running-low'], [data-status='running-high']),
+.indicator:is([data-status='running-low'], [data-status='running-high']) {
+  --status-color: var(--color-warning-light);
+}
+
+.value:is([data-status='starving'], [data-status='overflowing']),
+.indicator:is([data-status='starving'], [data-status='overflowing']) {
+  --status-color: var(--color-danger);
+}
+
 .header {
   display: flex;
   align-items: baseline;
@@ -13,31 +29,17 @@
 }
 
 .value {
+  color: var(--status-color);
   font-size: 1rem;
   font-weight: 600;
-}
-
-/* green 40%–60%, yellow 20%–40% and 60%–80%, red beyond */
-.value[data-status='good'] {
-  color: var(--color-success);
-}
-
-.value[data-status='running-low'],
-.value[data-status='running-high'] {
-  color: var(--color-warning-light);
-}
-
-.value[data-status='starving'],
-.value[data-status='overflowing'] {
-  color: var(--color-danger);
 }
 
 .track {
   position: relative;
   height: 8px;
-  background: var(--color-surface);
-  border-radius: 4px;
   overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
 }
 
 /* the 20%–80% range the player should stay in */
@@ -45,27 +47,15 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  background: rgb(34 197 94 / 0.18);
-  border-inline: 1px solid rgb(34 197 94 / 0.5);
+  border-inline: 1px solid
+    color-mix(in srgb, var(--color-success) 50%, transparent);
+  background: color-mix(in srgb, var(--color-success) 18%, transparent);
 }
 
 .indicator {
   position: relative;
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
+  background: var(--status-color);
   transition: background 0.3s;
-}
-
-.indicator[data-status='good'] {
-  background: var(--color-success);
-}
-
-.indicator[data-status='running-low'],
-.indicator[data-status='running-high'] {
-  background: var(--color-warning-light);
-}
-
-.indicator[data-status='starving'],
-.indicator[data-status='overflowing'] {
-  background: var(--color-danger);
 }
