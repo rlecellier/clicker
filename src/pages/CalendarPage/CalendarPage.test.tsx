@@ -64,13 +64,11 @@ test('the arrows move by a week in the week view, by a day in the day view', () 
   useScreen(true);
   renderPage();
   fireEvent.click(screen.getByRole('button', { name: 'Next week' }));
-  expect(
-    screen.getByRole('heading', { name: '8 – 14 Feb 2027' }),
-  ).toBeVisible();
+  expect(screen.getByRole('heading', { name: '1 – 7 Mar 2027' })).toBeVisible();
 
   fireEvent.click(screen.getByRole('button', { name: 'Day' }));
   fireEvent.click(screen.getByRole('button', { name: 'Next day' }));
-  expect(screen.getByRole('list', { name: 'Thu 11' })).toBeInTheDocument();
+  expect(screen.getByRole('list', { name: 'Thu 4' })).toBeInTheDocument();
 });
 
 test('has no previous week before the start of the game', () => {

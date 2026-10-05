@@ -1,7 +1,12 @@
 export const HOURS_PER_DAY = 24;
 export const DAYS_PER_WEEK = 7;
 export const HOURS_PER_WEEK = HOURS_PER_DAY * DAYS_PER_WEEK;
-export const MS_PER_DAY = HOURS_PER_DAY * 3600 * 1000;
+
+// Artificial calendar (ADR 0006): a week of the game is a month, so a year
+// lasts 12 weeks.
+export const WEEKS_PER_YEAR = 12;
+export const DAYS_PER_YEAR = DAYS_PER_WEEK * WEEKS_PER_YEAR;
+export const HOURS_PER_YEAR = DAYS_PER_YEAR * HOURS_PER_DAY;
 
 // Game hours that go by in one real second while an action is running.
 export const HOURS_PER_SECOND = 1;

@@ -1,19 +1,26 @@
 import {
   DAYS_PER_WEEK,
   HOURS_PER_DAY,
-  MS_PER_DAY,
   STEP_HOURS,
+  WEEKS_PER_YEAR,
 } from './constants';
 
-const weekday = new Intl.DateTimeFormat('en', {
-  weekday: 'short',
-  timeZone: 'UTC',
-});
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-const month = new Intl.DateTimeFormat('en', {
-  month: 'short',
-  timeZone: 'UTC',
-});
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 // Where a game begins: the Monday of the week it starts in (`origin`, the
 // UTC midnight of that day) and the game hours of the moment it starts, which
@@ -40,22 +47,31 @@ export const gameStartOf = (now: Date): GameStart => {
   };
 };
 
-// Calendar date of the n-th day of a game (0 = the Monday of the first week).
-export const dateOfDay = (origin: number, absoluteDay: number) =>
-  new Date(origin + absoluteDay * MS_PER_DAY);
-
-export const weekdayLabel = (origin: number, absoluteDay: number) =>
-  weekday.format(dateOfDay(origin, absoluteDay));
-
-export const monthLabel = (origin: number, absoluteDay: number) =>
-  month.format(dateOfDay(origin, absoluteDay));
-
-export const dayOfMonth = (origin: number, absoluteDay: number) =>
-  dateOfDay(origin, absoluteDay).getUTCDate();
-
-export const yearOf = (origin: number, absoluteDay: number) =>
-  dateOfDay(origin, absoluteDay).getUTCFullYear();
+// Artificial calendar (ADR 0006): every week of the game is a month, named
+// after the real month of the launch for week 0 and going on from there, and
+// a year is 12 weeks. A month has 7 days, one per weekday.
+const monthsSinceYearZero = (origin: number, absoluteDay: number) => {
+  const launch = new Date(origin);
+  return (
+    launch.getUTCFullYear() * WEEKS_PER_YEAR +
+    launch.getUTCMonth() +
+    Math.floor(absoluteDay / DAYS_PER_WEEK)
+  );
+};
 
 // Index of the weekday of a day of the game, 0 = Monday.
 export const weekdayIndex = (absoluteDay: number) =>
   absoluteDay % DAYS_PER_WEEK;
+
+export const weekdayLabel = (_origin: number, absoluteDay: number) =>
+  WEEKDAYS[weekdayIndex(absoluteDay)];
+
+export const monthLabel = (origin: number, absoluteDay: number) =>
+  MONTHS[monthsSinceYearZero(origin, absoluteDay) % WEEKS_PER_YEAR];
+
+// 1 to 7: the n-th day of the week-month.
+export const dayOfMonth = (_origin: number, absoluteDay: number) =>
+  weekdayIndex(absoluteDay) + 1;
+
+export const yearOf = (origin: number, absoluteDay: number) =>
+  Math.floor(monthsSinceYearZero(origin, absoluteDay) / WEEKS_PER_YEAR);

@@ -1,8 +1,9 @@
-import { HOURS_PER_DAY } from '@game/time';
+import { HOURS_PER_DAY, HOURS_PER_YEAR } from '@game/time';
 
-import { HOURS_PER_YEAR, START_AGE } from './constants';
+import { START_AGE } from './constants';
 
-// Age in whole years of the player, after the given game hours.
+// Age in whole years of the player, after the given game hours. A year of the
+// game lasts 12 weeks (ADR 0006).
 export const ageAt = (elapsedHours: number) =>
   START_AGE + Math.floor(elapsedHours / HOURS_PER_YEAR);
 

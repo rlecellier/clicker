@@ -1,12 +1,12 @@
 import { expect, test } from 'vitest';
 
 import {
-  dateOfDay,
   dayOfMonth,
   gameStartOf,
   monthLabel,
   weekdayIndex,
   weekdayLabel,
+  yearOf,
 } from './dates';
 
 // Monday 5 October 2026, local time.
@@ -34,11 +34,28 @@ test('a Sunday belongs to the week that began the Monday before', () => {
 
 test('days are counted from the origin', () => {
   const { origin } = gameStartOf(MONDAY);
-  expect(dateOfDay(origin, 0).getUTCDate()).toBe(5);
   expect(weekdayLabel(origin, 0)).toBe('Mon');
   expect(weekdayLabel(origin, 6)).toBe('Sun');
   expect(weekdayLabel(origin, 7)).toBe('Mon');
-  expect(dayOfMonth(origin, 27)).toBe(1);
-  expect(monthLabel(origin, 27)).toBe('Nov');
+  expect(weekdayIndex(9)).toBe(2);
+});
+
+test('a week is a month and a year is 12 weeks', () => {
+  const { origin } = gameStartOf(MONDAY);
+  // week 0 is October 2026, its 7 days are numbered 1 to 7
+  expect(monthLabel(origin, 0)).toBe('Oct');
+  expect(dayOfMonth(origin, 0)).toBe(1);
+  expect(dayOfMonth(origin, 6)).toBe(7);
+  expect(yearOf(origin, 6)).toBe(2026);
+  // week 1 is November, week 3 is January 2027
+  expect(monthLabel(origin, 7)).toBe('Nov');
+  expect(dayOfMonth(origin, 7)).toBe(1);
+  expect(monthLabel(origin, 27)).toBe('Jan');
+  expect(dayOfMonth(origin, 27)).toBe(7);
+  expect(yearOf(origin, 20)).toBe(2026);
+  expect(yearOf(origin, 21)).toBe(2027);
+  // 12 weeks later it is the same month, a year later
+  expect(monthLabel(origin, 12 * 7)).toBe('Oct');
+  expect(yearOf(origin, 12 * 7)).toBe(2027);
   expect(weekdayIndex(9)).toBe(2);
 });
