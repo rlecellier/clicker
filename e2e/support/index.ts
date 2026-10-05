@@ -4,6 +4,8 @@ export {
   elapse,
   MONDAY_MORNING,
   openPage,
+  openSite,
   perform,
   startGame,
+  startNewGame,
 } from './startGame';

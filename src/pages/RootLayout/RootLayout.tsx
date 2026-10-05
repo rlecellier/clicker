@@ -10,12 +10,11 @@ import { GameClock } from '@component/GameClock';
 import { MoneyCounter } from '@component/MoneyCounter';
 import { Sidebar } from '@component/Sidebar';
 import { GameProvider, useGameContext } from '@context/GameContext';
+import { useGameStart } from '@hook/useGameStart';
 import { useMediaQuery } from '@hook/useMediaQuery';
-import { birthDateOf } from '@game/age';
-import { newGameState } from '@game/gameState';
+import { StartPage } from '@page/StartPage';
 import { getCaloriesStatus } from '@game/nutrition';
-import { readSave } from '@game/save';
-import { gameStartOf, HOURS_PER_DAY, momentOf } from '@game/time';
+import { HOURS_PER_DAY, momentOf } from '@game/time';
 
 import styles from './RootLayout.module.css';
 
@@ -109,22 +108,12 @@ const Layout = () => {
 };
 
 export const RootLayout = () => {
-  // The saved game is read once, when the page opens.
-  const [savedGame] = useState(
-    () =>
-      readSave(localStorage) ??
-      (() => {
-        // a new game starts at the date and time of the player
-        const now = new Date();
-        return newGameState({
-          ...gameStartOf(now),
-          birthDate: birthDateOf(now),
-        });
-      })(),
-  );
+  const { game, start } = useGameStart();
+
+  if (!game) return <StartPage onStart={start} />;
 
   return (
-    <GameProvider initialState={savedGame} persist>
+    <GameProvider initialState={game} persist>
       <Layout />
     </GameProvider>
   );
