@@ -18,3 +18,10 @@ createRoot(root).render(
     <RouterProvider router={router} />
   </StrictMode>,
 );
+
+// Temporary: ?debug shows the widths of the page (Firefox on Android issue).
+if (new URLSearchParams(location.search).has('debug')) {
+  void import('./debugOverlay').then(({ showDebugOverlay }) => {
+    showDebugOverlay();
+  });
+}
