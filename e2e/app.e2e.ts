@@ -91,4 +91,16 @@ test('navigate the menu, resume a saved game and restart it', async ({
   });
   await page.reload();
   await expect(clock).toContainText('07:00');
+
+  // No page scrolls sideways on a narrow phone.
+  await page.setViewportSize({ width: 360, height: 700 });
+  for (const path of ['/', '/calendar', '/balance', '/profile', '/places']) {
+    await page.goto(path);
+    const overflow = await page.evaluate(() =>
+      [...document.querySelectorAll('header, aside, main')].some(
+        (element) => element.scrollWidth > element.clientWidth,
+      ),
+    );
+    expect(overflow, path).toBe(false);
+  }
 });
