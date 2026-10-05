@@ -33,6 +33,11 @@
   --color-on-accent: #fff;
 }
 
+/* Browsers that ignore `overflow-x: clip` on #root still never scroll sideways. */
+html {
+  overflow-x: hidden;
+}
+
 body {
   font-family: system-ui, sans-serif;
   background: var(--color-bg);
