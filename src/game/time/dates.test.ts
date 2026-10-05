@@ -3,6 +3,7 @@ import { expect, test } from 'vitest';
 import {
   dayOfMonth,
   gameStartOf,
+  lastDayOfMonth,
   monthLabel,
   weekdayIndex,
   weekdayLabel,
@@ -42,16 +43,19 @@ test('days are counted from the origin', () => {
 
 test('a week is a month and a year is 12 weeks', () => {
   const { origin } = gameStartOf(MONDAY);
-  // week 0 is October 2026, its 7 days are numbered 1 to 7
+  // week 0 is October 2026, its 7 days cover the dates 1 to 28
   expect(monthLabel(origin, 0)).toBe('Oct');
   expect(dayOfMonth(origin, 0)).toBe(1);
-  expect(dayOfMonth(origin, 6)).toBe(7);
+  expect(lastDayOfMonth(origin, 0)).toBe(4);
+  expect(dayOfMonth(origin, 1)).toBe(5);
+  expect(dayOfMonth(origin, 6)).toBe(25);
+  expect(lastDayOfMonth(origin, 6)).toBe(28);
   expect(yearOf(origin, 6)).toBe(2026);
   // week 1 is November, week 3 is January 2027
   expect(monthLabel(origin, 7)).toBe('Nov');
   expect(dayOfMonth(origin, 7)).toBe(1);
   expect(monthLabel(origin, 27)).toBe('Jan');
-  expect(dayOfMonth(origin, 27)).toBe(7);
+  expect(dayOfMonth(origin, 27)).toBe(25);
   expect(yearOf(origin, 20)).toBe(2026);
   expect(yearOf(origin, 21)).toBe(2027);
   // 12 weeks later it is the same month, a year later
