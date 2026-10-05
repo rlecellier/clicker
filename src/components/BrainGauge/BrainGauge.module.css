@@ -1,7 +1,6 @@
-/* compact sits next to the calories gauge, full takes the width of its
-   container, like the body gauge */
+/* both take the width of their container, the sidebar or the page */
 .compact {
-  width: 100px;
+  width: 100%;
   --header-size: 1rem;
   --header-gap: 0.25rem;
 }
