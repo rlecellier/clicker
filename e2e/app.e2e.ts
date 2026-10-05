@@ -22,10 +22,13 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   const clock = page.getByRole('timer', { name: 'Game time' });
   const lookForAJob = page.getByRole('button', { name: /Look for a job/ });
 
-  // Without a saved game, the only way in is New Game, then the briefing.
+  // Without a saved game, the only way in is New Game, who the player is, then
+  // the briefing, which names what the parents expect of them.
   await expect(newGame).toBeVisible();
   await expect(clock).toBeHidden();
   await newGame.click();
+  await page.getByRole('button', { name: 'A girl' }).click();
+  await expect(page.getByText(/self-made girl/)).toBeVisible();
   await expect(
     page.getByText(/1,000 coins in your bank account/),
   ).toBeVisible();
