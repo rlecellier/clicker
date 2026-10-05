@@ -20,7 +20,7 @@ type CalendarGridProps = {
   history: DoneEntry[];
   // the job whose shifts the player must work, in a thin lane beside it
   job?: Employment;
-  // the day the game is on, which gets the cursor
+  // the day the game is on, where the time cursor is brightest
   currentDay: number;
   // ratio of the current day already gone, between 0 and 1
   dayRatio: number;
@@ -85,6 +85,10 @@ export const CalendarGrid = ({
             {String(hour).padStart(2, '0')}:00
           </span>
         ))}
+        <span
+          className={styles.now}
+          style={{ top: percentOfDay(dayRatio * HOURS_PER_DAY) }}
+        />
       </div>
       {days.map((day) => {
         const isCurrent = day === currentDay;
@@ -122,13 +126,11 @@ export const CalendarGrid = ({
                 {entry.title}
               </li>
             ))}
-            {isCurrent && (
-              <li
-                className={styles.cursor}
-                style={{ top: percentOfDay(dayRatio * HOURS_PER_DAY) }}
-                aria-hidden
-              />
-            )}
+            <li
+              className={styles.cursor}
+              style={{ top: percentOfDay(dayRatio * HOURS_PER_DAY) }}
+              aria-hidden
+            />
           </ul>
         );
       })}

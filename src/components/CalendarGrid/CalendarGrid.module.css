@@ -174,3 +174,19 @@
   background: var(--color-success);
   border-radius: 2px;
 }
+
+/* The line runs across every day shown, brightest on the current one. */
+.day:not([data-current]) .cursor {
+  opacity: 0.35;
+}
+
+.now {
+  position: absolute;
+  right: 0;
+  width: 0;
+  height: 0;
+  margin-top: -5px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 6px solid var(--color-success);
+}
