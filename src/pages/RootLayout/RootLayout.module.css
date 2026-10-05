@@ -58,21 +58,28 @@
   padding: 0.4rem;
 }
 
-/* Mobile only: the game time, between the header and the days strip. */
+/* Mobile only: the game time on the left, the action in progress on the rest
+   of the line, between the header and the days strip. */
 .clockBar {
   position: sticky;
   top: var(--header-height);
   z-index: var(--z-sticky);
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.75rem;
   height: var(--clock-height);
+  padding: 0 0.5rem;
   border-bottom: 1px solid var(--color-surface);
   background: var(--color-bg);
 }
 
-/* Under the days strip. The space is reserved even when no action is running,
-   so that the page does not move when one starts. */
+.clockBarActivity {
+  flex: 1;
+  min-width: 0;
+}
+
+/* From tablet up: under the days strip. The space is reserved even when no
+   action is running, so that the page does not move when one starts. */
 .activity {
   position: sticky;
   top: calc(var(--header-height) + var(--clock-height) + var(--strip-height));
