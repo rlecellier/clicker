@@ -12,14 +12,18 @@ test('on mobile, the calendar page shows one day and swipes to the next', async 
   const page = await context.newPage();
   await startGame(page);
   await openPage(page, 'Calendar');
-  await expect(page.getByRole('list')).toHaveCount(1);
+  await expect(page.getByRole('main').getByRole('list')).toHaveCount(1);
   const title = page.getByRole('heading', { level: 2 });
   await expect(title).toHaveText('Mon 1 Oct 2026');
   // On the current day: there is nothing to come back to.
   await expect(page.getByRole('button', { name: 'Today' })).toBeDisabled();
 
   // Playwright has no swipe gesture: the touch events are sent by hand.
-  const grid = page.getByRole('list').locator('..').locator('..');
+  const grid = page
+    .getByRole('main')
+    .getByRole('list')
+    .locator('..')
+    .locator('..');
   await grid.dispatchEvent('touchstart', {
     touches: [{ identifier: 0, clientX: 300, clientY: 300 }],
   });
@@ -40,7 +44,7 @@ test('on desktop, the calendar page shows the week and can show a day', async ({
   await startGame(page);
   await openPage(page, 'Calendar');
   const title = page.getByRole('heading', { level: 2 });
-  await expect(page.getByRole('list')).toHaveCount(7);
+  await expect(page.getByRole('main').getByRole('list')).toHaveCount(7);
 
   // The game began on the Monday of this week: nothing before it.
   await expect(
@@ -52,14 +56,14 @@ test('on desktop, the calendar page shows the week and can show a day', async ({
   await expect(title).toHaveText('1 – 7 Oct 2026');
 
   await page.getByRole('button', { name: 'Day', exact: true }).click();
-  await expect(page.getByRole('list')).toHaveCount(1);
+  await expect(page.getByRole('main').getByRole('list')).toHaveCount(1);
   await page.getByRole('button', { name: 'Next day' }).click();
   await expect(title).toHaveText('Tue 2 Oct 2026');
   await page.getByRole('button', { name: 'Today' }).click();
   await expect(title).toHaveText('Mon 1 Oct 2026');
 
   await page.getByRole('button', { name: 'Week', exact: true }).click();
-  await expect(page.getByRole('list')).toHaveCount(7);
+  await expect(page.getByRole('main').getByRole('list')).toHaveCount(7);
 });
 
 test('the whole day fits the screen, and ctrl + wheel zooms in on the hours', async ({
@@ -69,7 +73,12 @@ test('the whole day fits the screen, and ctrl + wheel zooms in on the hours', as
   await startGame(page);
   await perform(page, /Have lunch/, 1);
   await page.goto('/calendar');
-  const grid = page.getByRole('list').first().locator('..').locator('..');
+  const grid = page
+    .getByRole('main')
+    .getByRole('list')
+    .first()
+    .locator('..')
+    .locator('..');
   const fits = await grid.evaluate(
     (element) => element.scrollHeight <= element.clientHeight,
   );
