@@ -4,16 +4,41 @@
   gap: 0.5rem;
 }
 
-.select {
+/* The select looks like a button; its arrow is an icon laid over the right
+   padding, which leaves room for it. */
+.field {
+  position: relative;
+  display: flex;
   flex: 1 1 auto;
   min-width: 0;
+}
+
+.select {
+  width: 100%;
+  min-width: 0;
   padding: 0.9rem;
-  border: 1px solid var(--color-muted);
+  padding-inline-end: 2.75rem;
+  border: 0;
   border-radius: var(--radius-md);
-  background: transparent;
-  color: inherit;
+  appearance: none;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
   font: inherit;
   font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.select:hover:enabled {
+  background: var(--color-accent-hover);
+}
+
+.chevron {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0.9rem;
+  margin-block: auto;
+  color: var(--color-on-accent);
+  pointer-events: none;
 }
 
 .go {
