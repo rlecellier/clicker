@@ -17,6 +17,7 @@
   align-items: center;
   gap: 0.3rem;
   margin-inline-start: 0.5rem;
-  color: var(--color-muted);
-  font-size: 0.8rem;
+  /* the button's own color: the muted one is unreadable on its background */
+  color: inherit;
+  font-size: 0.85rem;
 }
