@@ -36,6 +36,11 @@
 /* Browsers that ignore `overflow-x: clip` on #root still never scroll sideways. */
 html {
   overflow-x: hidden;
+  /* The page only pans vertically by touch, whatever overflows (Firefox on
+     Android pans sideways otherwise), and a double-tap does not zoom it. The
+     pinch zoom stays. */
+  touch-action: pan-y pinch-zoom;
+  overscroll-behavior-x: none;
 }
 
 body {
