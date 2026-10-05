@@ -79,9 +79,10 @@ test('an action of another place is not done', () => {
 });
 
 test('reading draws a book and moves it on', () => {
-  const state = gameReducer(INITIAL_GAME_STATE, perform('read'));
+  const state = gameReducer(INITIAL_GAME_STATE, perform('read-1'));
   expect(state.bookId).toBe(BOOKS[0]?.id);
   expect(state.bookHours).toBe(1);
+  expect(gameReducer(INITIAL_GAME_STATE, perform('read-3')).bookHours).toBe(3);
 });
 
 test('reading is not possible once the whole library is read', () => {
@@ -89,7 +90,7 @@ test('reading is not possible once the whole library is read', () => {
     ...INITIAL_GAME_STATE,
     readBookIds: BOOKS.map((book) => book.id),
   };
-  expect(gameReducer(done, perform('read'))).toBe(done);
+  expect(gameReducer(done, perform('read-1'))).toBe(done);
 });
 
 test('looking for a job takes an hour and hires the player', () => {
@@ -173,7 +174,7 @@ test('at the end of the shift, the player goes home', () => {
 test('working burns more calories than reading', () => {
   const rested = { ...AT_WORK_8, calories: 50 };
   const worked = gameReducer(rested, perform('work'));
-  const read = gameReducer({ ...rested, location: 'home' }, perform('read'));
+  const read = gameReducer({ ...rested, location: 'home' }, perform('read-1'));
   expect(50 - worked.calories).toBeGreaterThan((50 - read.calories) / 2);
 });
 

@@ -83,11 +83,11 @@ test('reading draws a book, moves it on and lists it in achievements once read',
   const book = page.getByRole('meter', { name: 'Animal Farm' });
   await expect(book).toBeHidden();
 
-  await page.getByRole('button', { name: /^Read/ }).click();
+  await page.getByRole('button', { name: 'Read 1h' }).click();
   await expect(page.getByRole('timer')).toContainText('08:00');
   await expect(book).toHaveAttribute('aria-valuetext', '16%');
-  await page.getByRole('button', { name: /^Read/ }).click();
-  await page.getByRole('button', { name: /^Read/ }).click();
+  await page.getByRole('button', { name: 'Read 2h' }).click();
+  await expect(page.getByRole('timer')).toContainText('10:00');
   await expect(book).toHaveAttribute('aria-valuetext', '50%');
   await expect(page.getByText('3 / 6 h')).toBeVisible();
 
@@ -97,9 +97,7 @@ test('reading draws a book, moves it on and lists it in achievements once read',
 
   // Three more hours finish the book, which moves to the books read.
   await openPage(page, 'Game');
-  for (let hour = 0; hour < 3; hour += 1) {
-    await page.getByRole('button', { name: /^Read/ }).click();
-  }
+  await page.getByRole('button', { name: 'Read 3h' }).click();
   await openPage(page, 'Achievements');
   await expect(page.getByText('Books read (1)')).toBeVisible();
   await expect(page.getByText('George Orwell')).toBeVisible();
