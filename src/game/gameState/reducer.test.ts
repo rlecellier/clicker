@@ -114,11 +114,59 @@ test('actions done in a row are merged in the history', () => {
   ]);
 });
 
-test('an action of another place is not done', () => {
+test('an action of another place is queued, not done', () => {
+  const queued = gameReducer(AT_WORK_8, perform('meal'));
+  expect(queued.activity).toBeUndefined();
+  expect(queued.queue).toEqual([{ actionId: 'meal', roll: 0 }]);
+  // there is no job to go and work at
   expect(gameReducer(INITIAL_GAME_STATE, perform('work'))).toBe(
     INITIAL_GAME_STATE,
   );
-  expect(gameReducer(AT_WORK_8, perform('meal'))).toBe(AT_WORK_8);
+});
+
+test('queued actions start in order once the player is at their place', () => {
+  let queued: GameState = AT_WORK_8;
+  for (const id of ['snack', 'meal', 'read-1'] as const) {
+    queued = gameReducer(queued, perform(id));
+  }
+  expect(queued.queue).toHaveLength(3);
+
+  const home = gameReducer(queued, { type: 'goTo', place: 'home' });
+  expect(home.activity?.id).toBe('snack');
+  expect(home.queue.map(({ actionId }) => actionId)).toEqual([
+    'meal',
+    'read-1',
+  ]);
+
+  // each one starts as the previous is over
+  const meal = finish(home);
+  expect(meal.activity?.id).toBe('meal');
+  const reading = finish(meal);
+  expect(reading.activity?.id).toBe('read-1');
+  expect(finish(reading).queue).toEqual([]);
+});
+
+test('a queued action waits at the head of the queue for its place', () => {
+  const queued = gameReducer(SELLER, perform('eat-out'));
+  const eating = finish(gameReducer(queued, perform('meal')));
+  // eat-out is for work: it stays queued at home
+  expect(eating.activity).toBeUndefined();
+  expect(eating.queue).toHaveLength(1);
+  const work = gameReducer(eating, { type: 'goTo', place: 'work' });
+  expect(work.activity?.id).toBe('eat-out');
+});
+
+test('a queued action that cannot be done any more is dropped', () => {
+  const queued = gameReducer(AT_WORK_8, { ...perform('meal') });
+  const empty = { ...queued, fridge: 0 };
+  const home = gameReducer(empty, { type: 'goTo', place: 'home' });
+  expect(home.activity).toBeUndefined();
+  expect(home.queue).toEqual([]);
+});
+
+test('a queued action can be cancelled', () => {
+  const queued = gameReducer(AT_WORK_8, perform('meal'));
+  expect(gameReducer(queued, { type: 'unqueue', index: 0 }).queue).toEqual([]);
 });
 
 test('thinking is possible anywhere and lets 30 min, 1 or 2 hours go by', () => {

@@ -24,6 +24,10 @@ export type Activity = {
   reading?: { hours: number; bookFrom: number };
 };
 
+// An action chosen for a place the player is not at: it starts once they are
+// there and free. `roll` in [0, 1) draws the book of a reading.
+export type QueuedAction = { actionId: ActionId; roll: number };
+
 // Everything needed to resume a game: plain JSON, no function, no instant of
 // the browser (ADR 0002).
 export type GameState = Nutrition &
@@ -45,6 +49,9 @@ export type GameState = Nutrition &
     location: Location;
     // the action in progress, if any
     activity?: Activity;
+    // actions waiting for the player to be at their place, in the order they
+    // were chosen
+    queue: QueuedAction[];
     // what the player did, actions done in a row merged
     history: DoneEntry[];
     // the job the player holds, if any
@@ -73,6 +80,7 @@ export const newGameState = ({
   birthDate,
   coins: INITIAL_COINS,
   location: 'home',
+  queue: [],
   history: [],
 });
 

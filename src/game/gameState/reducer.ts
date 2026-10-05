@@ -7,7 +7,7 @@ import { stepNutrition } from '@game/nutrition';
 import { drawBook, readBook, type Reading } from '@game/reading';
 import { stepSleep } from '@game/sleep';
 
-import { blockerOf, stepOf } from './selectors';
+import { blockerOf, queueBlockerOf, stepOf } from './selectors';
 import {
   newGameState,
   type Activity,
@@ -19,6 +19,8 @@ export type GameAction =
   // the player starts an action of the place they are at. `roll` in [0, 1)
   // draws the book when a reading starts without one
   | { type: 'perform'; actionId: ActionId; roll: number }
+  // the player takes an action off the queue
+  | { type: 'unqueue'; index: number }
   // real time goes by: the game hours of the action in progress go by with it
   | { type: 'tick'; hours: number }
   // the player goes to a place: work, if they have a job, or back home
@@ -100,12 +102,48 @@ const elapse = (state: GameState, hours: number): GameState => {
   if (!isOver) return next;
 
   const { jobId, id } = activity;
-  return {
+  return startQueued({
     ...next,
     job: jobId ? hireAt(jobId, to) : next.job,
     fridge:
       id !== 'job-search' && ACTIONS[id].restocks ? FRIDGE_MAX : next.fridge,
+  });
+};
+
+// Starts an action of the place the player is at, the state as it was when it
+// cannot be done.
+const begin = (state: GameState, actionId: ActionId, roll: number) => {
+  const done = ACTIONS[actionId];
+  if (blockerOf(state, done)) return state;
+  const paid: GameState = {
+    ...state,
+    coins: state.coins - (done.cost ?? 0),
+    fridge: state.fridge - (done.portions ?? 0),
   };
+  if (done.kind !== 'read') return startActivity(paid, { id: done.id });
+
+  // the book is drawn as the reading starts, and the hours that go to it
+  // are known: the ones past its last page are lost
+  const drawn = { ...paid, ...drawBook(paid, roll) };
+  const { hours } = readBook(drawn, done.hours, roll);
+  return startActivity(drawn, {
+    id: done.id,
+    reading: { hours, bookFrom: drawn.bookHours },
+  });
+};
+
+// Starts the queued actions one after the other, as soon as the player is free
+// and at their place. One that cannot be done any more is dropped.
+const startQueued = (state: GameState): GameState => {
+  let current = state;
+  while (!current.activity) {
+    const [head, ...queue] = current.queue;
+    if (!head) break;
+    const { place } = ACTIONS[head.actionId];
+    if (place !== 'anywhere' && place !== current.location) break;
+    current = begin({ ...current, queue }, head.actionId, head.roll);
+  }
+  return current;
 };
 
 export const gameReducer = (
@@ -115,22 +153,25 @@ export const gameReducer = (
   switch (action.type) {
     case 'perform': {
       const done = ACTIONS[action.actionId];
-      if (blockerOf(state, done)) return state;
-      const paid: GameState = {
+      if (done.place === 'anywhere' || done.place === state.location) {
+        return begin(state, action.actionId, action.roll);
+      }
+      // another place: it waits for the player to be there
+      return queueBlockerOf(state, done)
+        ? state
+        : {
+            ...state,
+            queue: [
+              ...state.queue,
+              { actionId: action.actionId, roll: action.roll },
+            ],
+          };
+    }
+    case 'unqueue': {
+      return {
         ...state,
-        coins: state.coins - (done.cost ?? 0),
-        fridge: state.fridge - (done.portions ?? 0),
+        queue: state.queue.filter((_, index) => index !== action.index),
       };
-      if (done.kind !== 'read') return startActivity(paid, { id: done.id });
-
-      // the book is drawn as the reading starts, and the hours that go to it
-      // are known: the ones past its last page are lost
-      const drawn = { ...paid, ...drawBook(paid, action.roll) };
-      const { hours } = readBook(drawn, done.hours, action.roll);
-      return startActivity(drawn, {
-        id: done.id,
-        reading: { hours, bookFrom: drawn.bookHours },
-      });
     }
     case 'tick': {
       return elapse(state, action.hours);
@@ -140,7 +181,7 @@ export const gameReducer = (
       // only the job takes the player to work
       return action.place === 'work' && !state.job
         ? state
-        : { ...state, location: action.place };
+        : startQueued({ ...state, location: action.place });
     }
     case 'takeJob': {
       return state.job || state.location !== 'home' || state.activity

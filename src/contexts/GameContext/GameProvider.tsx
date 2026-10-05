@@ -3,7 +3,7 @@ import { useCallback, useMemo, useReducer } from 'react';
 import { ageAt, birthDateOf } from '@game/age';
 import { getBody } from '@game/body';
 import {
-  availableActionsOf,
+  actionsOfPlace,
   currentActivityOf,
   currentBookOf,
   currentShiftOf,
@@ -11,6 +11,7 @@ import {
   INITIAL_GAME_STATE,
   nextShiftOf,
   playedHoursOf,
+  queuedActionsOf,
   weekHourOf,
   weekOf,
 } from '@game/gameState';
@@ -61,9 +62,13 @@ export const GameProvider = ({
       activity: currentActivityOf(state),
       currentShift: currentShiftOf(state),
       nextShift: nextShiftOf(state),
-      actions: availableActionsOf(state),
+      actionsAt: (place) => actionsOfPlace(state, place),
+      queue: queuedActionsOf(state),
       perform: (actionId) => {
         dispatch({ type: 'perform', actionId, roll: Math.random() });
+      },
+      unqueue: (index) => {
+        dispatch({ type: 'unqueue', index });
       },
       goTo: (place) => {
         dispatch({ type: 'goTo', place });

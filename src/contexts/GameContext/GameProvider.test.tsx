@@ -83,12 +83,11 @@ test('an action runs in real time, one game hour per second', async () => {
 
 test('offers the actions of the place the player is at', () => {
   const { result } = renderGame();
-  expect(result.current.actions.map(({ action }) => action.id)).toContain(
-    'sleep-8',
-  );
-  expect(result.current.actions.map(({ action }) => action.id)).not.toContain(
-    'work',
-  );
+  const ids = (place: 'home' | 'work') =>
+    result.current.actionsAt(place).map(({ action }) => action.id);
+  expect(ids('home')).toContain('sleep-8');
+  expect(ids('home')).not.toContain('work');
+  expect(ids('work')).toContain('work');
 });
 
 test('looking for a job takes an hour, then the player is hired', async () => {

@@ -1,5 +1,6 @@
 import { ACTIONS, actionsAt, JOB_SEARCH, type Action } from '@game/actions';
 import { FRIDGE_MAX } from '@game/fridge';
+import type { Location } from '@game/location';
 import { getBook, isLibraryRead } from '@game/reading';
 import { nextShiftAfter, shiftAt } from '@game/jobs';
 import { HOURS_PER_WEEK } from '@game/time';
@@ -51,13 +52,28 @@ export const blockerOf = (
   return (action.cost ?? 0) > state.coins ? 'Not enough coins' : undefined;
 };
 
-// The actions of the place the player is at, with what keeps them from doing
-// one.
-export const availableActionsOf = (state: GameState) =>
-  actionsAt(state.location).map((action) => ({
+// Why an action of another place cannot be queued, undefined when it can: the
+// rest is checked once the player is there.
+export const queueBlockerOf = (
+  state: GameState,
+  action: Action,
+): string | undefined =>
+  action.place === 'work' && !state.job ? 'You have no job' : undefined;
+
+// The actions of a place, with what keeps the player from doing one: right
+// now where they are, and from queueing it anywhere else.
+export const actionsOfPlace = (state: GameState, place: Location) =>
+  actionsAt(place).map((action) => ({
     action,
-    blocker: blockerOf(state, action),
+    blocker:
+      place === state.location
+        ? blockerOf(state, action)
+        : queueBlockerOf(state, action),
   }));
+
+// The queued actions, in order.
+export const queuedActionsOf = (state: GameState) =>
+  state.queue.map(({ actionId }) => ACTIONS[actionId]);
 
 // The book on the go.
 export const currentBookOf = (state: GameState) => getBook(state.bookId);

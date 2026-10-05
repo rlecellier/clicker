@@ -54,10 +54,15 @@ export type GameContextValue = {
   currentShift?: Shift;
   // the next shift to start
   nextShift?: ShiftOccurrence;
-  // the actions of the place the player is at, with what keeps them from
-  // doing one
-  actions: { action: Action; blocker?: string }[];
+  // the actions of a place, with what keeps the player from doing one (from
+  // queueing it, when they are not at that place)
+  actionsAt: (place: Location) => { action: Action; blocker?: string }[];
+  // the actions waiting for the player to be at their place, in order
+  queue: Action[];
+  // starts an action of the place the player is at, queues one of another place
   perform: (actionId: ActionId) => void;
+  // takes the action at that rank off the queue
+  unqueue: (index: number) => void;
   goTo: (place: Location) => void;
   takeJob: (jobId: JobId) => void;
   restart: () => void;

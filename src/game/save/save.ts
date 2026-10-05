@@ -1,3 +1,4 @@
+import { isActionId } from '@game/actions';
 import { isDoneEntry } from '@game/history';
 import { FRIDGE_MAX } from '@game/fridge';
 import { isJobId } from '@game/jobs';
@@ -9,7 +10,7 @@ import type { GameState } from '@game/gameState';
 
 export const SAVE_KEY = 'clicker.save';
 // Bumped when the shape of `GameState` changes in a way old saves can't fit.
-export const SAVE_VERSION = 8;
+export const SAVE_VERSION = 9;
 
 // The part of `Storage` the save needs, so it can be faked in tests.
 export type SaveStorage = Pick<Storage, 'getItem' | 'setItem'>;
@@ -49,6 +50,16 @@ const isEmployment = (value: unknown) =>
       Number.MAX_SAFE_INTEGER,
     ));
 
+const isQueue = (value: unknown) =>
+  Array.isArray(value) &&
+  value.every(
+    (item: unknown) =>
+      typeof item === 'object' &&
+      item !== null &&
+      isActionId((item as Record<string, unknown>).actionId) &&
+      isBetweenZeroAnd((item as Record<string, unknown>).roll, 1),
+  );
+
 // A save comes from outside: it is checked before it becomes a game.
 const isGameState = (value: unknown): value is GameState => {
   if (typeof value !== 'object' || value === null) return false;
@@ -78,6 +89,7 @@ const isGameState = (value: unknown): value is GameState => {
     isBetweenZeroAnd(state.fat, Number.MAX_SAFE_INTEGER) &&
     isCurrentBook(state.bookId, state.bookHours) &&
     isReadBookIds(state.readBookIds, state.bookId) &&
+    isQueue(state.queue) &&
     Array.isArray(state.history) &&
     state.history.every(isDoneEntry) &&
     // a state with a job is at work only if the job is there to go to
