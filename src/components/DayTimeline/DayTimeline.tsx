@@ -5,7 +5,7 @@ import { dayOfMonth, HOURS_PER_DAY, weekdayLabel } from '@game/time';
 import styles from './DayTimeline.module.css';
 
 // Days on each side of the current one that are drawn: enough to fill the
-// banner while the days slide.
+// whole width while the days slide, even before the first day of the game.
 const DAYS_AROUND = 4;
 
 type DayTimelineProps = {
@@ -35,7 +35,7 @@ export const DayTimeline = ({
   const days = Array.from(
     { length: 2 * DAYS_AROUND + 1 },
     (_, index) => currentDay - DAYS_AROUND + index,
-  ).filter((day) => day >= 0);
+  );
 
   return (
     <div className={styles.root} role="img" aria-label={label}>
@@ -44,6 +44,7 @@ export const DayTimeline = ({
           key={day}
           className={styles.day}
           data-current={day === currentDay || undefined}
+          data-before-start={day < 0 || undefined}
           style={{
             left: `calc(50% + (${day - dayPosition}) * var(--day-width))`,
           }}
