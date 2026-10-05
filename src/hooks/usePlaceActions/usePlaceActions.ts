@@ -1,11 +1,16 @@
+import { PLACES } from '@component/PlaceInfo';
 import { useGameContext } from '@context/GameContext';
 import type { GameContextValue } from '@context/GameContext/types';
-import type { ActionId } from '@game/actions';
+import {
+  ACTION_CATEGORIES,
+  type ActionCategory,
+  type ActionId,
+} from '@game/actions';
 import type { EventKind } from '@game/history';
 import type { Location } from '@game/location';
 import { formatDuration } from '@game/time';
 
-type Row = {
+export type Row = {
   key: string;
   // the name of the group, none for an action alone
   name?: string;
@@ -19,6 +24,12 @@ type Row = {
     detail: string;
     blocker?: string;
   }[];
+};
+
+const TITLES: Record<ActionCategory, string | undefined> = {
+  place: undefined,
+  self: 'You',
+  online: 'Phone',
 };
 
 // The actions of a group (sleep 2, 4, 6, 8 h) share one row.
@@ -50,13 +61,22 @@ const rowsOf = (actions: ReturnType<GameContextValue['actionsAt']>): Row[] => {
   return rows;
 };
 
-// The actions of a place, one row each: done right away when the player is
-// there, queued for when they get there otherwise.
+// The actions of a place, split by where they come from (the place, the
+// player, their phone) and one row each: done right away when the player is
+// there, queued for when they get there otherwise. A category with no action
+// is left out.
 export const usePlaceActions = (place: Location) => {
   const { actionsAt, perform } = useGameContext();
+  const offered = actionsAt(place);
 
   return {
-    rows: rowsOf(actionsAt(place)),
+    sections: ACTION_CATEGORIES.map((category) => ({
+      category,
+      title: TITLES[category] ?? `At ${PLACES[place].label.toLowerCase()}`,
+      rows: rowsOf(
+        offered.filter(({ action }) => action.category === category),
+      ),
+    })).filter(({ rows }) => rows.length > 0),
     perform: (id: string) => {
       perform(id as ActionId);
     },

@@ -15,7 +15,7 @@ export const useGamePanel = () => {
     elapsedHours,
     origin,
   } = useGameContext();
-  const { rows, perform } = usePlaceActions(location);
+  const { sections, perform } = usePlaceActions(location);
 
   const currentDay = Math.floor(elapsedHours / HOURS_PER_DAY);
 
@@ -39,7 +39,7 @@ export const useGamePanel = () => {
       pay: `${jobDefinition.hourlyCoins} coins / hour`,
       shift,
     },
-    rows,
+    sections,
     perform,
   };
 };

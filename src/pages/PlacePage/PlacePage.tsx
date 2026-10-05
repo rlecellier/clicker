@@ -1,7 +1,7 @@
 import { ArrowLeft } from 'lucide-react';
 import { Link, useParams } from 'react-router';
 
-import { ActionList } from '@component/ActionList';
+import { ActionSections } from '@component/ActionSections';
 import { PlaceBanner } from '@component/PlaceBanner';
 import { QueueList } from '@component/QueueList';
 import { useGameContext } from '@context/GameContext';
@@ -14,7 +14,9 @@ import styles from './PlacePage.module.css';
 export const PlacePage = () => {
   const { place } = useParams();
   const { location } = useGameContext();
-  const { rows, perform } = usePlaceActions(isLocation(place) ? place : 'home');
+  const { sections, perform } = usePlaceActions(
+    isLocation(place) ? place : 'home',
+  );
   const queue = useQueue();
 
   if (!isLocation(place)) {
@@ -30,7 +32,7 @@ export const PlacePage = () => {
         All places
       </Link>
       <PlaceBanner place={place} location={location} />
-      <ActionList rows={rows} onPerform={perform} />
+      <ActionSections sections={sections} onPerform={perform} />
       <QueueList items={queue.items} onRemove={queue.remove} />
     </div>
   );

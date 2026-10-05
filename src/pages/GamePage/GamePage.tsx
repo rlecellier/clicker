@@ -1,4 +1,4 @@
-import { ActionList } from '@component/ActionList';
+import { ActionSections } from '@component/ActionSections';
 import { BookProgress } from '@component/BookProgress';
 import { GetJob } from '@component/GetJob';
 import { JobStatus } from '@component/JobStatus';
@@ -14,7 +14,7 @@ import styles from './GamePage.module.css';
 
 export const GamePage = () => {
   const { currentBook, bookHours } = useGameContext();
-  const { location, job, rows, perform } = useGamePanel();
+  const { location, job, sections, perform } = useGamePanel();
   const move = useMove();
   const queue = useQueue();
 
@@ -33,7 +33,7 @@ export const GamePage = () => {
           />
         )}
         <GetJob />
-        <ActionList rows={rows} onPerform={perform} />
+        <ActionSections sections={sections} onPerform={perform} />
         <QueueList items={queue.items} onRemove={queue.remove} />
         {currentBook && (
           <BookProgress
