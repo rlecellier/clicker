@@ -1,7 +1,6 @@
-import { Meter } from '@base-ui/react/meter';
 import { BookOpen } from 'lucide-react';
 
-import styles from './BookProgress.module.css';
+import { Gauge } from '@component/Gauge';
 
 type BookProgressProps = {
   title: string;
@@ -18,24 +17,19 @@ export const BookProgress = ({
   const percent = Math.floor((hoursRead / totalHours) * 100);
 
   return (
-    <Meter.Root
+    <Gauge
       value={hoursRead}
       max={totalHours}
-      className={styles.root}
-      aria-label={title}
-      aria-valuetext={`${percent}%`}
-    >
-      <div className={styles.header}>
-        <span className={styles.value}>
+      size="full"
+      tone="success"
+      label={title}
+      valueText={`${percent}%`}
+      title={
+        <>
           <BookOpen aria-hidden size={14} /> {percent}%
-        </span>
-        <span className={styles.hours}>
-          {Math.floor(hoursRead)} / {totalHours} h
-        </span>
-      </div>
-      <Meter.Track className={styles.track}>
-        <Meter.Indicator className={styles.indicator} />
-      </Meter.Track>
-    </Meter.Root>
+        </>
+      }
+      detail={`${Math.floor(hoursRead)} / ${totalHours} h`}
+    />
   );
 };

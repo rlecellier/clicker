@@ -1,7 +1,6 @@
-import { Meter } from '@base-ui/react/meter';
 import { Hourglass } from 'lucide-react';
 
-import styles from './ActivityProgress.module.css';
+import { Gauge } from '@component/Gauge';
 
 type ActivityProgressProps = {
   // what the player is doing
@@ -20,22 +19,18 @@ export const ActivityProgress = ({
   const percent = Math.floor((done / hours) * 100);
 
   return (
-    <Meter.Root
+    <Gauge
       value={done}
       max={hours}
-      className={styles.root}
-      aria-label="Action in progress"
-      aria-valuetext={`${title}, ${percent}%`}
-    >
-      <div className={styles.header}>
-        <span className={styles.value}>
+      size="full"
+      label="Action in progress"
+      valueText={`${title}, ${percent}%`}
+      title={
+        <>
           <Hourglass aria-hidden size={14} /> {title}
-        </span>
-        <span className={styles.percent}>{percent}%</span>
-      </div>
-      <Meter.Track className={styles.track}>
-        <Meter.Indicator className={styles.indicator} />
-      </Meter.Track>
-    </Meter.Root>
+        </>
+      }
+      detail={`${percent}%`}
+    />
   );
 };
