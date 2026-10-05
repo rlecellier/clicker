@@ -4,6 +4,9 @@ import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 
 import { createMemoryRouter, RouterProvider } from 'react-router';
 
+import { INITIAL_GAME_STATE } from '@game/gameState';
+import { SAVE_KEY, serializeSave } from '@game/save';
+
 import { routes } from './routes';
 
 const renderApp = (path = '/') => {
@@ -13,17 +16,20 @@ const renderApp = (path = '/') => {
 
 beforeEach(() => {
   vi.useFakeTimers({ shouldAdvanceTime: true });
+  // the game is already started: the start screens are a journey of their own
+  localStorage.setItem(SAVE_KEY, serializeSave(INITIAL_GAME_STATE));
 });
 
 afterEach(() => {
   vi.useRealTimers();
+  localStorage.clear();
 });
 
 test('shows the calories gauge and the gold coins', () => {
   renderApp();
   expect(screen.getByRole('meter', { name: 'Calories' })).toBeInTheDocument();
   expect(screen.getByRole('status', { name: 'Gold coins' })).toHaveTextContent(
-    '0',
+    '1,000',
   );
 });
 

@@ -47,17 +47,17 @@ test('look for a job, work a morning, eat out and come back home', async ({
   await page.getByRole('button', { name: 'Go to work' }).click();
   await expect(location).toHaveAttribute('data-location', 'work');
   await expect(clock).toContainText('08:00');
-  await expect(coins(page)).toHaveText('20');
+  await expect(coins(page)).toHaveText('1,000');
   await page.getByRole('button', { name: /^Work/ }).click();
   await expect(page.getByRole('button', { name: 'Go home' })).toBeDisabled();
   await elapse(page, 0.5);
-  await expect(coins(page)).toHaveText('25');
+  await expect(coins(page)).toHaveText('1,005');
   await demoShot(page, 'working');
   for (let click = 0; click < 7; click += 1) {
     await perform(page, /^Work/, 0.5);
   }
   await expect(clock).toContainText('12:00');
-  await expect(coins(page)).toHaveText('60');
+  await expect(coins(page)).toHaveText('1,040');
   await expect(job).toContainText('Next shift today, 13:00 – 18:00');
 
   await openPage(page, 'Calendar');
@@ -78,10 +78,10 @@ test('look for a job, work a morning, eat out and come back home', async ({
   );
   await perform(page, 'Eat out', 1);
   await expect(clock).toContainText('13:00');
-  await expect(coins(page)).toHaveText('52');
+  await expect(coins(page)).toHaveText('1,032');
   await demoShot(page, 'eat-out');
   await perform(page, /^Work/, 0.5);
-  await expect(coins(page)).toHaveText('57');
+  await expect(coins(page)).toHaveText('1,037');
 
   // Leaving costs no time; thinking is possible at work too.
   await page.getByRole('button', { name: 'Go home' }).click();
