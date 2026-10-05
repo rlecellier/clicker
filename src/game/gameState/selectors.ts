@@ -52,8 +52,8 @@ export const blockerOf = (
   return (action.cost ?? 0) > state.coins ? 'Not enough coins' : undefined;
 };
 
-// Why an action of another place cannot be queued, undefined when it can: the
-// rest is checked once the player is there.
+// Why an action cannot be queued, undefined when it can: the rest is checked
+// once the player is free and at its place.
 export const queueBlockerOf = (
   state: GameState,
   action: Action,
@@ -61,12 +61,13 @@ export const queueBlockerOf = (
   action.place === 'work' && !state.job ? 'You have no job' : undefined;
 
 // The actions of a place, with what keeps the player from doing one: right
-// now where they are, and from queueing it anywhere else.
+// now where they are (queued when they are busy), and from queueing it
+// anywhere else.
 export const actionsOfPlace = (state: GameState, place: Location) =>
   actionsAt(place).map((action) => ({
     action,
     blocker:
-      place === state.location
+      place === state.location && !state.activity
         ? blockerOf(state, action)
         : queueBlockerOf(state, action),
   }));

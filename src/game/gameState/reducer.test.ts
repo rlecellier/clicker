@@ -80,7 +80,7 @@ test('many small ticks give the same hours as one big one', () => {
 
 test('only one action runs at a time', () => {
   const busy = gameReducer(SELLER, perform('sleep-2'));
-  expect(gameReducer(busy, perform('sleep-4'))).toBe(busy);
+  expect(gameReducer(busy, perform('sleep-4')).activity).toBe(busy.activity);
   expect(gameReducer(busy, { type: 'goTo', place: 'work' })).toBe(busy);
   expect(gameReducer(busy, { type: 'takeJob', jobId: 'clothes-seller' })).toBe(
     busy,
@@ -144,6 +144,19 @@ test('queued actions start in order once the player is at their place', () => {
   const reading = finish(meal);
   expect(reading.activity?.id).toBe('read-1');
   expect(finish(reading).queue).toEqual([]);
+});
+
+test('actions of the current place are queued while the player is busy', () => {
+  let busy = gameReducer(INITIAL_GAME_STATE, perform('think-60'));
+  for (let index = 0; index < 3; index++)
+    busy = gameReducer(busy, perform('think-60'));
+  expect(busy.queue).toHaveLength(3);
+
+  // they chain one after the other, as many as were clicked
+  const last = finish(finish(finish(busy)));
+  expect(last.queue).toEqual([]);
+  expect(last.activity?.id).toBe('think-60');
+  expect(finish(last).activity).toBeUndefined();
 });
 
 test('a queued action waits at the head of the queue for its place', () => {

@@ -53,9 +53,14 @@ test('look for a job, work a morning, eat out and come back home', async ({
   await elapse(page, 0.5);
   await expect(coins(page)).toHaveText('1,005');
   await demoShot(page, 'working');
+  // Clicking again while working stacks the actions: they chain on their own.
   for (let click = 0; click < 5; click += 1) {
-    await perform(page, /^Work/, 0.5);
+    await page.getByRole('button', { name: /^Work/ }).click();
   }
+  await expect(
+    page.getByRole('region', { name: 'Queued actions' }).getByRole('listitem'),
+  ).toHaveCount(4);
+  await elapse(page, 2.5);
   await expect(clock).toContainText('12:00');
   await expect(coins(page)).toHaveText('1,030');
   await expect(job).toContainText('Next shift today, 13:00 – 18:00');

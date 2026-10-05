@@ -71,7 +71,15 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await expect(clock).toContainText(/13:[3-5]\d/);
   await expect(progress).toHaveAttribute('aria-valuetext', /Sleep, (5|6)\d%/);
   await demoShot(page, 'time-running');
-  await expect(page.getByRole('button', { name: /Sleep 2h/ })).toBeDisabled();
+  // An action asked for while busy waits in the queue, and can be cancelled.
+  await page.getByRole('button', { name: /Sleep 2h/ }).click();
+  await expect(
+    page.getByRole('region', { name: 'Queued actions' }),
+  ).toContainText('Sleep');
+  await page.getByRole('button', { name: /^Cancel Sleep/ }).click();
+  await expect(
+    page.getByRole('region', { name: 'Queued actions' }),
+  ).toHaveCount(0);
   await elapse(page, 2);
   await expect(clock).toContainText('15:30');
   await expect(progress).toBeHidden();
