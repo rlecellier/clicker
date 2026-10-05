@@ -8,7 +8,7 @@ export const AchievementsPage = () => {
   const { currentBook, bookHours, readBooks, isLibraryRead } = useGameContext();
 
   return (
-    <section className={styles.root}>
+    <section>
       <h2 className={styles.title}>Achievements</h2>
       <h3 className={styles.name}>Current book</h3>
       {currentBook ? (

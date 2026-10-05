@@ -12,7 +12,7 @@ export const ProfilePage = () => {
     useGameContext();
 
   return (
-    <section className={styles.root}>
+    <section>
       <h2 className={styles.title}>Profile</h2>
       <dl className={styles.stats}>
         <div>

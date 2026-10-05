@@ -7,7 +7,7 @@ export const PlacesPage = () => {
   const { location } = useGameContext();
 
   return (
-    <section className={styles.root}>
+    <section>
       <h2 className={styles.title}>Places</h2>
       <PlaceList location={location} />
     </section>

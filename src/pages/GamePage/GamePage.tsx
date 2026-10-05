@@ -21,7 +21,7 @@ export const GamePage = () => {
   const queue = useQueue();
 
   return (
-    <div className={styles.content}>
+    <>
       <LocationIndicator location={location} />
       {job && <JobStatus {...job} />}
       <div className={styles.actions}>
@@ -52,6 +52,6 @@ export const GamePage = () => {
           />
         )}
       </div>
-    </div>
+    </>
   );
 };

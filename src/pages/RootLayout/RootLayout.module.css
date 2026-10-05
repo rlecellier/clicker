@@ -9,11 +9,13 @@
 }
 
 .main {
-  /* Leaves room for the folded sidebar, fixed on the left on mobile. */
   flex: 1;
+  /* leaves room for the folded sidebar, fixed on the left on mobile */
   margin-left: var(--rail-width);
   min-width: 0;
   box-sizing: border-box;
+  /* every page has the same margin around it */
+  padding: 1rem;
   text-align: center;
 }
 
