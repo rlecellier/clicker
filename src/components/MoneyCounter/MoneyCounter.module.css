@@ -11,3 +11,9 @@
 .icon {
   color: var(--color-warning-light);
 }
+
+@media (max-width: 639px) {
+  .money {
+    font-size: 1.1rem;
+  }
+}

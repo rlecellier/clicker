@@ -65,3 +65,19 @@
   color: inherit;
   text-decoration: none;
 }
+
+/* On a narrow phone the header must fit: tighter, with smaller figures. */
+@media (max-width: 639px) {
+  .header {
+    padding: 0 0.5rem;
+  }
+
+  .brand,
+  .status {
+    gap: 0.5rem;
+  }
+
+  .title {
+    font-size: 1.1rem;
+  }
+}

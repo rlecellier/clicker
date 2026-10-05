@@ -3,3 +3,9 @@
   font-weight: 600;
   margin: 0;
 }
+
+@media (max-width: 639px) {
+  .age {
+    font-size: 1.1rem;
+  }
+}
