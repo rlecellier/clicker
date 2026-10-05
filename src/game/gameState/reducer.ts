@@ -8,12 +8,7 @@ import { drawBook, readBook, type Reading } from '@game/reading';
 import { stepSleep } from '@game/sleep';
 
 import { blockerOf, queueBlockerOf, stepOf } from './selectors';
-import {
-  newGameState,
-  type Activity,
-  type GameState,
-  type NewGame,
-} from './types';
+import { type Activity, type GameState } from './types';
 
 export type GameAction =
   // the player starts an action of the place they are at. `roll` in [0, 1)
@@ -26,9 +21,7 @@ export type GameAction =
   // the player goes to a place: work, if they have a job, or back home
   | { type: 'goTo'; place: Location }
   // the player starts looking for a job and takes the one they pick
-  | { type: 'takeJob'; jobId: JobId }
-  // a brand new game, whatever the current one
-  | { type: 'restart'; game: NewGame };
+  | { type: 'takeJob'; jobId: JobId };
 
 // Starts an activity at the current time of the game.
 const startActivity = (
@@ -187,9 +180,6 @@ export const gameReducer = (
       return state.job || state.location !== 'home' || state.activity
         ? state
         : startActivity(state, { id: 'job-search', jobId: action.jobId });
-    }
-    case 'restart': {
-      return newGameState(action.game);
     }
   }
 };

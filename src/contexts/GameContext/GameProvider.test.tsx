@@ -135,17 +135,3 @@ test('the player goes to work and works during a shift', async () => {
   expect(result.current.elapsedHours).toBe(8.5);
   vi.useRealTimers();
 });
-
-test('restarting gives a brand new game', () => {
-  const { result } = renderGame(
-    gameStateFactory.build({ traits: ['working'] }),
-  );
-
-  act(() => {
-    result.current.restart();
-  });
-
-  expect(result.current.coins).toBe(INITIAL_COINS);
-  expect(result.current.job).toBeUndefined();
-  expect(result.current.history).toEqual([]);
-});

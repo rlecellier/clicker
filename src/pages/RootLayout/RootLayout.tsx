@@ -18,7 +18,11 @@ import { HOURS_PER_DAY, momentOf } from '@game/time';
 
 import styles from './RootLayout.module.css';
 
-const Layout = () => {
+type LayoutProps = {
+  onRestart: () => void;
+};
+
+const Layout = ({ onRestart }: LayoutProps) => {
   const {
     age,
     coins,
@@ -32,7 +36,6 @@ const Layout = () => {
     history,
     job,
     origin,
-    restart,
   } = useGameContext();
   const { date, time } = momentOf(origin, elapsedHours);
   // the clock sits above the days strip on mobile, where the header is tight
@@ -97,7 +100,7 @@ const Layout = () => {
           dreams={dreams}
           isOpen={isMenuOpen}
           onClose={closeMenu}
-          onRestart={restart}
+          onRestart={onRestart}
         />
         <main className={styles.main}>
           <Outlet />
@@ -108,13 +111,13 @@ const Layout = () => {
 };
 
 export const RootLayout = () => {
-  const { game, start } = useGameStart();
+  const { game, start, restart } = useGameStart();
 
   if (!game) return <StartPage onStart={start} />;
 
   return (
     <GameProvider initialState={game} persist>
-      <Layout />
+      <Layout onRestart={restart} />
     </GameProvider>
   );
 };

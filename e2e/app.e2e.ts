@@ -10,7 +10,7 @@ import {
 } from './support';
 
 // On mobile: the start screens, the menu, the places page, then the save and
-// the restart.
+// the restart, back to the title screen.
 test('start a game, navigate the menu, resume a saved game and restart it', async ({
   page,
 }) => {
@@ -101,12 +101,15 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
     page.getByRole('meter', { name: 'Action in progress' }),
   ).toBeHidden();
 
-  // Restart Game starts a new game, which is the one saved.
+  // Restart Game forgets the game and goes back to the title screen, where a
+  // reload stays: nothing is saved anymore.
   await menu.click();
   await page.getByRole('button', { name: 'Restart Game' }).click();
-  await expect(clock).toContainText('07:00');
-  await expect(lookForAJob).toBeVisible();
+  await expect(newGame).toBeVisible();
+  await expect(clock).toBeHidden();
   await page.reload();
+  await expect(newGame).toBeVisible();
+  await startNewGame(page);
   await expect(clock).toContainText('07:00');
   await expect(lookForAJob).toBeVisible();
 

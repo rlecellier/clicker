@@ -65,7 +65,6 @@ export type GameContextValue = {
   unqueue: (index: number) => void;
   goTo: (place: Location) => void;
   takeJob: (jobId: JobId) => void;
-  restart: () => void;
 };
 
 export type GameProviderProps = {
