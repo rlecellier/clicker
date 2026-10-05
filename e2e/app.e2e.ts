@@ -1,16 +1,39 @@
 import { expect, test } from '@playwright/test';
 
-import { elapse, getAJob, openPage, perform, startGame } from './support';
+import {
+  elapse,
+  getAJob,
+  openPage,
+  openSite,
+  perform,
+  startNewGame,
+} from './support';
 
-// On mobile: the menu, the places page, then the save and the restart.
-test('navigate the menu, resume a saved game and restart it', async ({
+// On mobile: the start screens, the menu, the places page, then the save and
+// the restart.
+test('start a game, navigate the menu, resume a saved game and restart it', async ({
   page,
 }) => {
-  await startGame(page);
+  const newGame = page.getByRole('button', { name: 'New Game' });
+  const startTheGame = page.getByRole('button', { name: 'Start the game' });
+  await openSite(page);
   const menu = page.getByRole('button', { name: 'Menu' });
   const sidebar = page.getByRole('meter', { name: 'Calories' });
   const clock = page.getByRole('timer', { name: 'Game time' });
   const lookForAJob = page.getByRole('button', { name: /Look for a job/ });
+
+  // Without a saved game, the only way in is New Game, then the briefing.
+  await expect(newGame).toBeVisible();
+  await expect(clock).toBeHidden();
+  await newGame.click();
+  await expect(
+    page.getByText(/1,000 coins in your bank account/),
+  ).toBeVisible();
+  await expect(page.getByText(/small apartment/)).toBeVisible();
+  await expect(clock).toBeHidden();
+  await startTheGame.click();
+  await expect(clock).toContainText('07:00');
+  await expect(lookForAJob).toBeVisible();
 
   // Folded on mobile: the menu icons are there, the gauges are not.
   await expect(sidebar).not.toBeInViewport();
@@ -84,12 +107,14 @@ test('navigate the menu, resume a saved game and restart it', async ({
   await expect(clock).toContainText('07:00');
   await expect(lookForAJob).toBeVisible();
 
-  // A broken save is ignored and a new game starts.
+  // A broken save is ignored: the player is back at the start screens.
   await perform(page, /Have a snack/, 0.5);
   await page.evaluate(() => {
     localStorage.setItem('clicker.save', '{"version":1,"state":{"oops":true}}');
   });
   await page.reload();
+  await expect(newGame).toBeVisible();
+  await startNewGame(page);
   await expect(clock).toContainText('07:00');
 
   // No page scrolls sideways on a narrow phone.
