@@ -1,0 +1,59 @@
+/* It takes the width of its container, the sidebar or the page. */
+.root {
+  width: 100%;
+}
+
+.compact {
+  --header-gap: 0.25rem;
+}
+
+.full {
+  --header-gap: 0.5rem;
+}
+
+.accent {
+  --gauge-color: var(--color-accent-light);
+}
+
+.success {
+  --gauge-color: var(--color-success);
+}
+
+.sleep {
+  --gauge-color: var(--color-sleep);
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: var(--header-gap);
+  font-variant-numeric: tabular-nums;
+}
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.detail {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.indicator {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  background: var(--gauge-color);
+}
