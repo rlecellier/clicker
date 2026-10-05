@@ -35,8 +35,8 @@ export const BalancePage = () => {
         </div>
       </dl>
       <p className={styles.note}>
-        Pay lands in your pocket with every half hour you work. Nothing to pay
-        for yet: the flat has no rent and the meals are free.
+        Pay lands in your pocket as the hours of work go by. Meals at home come
+        from the fridge, meals out at work cost coins.
       </p>
     </section>
   );

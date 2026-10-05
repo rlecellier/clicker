@@ -2,7 +2,7 @@ import { expect, test } from 'vitest';
 
 import { ACTIONS, actionsAt, isActionId } from './actions';
 
-test('at home the player eats, reads and sleeps', () => {
+test('at home the player eats, reads, sleeps, thinks and goes shopping', () => {
   expect(actionsAt('home').map(({ id }) => id)).toEqual([
     'breakfast',
     'lunch',
@@ -14,12 +14,36 @@ test('at home the player eats, reads and sleeps', () => {
     'sleep-4',
     'sleep-6',
     'sleep-8',
+    'think-30',
+    'think-60',
+    'think-120',
+    'shopping',
   ]);
 });
 
-test('at work the player works, half an hour at a time', () => {
-  expect(actionsAt('work')).toEqual([ACTIONS.work]);
+test('at work the player works, half an hour at a time, eats out and thinks', () => {
+  expect(actionsAt('work').map(({ id }) => id)).toEqual([
+    'work',
+    'eat-out',
+    'think-30',
+    'think-60',
+    'think-120',
+  ]);
   expect(ACTIONS.work.hours).toBe(0.5);
+});
+
+test('thinking lasts 30 min, 1 hour or 2 hours', () => {
+  expect(ACTIONS['think-30'].hours).toBe(0.5);
+  expect(ACTIONS['think-60'].hours).toBe(1);
+  expect(ACTIONS['think-120'].hours).toBe(2);
+  expect(ACTIONS['think-120'].label).toBe('Think 2h');
+});
+
+test('a meal at home takes a portion of the fridge, a meal out costs coins', () => {
+  expect(ACTIONS.lunch.portions).toBe(1);
+  expect(ACTIONS.lunch.cost).toBeUndefined();
+  expect(ACTIONS['eat-out'].cost).toBeGreaterThan(0);
+  expect(ACTIONS['eat-out'].portions).toBeUndefined();
 });
 
 test('reading lasts 1, 2 or 3 hours', () => {

@@ -31,3 +31,16 @@ test('does nothing when disabled', () => {
   });
   expect(saved()).toBeUndefined();
 });
+
+test('waits for an action to be over before saving', () => {
+  renderHook(() => {
+    useAutoSave(
+      {
+        ...INITIAL_GAME_STATE,
+        activity: { id: 'sleep-2', from: 7, done: 1 },
+      },
+      true,
+    );
+  });
+  expect(saved()).toBeUndefined();
+});

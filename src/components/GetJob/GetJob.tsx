@@ -7,12 +7,12 @@ import { useGetJob } from '@hook/useGetJob';
 
 // The "Look for a job" button and the sheet of jobs it opens.
 export const GetJob = () => {
-  const { canGetJob, isOpen, jobs, open, close, pick } = useGetJob();
+  const { canGetJob, isBusy, isOpen, jobs, open, close, pick } = useGetJob();
   if (!canGetJob) return;
 
   return (
     <>
-      <Button onClick={open}>
+      <Button disabled={isBusy} onClick={open}>
         <Briefcase aria-hidden size={18} /> Look for a job
       </Button>
       <ModalSheet

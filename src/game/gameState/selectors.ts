@@ -1,9 +1,10 @@
-import { actionsAt, type Action } from '@game/actions';
+import { ACTIONS, actionsAt, JOB_SEARCH, type Action } from '@game/actions';
+import { FRIDGE_MAX } from '@game/fridge';
 import { getBook, isLibraryRead } from '@game/reading';
 import { nextShiftAfter, shiftAt } from '@game/jobs';
 import { HOURS_PER_WEEK } from '@game/time';
 
-import type { GameState } from './types';
+import type { Activity, GameState } from './types';
 
 export const weekOf = (state: GameState) =>
   Math.floor(state.elapsedHours / HOURS_PER_WEEK);
@@ -22,18 +23,32 @@ export const currentShiftOf = (state: GameState) =>
 export const nextShiftOf = (state: GameState) =>
   nextShiftAfter(state.job, state.elapsedHours);
 
+type Step = Pick<Action, 'title' | 'kind' | 'hours' | 'calories'>;
+
+// What an activity is made of: the action, or the job hunt.
+export const stepOf = ({ id }: Activity): Step =>
+  id === 'job-search' ? JOB_SEARCH : ACTIONS[id];
+
 // Why an action cannot be done right now, undefined when it can.
 export const blockerOf = (
   state: GameState,
   action: Action,
 ): string | undefined => {
-  if (action.place !== state.location) return 'Not here';
+  if (state.activity) return 'Busy';
+  if (action.place !== 'anywhere' && action.place !== state.location) {
+    return 'Not here';
+  }
   if (action.kind === 'work' && !currentShiftOf(state)) {
     return 'Not your working hours';
   }
-  return action.kind === 'read' && isLibraryRead(state)
-    ? 'The whole library is read'
-    : undefined;
+  if (action.kind === 'read' && isLibraryRead(state)) {
+    return 'The whole library is read';
+  }
+  if ((action.portions ?? 0) > state.fridge) return 'The fridge is empty';
+  if (action.restocks && state.fridge >= FRIDGE_MAX) {
+    return 'The fridge is full';
+  }
+  return (action.cost ?? 0) > state.coins ? 'Not enough coins' : undefined;
 };
 
 // The actions of the place the player is at, with what keeps them from doing
@@ -46,3 +61,11 @@ export const availableActionsOf = (state: GameState) =>
 
 // The book on the go.
 export const currentBookOf = (state: GameState) => getBook(state.bookId);
+
+// The action in progress, with how far it is, if any.
+export const currentActivityOf = (state: GameState) =>
+  state.activity && {
+    title: stepOf(state.activity).title,
+    done: state.activity.done,
+    hours: stepOf(state.activity).hours,
+  };

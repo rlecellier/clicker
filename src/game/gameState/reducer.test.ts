@@ -1,20 +1,30 @@
 import { expect, test } from 'vitest';
 
+import { FRIDGE_MAX } from '@game/fridge';
+import { INITIAL_COINS } from '@game/coins';
 import { BOOKS } from '@game/reading';
 import { gameStateFactory } from '@test/factories/gameStateFactory';
 
 import { gameReducer, type GameAction } from './reducer';
-import { INITIAL_GAME_STATE, newGameState } from './types';
+import { INITIAL_GAME_STATE, newGameState, type GameState } from './types';
 
 const perform = (
   actionId: Extract<GameAction, { type: 'perform' }>['actionId'],
 ) => ({ type: 'perform', actionId, roll: 0 }) as const;
 
+// Lets the whole action in progress go by.
+const finish = (state: GameState) =>
+  gameReducer(state, { type: 'tick', hours: 100 });
+
+// Does an action from start to end.
+const doAction = (state: GameState, actionId: Parameters<typeof perform>[0]) =>
+  finish(gameReducer(state, perform(actionId)));
+
 // Monday 07:00, a clothes seller, at home.
 const SELLER = gameStateFactory.build({ traits: ['working'] });
 const AT_WORK_8 = { ...SELLER, elapsedHours: 8, location: 'work' as const };
 
-test('a new game starts at home, jobless, with no coin and an empty calendar', () => {
+test('a new game starts at home, jobless, with a few coins, a full fridge and an empty calendar', () => {
   const state = newGameState({
     origin: Date.UTC(2026, 9, 5),
     startHours: 2 * 24 + 14.5,
@@ -22,24 +32,63 @@ test('a new game starts at home, jobless, with no coin and an empty calendar', (
   });
   expect(state).toMatchObject({
     location: 'home',
-    coins: 0,
+    coins: INITIAL_COINS,
+    fridge: FRIDGE_MAX,
     history: [],
     elapsedHours: 2 * 24 + 14.5,
     startHours: 2 * 24 + 14.5,
   });
   expect(state.job).toBeUndefined();
+  expect(state.activity).toBeUndefined();
 });
 
-test('time does not move until the player acts', () => {
-  const state = gameReducer(INITIAL_GAME_STATE, {
-    type: 'goTo',
-    place: 'home',
-  });
-  expect(state.elapsedHours).toBe(INITIAL_GAME_STATE.elapsedHours);
+test('starting an action does not move the clock: time goes by with the ticks', () => {
+  const started = gameReducer(INITIAL_GAME_STATE, perform('sleep-4'));
+  expect(started.elapsedHours).toBe(7);
+  expect(started.activity).toMatchObject({ id: 'sleep-4', from: 7, done: 0 });
+
+  const halfway = gameReducer(started, { type: 'tick', hours: 2 });
+  expect(halfway.elapsedHours).toBe(9);
+  expect(halfway.activity?.done).toBe(2);
+  expect(halfway.history).toEqual([
+    { kind: 'sleep', title: 'Sleep', start: 7, end: 9 },
+  ]);
+
+  // the gauges follow the time: 2 hours out of 4 of sleep
+  expect(halfway.brain).toBeCloseTo(INITIAL_GAME_STATE.brain - 20, 5);
+});
+
+test('the time of an action is never more than its duration', () => {
+  const state = finish(gameReducer(INITIAL_GAME_STATE, perform('sleep-2')));
+  expect(state.elapsedHours).toBe(9);
+  expect(state.activity).toBeUndefined();
+  // nothing runs without an action
+  expect(gameReducer(state, { type: 'tick', hours: 5 })).toBe(state);
+});
+
+test('many small ticks give the same hours as one big one', () => {
+  let state = gameReducer(INITIAL_GAME_STATE, perform('lunch'));
+  for (let frame = 0; frame < 300; frame += 1) {
+    state = gameReducer(state, { type: 'tick', hours: 0.01 });
+  }
+  expect(state.activity).toBeUndefined();
+  expect(state.elapsedHours).toBe(8);
+  expect(state.history).toEqual([
+    { kind: 'meal', title: 'Lunch', start: 7, end: 8 },
+  ]);
+});
+
+test('only one action runs at a time', () => {
+  const busy = gameReducer(SELLER, perform('sleep-2'));
+  expect(gameReducer(busy, perform('sleep-4'))).toBe(busy);
+  expect(gameReducer(busy, { type: 'goTo', place: 'work' })).toBe(busy);
+  expect(gameReducer(busy, { type: 'takeJob', jobId: 'clothes-seller' })).toBe(
+    busy,
+  );
 });
 
 test('an action moves the clock by its duration and is written down', () => {
-  const state = gameReducer(INITIAL_GAME_STATE, perform('lunch'));
+  const state = doAction(INITIAL_GAME_STATE, 'lunch');
   expect(state.elapsedHours).toBe(INITIAL_GAME_STATE.elapsedHours + 1);
   expect(state.history).toEqual([
     { kind: 'meal', title: 'Lunch', start: 7, end: 8 },
@@ -48,24 +97,18 @@ test('an action moves the clock by its duration and is written down', () => {
 
 test('sleeping lasts as long as chosen and empties the brain', () => {
   const awake = { ...INITIAL_GAME_STATE, brain: 50 };
-  const state = gameReducer(awake, perform('sleep-4'));
+  const state = doAction(awake, 'sleep-4');
   expect(state.elapsedHours).toBe(11);
   expect(state.brain).toBeCloseTo(10, 5);
 });
 
 test('a meal fills the calories', () => {
-  const state = gameReducer(
-    { ...INITIAL_GAME_STATE, calories: 30 },
-    perform('dinner'),
-  );
+  const state = doAction({ ...INITIAL_GAME_STATE, calories: 30 }, 'dinner');
   expect(state.calories).toBeGreaterThan(30);
 });
 
 test('actions done in a row are merged in the history', () => {
-  const slept = gameReducer(
-    gameReducer(INITIAL_GAME_STATE, perform('sleep-2')),
-    perform('sleep-4'),
-  );
+  const slept = doAction(doAction(INITIAL_GAME_STATE, 'sleep-2'), 'sleep-4');
   expect(slept.history).toEqual([
     { kind: 'sleep', title: 'Sleep', start: 7, end: 13 },
   ]);
@@ -78,11 +121,45 @@ test('an action of another place is not done', () => {
   expect(gameReducer(AT_WORK_8, perform('lunch'))).toBe(AT_WORK_8);
 });
 
+test('thinking is possible anywhere and lets 30 min, 1 or 2 hours go by', () => {
+  expect(doAction(INITIAL_GAME_STATE, 'think-30').elapsedHours).toBe(7.5);
+  expect(doAction(INITIAL_GAME_STATE, 'think-60').elapsedHours).toBe(8);
+  expect(doAction(AT_WORK_8, 'think-120').elapsedHours).toBe(10);
+  expect(doAction(AT_WORK_8, 'think-120').location).toBe('work');
+  expect(doAction(INITIAL_GAME_STATE, 'think-60').history).toEqual([
+    { kind: 'think', title: 'Think', start: 7, end: 8 },
+  ]);
+});
+
 test('reading draws a book and moves it on', () => {
-  const state = gameReducer(INITIAL_GAME_STATE, perform('read-1'));
+  const state = doAction(INITIAL_GAME_STATE, 'read-1');
   expect(state.bookId).toBe(BOOKS[0]?.id);
   expect(state.bookHours).toBe(1);
-  expect(gameReducer(INITIAL_GAME_STATE, perform('read-3')).bookHours).toBe(3);
+  expect(state.elapsedHours).toBe(8);
+  expect(state.activity).toBeUndefined();
+  expect(doAction(INITIAL_GAME_STATE, 'read-3').bookHours).toBe(3);
+});
+
+test('the book moves on while the player reads', () => {
+  const halfway = gameReducer(
+    gameReducer(INITIAL_GAME_STATE, perform('read-2')),
+    { type: 'tick', hours: 1 },
+  );
+  expect(halfway.bookId).toBe(BOOKS[0]?.id);
+  expect(halfway.bookHours).toBeCloseTo(1, 5);
+});
+
+test('the last pages of a book end it, and the hours past them are lost', () => {
+  const book = BOOKS[0];
+  const almost = {
+    ...INITIAL_GAME_STATE,
+    bookId: book?.id,
+    bookHours: 5,
+  };
+  const state = doAction(almost, 'read-3');
+  expect(state.bookId).toBeUndefined();
+  expect(state.readBookIds).toEqual([book?.id]);
+  expect(state.elapsedHours).toBe(10);
 });
 
 test('reading is not possible once the whole library is read', () => {
@@ -93,11 +170,14 @@ test('reading is not possible once the whole library is read', () => {
   expect(gameReducer(done, perform('read-1'))).toBe(done);
 });
 
-test('looking for a job takes an hour and hires the player', () => {
-  const state = gameReducer(INITIAL_GAME_STATE, {
+test('looking for a job takes an hour and hires the player at the end', () => {
+  const started = gameReducer(INITIAL_GAME_STATE, {
     type: 'takeJob',
     jobId: 'clothes-seller',
   });
+  expect(started.job).toBeUndefined();
+
+  const state = finish(started);
   expect(state.job).toEqual({ id: 'clothes-seller', since: 8 });
   expect(state.elapsedHours).toBe(8);
   expect(state.history).toEqual([
@@ -134,20 +214,19 @@ test('the player cannot go to work without a job', () => {
   );
 });
 
-test('each click at work is half an hour of work, paid at once', () => {
-  const worked = gameReducer(AT_WORK_8, perform('work'));
+test('each click at work is half an hour of work, paid as time goes by', () => {
+  const started = gameReducer(AT_WORK_8, perform('work'));
+  expect(started.coins).toBe(AT_WORK_8.coins);
+
+  const worked = finish(started);
   expect(worked.elapsedHours).toBe(8.5);
   // 10 coins an hour
   expect(worked.coins).toBe(AT_WORK_8.coins + 5);
-  expect(worked.location).toBe('work');
-  expect(gameReducer(worked, perform('work')).coins).toBe(AT_WORK_8.coins + 10);
+  expect(doAction(worked, 'work').coins).toBe(AT_WORK_8.coins + 10);
 });
 
 test('work done in a row is a single entry of the calendar', () => {
-  const worked = gameReducer(
-    gameReducer(AT_WORK_8, perform('work')),
-    perform('work'),
-  );
+  const worked = doAction(doAction(AT_WORK_8, 'work'), 'work');
   expect(worked.history).toEqual([
     { kind: 'work', title: 'Work', start: 8, end: 9 },
   ]);
@@ -163,18 +242,60 @@ test('work is only possible during the working hours', () => {
   expect(gameReducer(weekend, perform('work'))).toBe(weekend);
 });
 
-test('at the end of the shift, the player goes home', () => {
+test('the player stays at work until they leave, even after the shift', () => {
   const nearlyDone = { ...AT_WORK_8, elapsedHours: 11.5 };
-  const state = gameReducer(nearlyDone, perform('work'));
+  const state = doAction(nearlyDone, 'work');
   expect(state.elapsedHours).toBe(12);
-  expect(state.location).toBe('home');
+  expect(state.location).toBe('work');
   expect(state.coins).toBe(nearlyDone.coins + 5);
+});
+
+test('a meal at home comes out of the fridge', () => {
+  const started = gameReducer(INITIAL_GAME_STATE, perform('lunch'));
+  expect(started.fridge).toBe(FRIDGE_MAX - 1);
+  expect(doAction(INITIAL_GAME_STATE, 'dinner').fridge).toBe(FRIDGE_MAX - 1);
+});
+
+test('no meal at home with an empty fridge', () => {
+  const empty = { ...INITIAL_GAME_STATE, fridge: 0 };
+  expect(gameReducer(empty, perform('breakfast'))).toBe(empty);
+});
+
+test('shopping fills the fridge once it is over, and costs an hour', () => {
+  const low = { ...INITIAL_GAME_STATE, fridge: 2 };
+  const started = gameReducer(low, perform('shopping'));
+  expect(started.fridge).toBe(2);
+
+  const state = finish(started);
+  expect(state.fridge).toBe(FRIDGE_MAX);
+  expect(state.elapsedHours).toBe(8);
+  expect(state.history).toEqual([
+    { kind: 'shopping', title: 'Shopping', start: 7, end: 8 },
+  ]);
+});
+
+test('no shopping when the fridge is full', () => {
+  expect(gameReducer(INITIAL_GAME_STATE, perform('shopping'))).toBe(
+    INITIAL_GAME_STATE,
+  );
+});
+
+test('eating out at work costs coins and leaves the fridge alone', () => {
+  const started = gameReducer(AT_WORK_8, perform('eat-out'));
+  expect(started.coins).toBe(AT_WORK_8.coins - 8);
+  expect(started.fridge).toBe(AT_WORK_8.fridge);
+  expect(finish(started).elapsedHours).toBe(9);
+});
+
+test('no eating out without the coins for it', () => {
+  const poor = { ...AT_WORK_8, coins: 7 };
+  expect(gameReducer(poor, perform('eat-out'))).toBe(poor);
 });
 
 test('working burns more calories than reading', () => {
   const rested = { ...AT_WORK_8, calories: 50 };
-  const worked = gameReducer(rested, perform('work'));
-  const read = gameReducer({ ...rested, location: 'home' }, perform('read-1'));
+  const worked = doAction(rested, 'work');
+  const read = doAction({ ...rested, location: 'home' }, 'read-1');
   expect(50 - worked.calories).toBeGreaterThan((50 - read.calories) / 2);
 });
 

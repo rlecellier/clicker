@@ -4,10 +4,18 @@ import type { Page } from '@playwright/test';
 export const MONDAY_MORNING = new Date(2026, 9, 5, 7, 0);
 
 // Opens a new game, launched at the given moment of the player's clock. The
-// clock stays still: the game does not depend on it once it has started.
+// browser clock is paused: the game only runs when `elapse` lets time go by.
 export const startGame = async (page: Page, now = MONDAY_MORNING) => {
-  await page.clock.setFixedTime(now);
+  await page.clock.install({ time: new Date(now.getTime() - 1000) });
+  await page.clock.pauseAt(now);
   await page.goto('/');
+};
+
+// Lets game hours go by, at one game hour per second, plus a margin for the
+// frame that starts the action: an action that lasts that many hours is over.
+// In the middle of an action the time is only known to within the margin.
+export const elapse = async (page: Page, hours: number) => {
+  await page.clock.runFor(hours * 1000 + 300);
 };
 
 // Opens a page of the menu (the menu is closed on mobile).
@@ -15,4 +23,14 @@ export const openPage = async (page: Page, name: string) => {
   const menu = page.getByRole('button', { name: 'Menu' });
   if (await menu.isVisible()) await menu.click();
   await page.getByRole('link', { name, exact: true }).click();
+};
+
+// Does an action from the buttons, and lets the hours it takes go by.
+export const perform = async (
+  page: Page,
+  name: string | RegExp,
+  hours: number,
+) => {
+  await page.getByRole('button', { name }).click();
+  await elapse(page, hours);
 };

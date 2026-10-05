@@ -15,6 +15,7 @@ import { BodyGauge } from '@component/BodyGauge';
 import { BrainGauge } from '@component/BrainGauge';
 import { CaloriesGauge } from '@component/CaloriesGauge';
 import { DreamGauge } from '@component/DreamGauge';
+import { FridgeGauge } from '@component/FridgeGauge';
 import { PLACES } from '@component/PlaceInfo';
 import type { Body } from '@game/body';
 import { LOCATIONS, type Location } from '@game/location';
@@ -24,6 +25,7 @@ import styles from './Sidebar.module.css';
 type SidebarProps = {
   id: string;
   calories: number;
+  fridge: number;
   body: Body;
   brain: number;
   dreamGauge: number;
@@ -51,6 +53,7 @@ const LINKS = [
 export const Sidebar = ({
   id,
   calories,
+  fridge,
   body,
   brain,
   dreamGauge,
@@ -91,6 +94,7 @@ export const Sidebar = ({
       />
       <aside id={id} className={styles.panel} data-open={isOpen || undefined}>
         <CaloriesGauge calories={calories} />
+        <FridgeGauge fridge={fridge} />
         <BodyGauge
           fatPercent={body.fatPercent}
           musclePercent={body.musclePercent}

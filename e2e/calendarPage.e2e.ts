@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { openPage, startGame } from './support';
+import { openPage, perform, startGame } from './support';
 
 test('on mobile, the calendar page shows one day and swipes to the next', async ({
   browser,
@@ -67,7 +67,7 @@ test('the whole day fits the screen, and ctrl + wheel zooms in on the hours', as
 }) => {
   await page.setViewportSize({ width: 1024, height: 700 });
   await startGame(page);
-  await page.getByRole('button', { name: /Have lunch/ }).click();
+  await perform(page, /Have lunch/, 1);
   await page.goto('/calendar');
   const grid = page.getByRole('list').first().locator('..').locator('..');
   const fits = await grid.evaluate(
@@ -98,7 +98,7 @@ test('on mobile, a pinch zooms in without changing the day', async ({
   });
   const page = await context.newPage();
   await startGame(page);
-  await page.getByRole('button', { name: /Have lunch/ }).click();
+  await perform(page, /Have lunch/, 1);
   await page.goto('/calendar');
   const lunch = page.getByTitle(/^Lunch/);
   // the event has no box until the grid is laid out

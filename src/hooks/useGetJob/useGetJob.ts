@@ -7,11 +7,13 @@ import { isJobId, JOB_IDS, JOBS } from '@game/jobs';
 // it, after an hour of searching. Only a player at home without a job can look
 // for one.
 export const useGetJob = () => {
-  const { job, location, takeJob } = useGameContext();
+  const { activity, job, location, takeJob } = useGameContext();
   const [isOpen, setIsOpen] = useState(false);
 
   return {
     canGetJob: !job && location === 'home',
+    // one thing at a time
+    isBusy: activity !== undefined,
     isOpen,
     jobs: JOB_IDS.map((id) => ({ id, title: JOBS[id].title })),
     open: () => {

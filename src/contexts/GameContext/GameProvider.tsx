@@ -1,9 +1,10 @@
-import { useMemo, useReducer } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 
 import { ageAt, birthDateOf } from '@game/age';
 import { getBody } from '@game/body';
 import {
   availableActionsOf,
+  currentActivityOf,
   currentBookOf,
   currentShiftOf,
   gameReducer,
@@ -15,6 +16,7 @@ import {
 } from '@game/gameState';
 import { gameStartOf } from '@game/time';
 import { getBook, isLibraryRead } from '@game/reading';
+import { useActionClock } from '@hook/useActionClock';
 import { useAutoSave } from '@hook/useAutoSave';
 
 import { GameContext } from './GameContext';
@@ -27,6 +29,10 @@ export const GameProvider = ({
 }: GameProviderProps) => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
 
+  const tick = useCallback((hours: number) => {
+    dispatch({ type: 'tick', hours });
+  }, []);
+  useActionClock(state.activity !== undefined, tick);
   useAutoSave(state, persist);
 
   const value = useMemo<GameContextValue>(
@@ -41,6 +47,7 @@ export const GameProvider = ({
       weekHour: weekHourOf(state),
       location: state.location,
       calories: state.calories,
+      fridge: state.fridge,
       body: getBody(state.fat),
       brain: state.brain,
       dreamGauge: state.dreamGauge,
@@ -51,6 +58,7 @@ export const GameProvider = ({
       isLibraryRead: isLibraryRead(state),
       history: state.history,
       job: state.job,
+      activity: currentActivityOf(state),
       currentShift: currentShiftOf(state),
       nextShift: nextShiftOf(state),
       actions: availableActionsOf(state),

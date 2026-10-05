@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { demoShot, openPage, startGame } from './support';
+import { demoShot, openPage, perform, startGame } from './support';
 
 test('the profile page shows the body of a new player', async ({ page }) => {
   await startGame(page);
@@ -23,11 +23,11 @@ test('the gold coins are shown in the header and in the profile', async ({
 }) => {
   await startGame(page);
   await expect(page.getByRole('status', { name: 'Gold coins' })).toHaveText(
-    '0',
+    '20',
   );
   await demoShot(page, 'age-and-coins');
   await openPage(page, 'Profile');
-  await expect(page.getByText('Gold coins').locator('..')).toContainText('0');
+  await expect(page.getByText('Gold coins').locator('..')).toContainText('20');
 });
 
 test('the profile shows the age, the birth date and the time played', async ({
@@ -44,9 +44,9 @@ test('the profile shows the age, the birth date and the time played', async ({
 
   // Eight hours of sleep are played.
   await openPage(page, 'Game');
-  await page.getByRole('button', { name: /Sleep 8h/ }).click();
-  await page.getByRole('button', { name: /Sleep 8h/ }).click();
-  await page.getByRole('button', { name: /Sleep 8h/ }).click();
+  await perform(page, /Sleep 8h/, 8);
+  await perform(page, /Sleep 8h/, 8);
+  await perform(page, /Sleep 8h/, 8);
   await openPage(page, 'Profile');
   await expect(page.getByText('Played').locator('..')).toContainText('1 d');
   await demoShot(page, 'profile-life');

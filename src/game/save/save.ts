@@ -1,4 +1,5 @@
 import { isDoneEntry } from '@game/history';
+import { FRIDGE_MAX } from '@game/fridge';
 import { isJobId } from '@game/jobs';
 import { isLocation } from '@game/location';
 import { CALORIES_CAP } from '@game/nutrition';
@@ -8,7 +9,7 @@ import type { GameState } from '@game/gameState';
 
 export const SAVE_KEY = 'clicker.save';
 // Bumped when the shape of `GameState` changes in a way old saves can't fit.
-export const SAVE_VERSION = 7;
+export const SAVE_VERSION = 8;
 
 // The part of `Storage` the save needs, so it can be faked in tests.
 export type SaveStorage = Pick<Storage, 'getItem' | 'setItem'>;
@@ -64,6 +65,10 @@ const isGameState = (value: unknown): value is GameState => {
     isBetweenZeroAnd(state.coins, Number.MAX_SAFE_INTEGER) &&
     isLocation(state.location as string | undefined) &&
     isBetweenZeroAnd(state.calories, CALORIES_CAP) &&
+    Number.isSafeInteger(state.fridge) &&
+    isBetweenZeroAnd(state.fridge, FRIDGE_MAX) &&
+    // an action in progress is not saved: it starts over
+    state.activity === undefined &&
     isBetweenZeroAnd(state.brain, BRAIN_CAP) &&
     isBetweenZeroAnd(state.dreamGauge, DREAM_CAP) &&
     // a full gauge has already made its dream

@@ -2,7 +2,9 @@ import { Button } from '@base-ui/react/button';
 import {
   BookOpen,
   Briefcase,
+  Lightbulb,
   Moon,
+  ShoppingCart,
   Utensils,
   type LucideIcon,
 } from 'lucide-react';
@@ -17,6 +19,8 @@ const ICONS: Record<EventKind, LucideIcon> = {
   sleep: Moon,
   read: BookOpen,
   search: Briefcase,
+  think: Lightbulb,
+  shopping: ShoppingCart,
 };
 
 type ActionListProps = {
@@ -31,8 +35,8 @@ type ActionListProps = {
       text: string;
       // what assistive technologies read
       label: string;
-      // how long it takes, "30 min"
-      duration: string;
+      // how long it takes and what it costs, "1h · 8 coins"
+      detail: string;
       // why it cannot be done right now, if it cannot
       blocker?: string;
     }[];
@@ -53,12 +57,12 @@ export const ActionList = ({ rows, onPerform }: ActionListProps) => {
                 <Icon aria-hidden size={18} /> {name}
               </span>
             )}
-            {options.map(({ id, text, label, duration, blocker }) => (
+            {options.map(({ id, text, label, detail, blocker }) => (
               <Button
                 key={id}
                 className={styles.action}
                 aria-label={label}
-                title={blocker ?? duration}
+                title={blocker ?? detail}
                 disabled={blocker !== undefined}
                 onClick={() => {
                   onPerform(id);
@@ -67,7 +71,7 @@ export const ActionList = ({ rows, onPerform }: ActionListProps) => {
                 {!name && <Icon aria-hidden size={18} />}
                 <span className={styles.label}>{text}</span>
                 {!name && (
-                  <span className={styles.detail}>{blocker ?? duration}</span>
+                  <span className={styles.detail}>{blocker ?? detail}</span>
                 )}
               </Button>
             ))}

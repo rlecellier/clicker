@@ -10,8 +10,8 @@ import type { CatalogBook } from '@game/reading';
 export type GameContextValue = {
   // gold coins
   coins: number;
-  // game hours since Monday 00:00 of the first week; it only moves when the
-  // player acts
+  // game hours since Monday 00:00 of the first week; it only moves while an
+  // action runs
   elapsedHours: number;
   // UTC midnight, in ms, of the Monday of the first week: day 0 of the game
   origin: number;
@@ -26,6 +26,8 @@ export type GameContextValue = {
   // where the player is
   location: Location;
   calories: number;
+  // portions left in the fridge at home
+  fridge: number;
   body: Body;
   // gauge between 0 and 100
   brain: number;
@@ -45,6 +47,9 @@ export type GameContextValue = {
   history: DoneEntry[];
   // the job the player holds, if any
   job?: Employment;
+  // the action in progress and how far it is, in game hours; none when the
+  // player is free to act
+  activity?: { title: string; done: number; hours: number };
   // the shift the player is in the middle of, if any
   currentShift?: Shift;
   // the next shift to start

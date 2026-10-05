@@ -30,6 +30,7 @@ const state = {
   elapsedHours: 123.5,
   coins: 250,
   calories: 61.2,
+  fridge: 4,
   fat: 4.5,
   brain: 33.3,
   dreamGauge: 42.5,
@@ -84,6 +85,12 @@ test('refuses a save with a missing or invalid field', () => {
   expect(broken({ elapsedHours: '10' })).toBeUndefined();
   expect(broken({ elapsedHours: [] })).toBeUndefined();
   expect(broken({ calories: 101 })).toBeUndefined();
+  expect(broken({ fridge: 11 })).toBeUndefined();
+  expect(broken({ fridge: 2.5 })).toBeUndefined();
+  expect(broken({ fridge: undefined })).toBeUndefined();
+  expect(
+    broken({ activity: { id: 'sleep-2', from: 7, done: 1 } }),
+  ).toBeUndefined();
   expect(broken({ brain: 101 })).toBeUndefined();
   expect(broken({ brain: undefined })).toBeUndefined();
   expect(broken({ dreamGauge: 100 })).toBeUndefined();

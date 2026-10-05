@@ -23,6 +23,7 @@ const Layout = () => {
     age,
     coins,
     calories,
+    fridge,
     body,
     brain,
     dreamGauge,
@@ -83,6 +84,7 @@ const Layout = () => {
         <Sidebar
           id="sidebar"
           calories={calories}
+          fridge={fridge}
           body={body}
           brain={brain}
           dreamGauge={dreamGauge}

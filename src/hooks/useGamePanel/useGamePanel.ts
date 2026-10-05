@@ -20,7 +20,7 @@ type Row = {
     text: string;
     // what assistive technologies read
     label: string;
-    duration: string;
+    detail: string;
     blocker?: string;
   }[];
 };
@@ -35,7 +35,9 @@ const rowsOf = (
       id: action.id,
       text: action.group?.option ?? action.label,
       label: action.label,
-      duration: formatDuration(action.hours),
+      detail: action.cost
+        ? `${formatDuration(action.hours)} · ${action.cost} coins`
+        : formatDuration(action.hours),
       blocker,
     };
     const row = action.group
@@ -60,6 +62,7 @@ export const useGamePanel = () => {
   const {
     location,
     job,
+    activity,
     currentShift,
     nextShift,
     elapsedHours,
@@ -85,6 +88,7 @@ export const useGamePanel = () => {
 
   return {
     location,
+    activity,
     job: jobDefinition && {
       title: jobDefinition.title,
       pay: `${jobDefinition.hourlyCoins} coins / hour`,

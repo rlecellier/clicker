@@ -2,6 +2,7 @@ import { Button } from '@base-ui/react/button';
 import { Briefcase, House } from 'lucide-react';
 
 import { ActionList } from '@component/ActionList';
+import { ActivityProgress } from '@component/ActivityProgress';
 import { BookProgress } from '@component/BookProgress';
 import { GetJob } from '@component/GetJob';
 import { JobStatus } from '@component/JobStatus';
@@ -13,7 +14,8 @@ import styles from './GamePage.module.css';
 
 export const GamePage = () => {
   const { currentBook, bookHours } = useGameContext();
-  const { location, job, travel, rows, perform, goTo } = useGamePanel();
+  const { location, activity, job, travel, rows, perform, goTo } =
+    useGamePanel();
 
   return (
     <div className={styles.content}>
@@ -22,6 +24,7 @@ export const GamePage = () => {
       <div className={styles.actions}>
         {travel && (
           <Button
+            disabled={activity !== undefined}
             onClick={() => {
               goTo(travel.place);
             }}
@@ -35,6 +38,7 @@ export const GamePage = () => {
           </Button>
         )}
         <GetJob />
+        {activity && <ActivityProgress {...activity} />}
         <ActionList rows={rows} onPerform={perform} />
         {currentBook && (
           <BookProgress
