@@ -76,10 +76,10 @@ test('the sidebar opens the profile page, with the stats of the player', async (
   expect(screen.getAllByLabelText('Body fat')).toHaveLength(2);
 });
 
-test('the sidebar unfolds the places and opens one with its banner', async () => {
+test('the places page lists the places and opens one with its banner', async () => {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
   renderApp();
-  await user.click(screen.getByRole('button', { name: /Places/ }));
+  await user.click(screen.getByRole('link', { name: 'Places' }));
   await user.click(screen.getByRole('link', { name: /Work/ }));
   expect(
     await screen.findByRole('heading', { name: 'Work' }),

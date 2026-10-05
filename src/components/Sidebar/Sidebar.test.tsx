@@ -20,7 +20,6 @@ const renderPanel = (isOpen: boolean) => {
         brain={30}
         dreamGauge={20}
         dreams={2}
-        location="home"
         isOpen={isOpen}
         onClose={onClose}
         onRestart={onRestart}
@@ -51,7 +50,6 @@ test('is marked as open only when it is open', () => {
         brain={30}
         dreamGauge={20}
         dreams={2}
-        location="home"
         isOpen
         onClose={vi.fn()}
         onRestart={vi.fn()}
@@ -111,52 +109,11 @@ test('marks the current page and closes when a link is clicked', async () => {
   expect(onClose).toHaveBeenCalled();
 });
 
-test('unfolds the places and links to each of them', async () => {
-  const user = userEvent.setup();
-  renderPanel(true);
-  const toggle = screen.getByRole('button', { name: /Places/ });
-  expect(toggle).toHaveAttribute('aria-expanded', 'false');
-
-  await user.click(toggle);
-  expect(toggle).toHaveAttribute('aria-expanded', 'true');
-  for (const [name, place] of [
-    ['Home', 'home'],
-    ['Work', 'work'],
-  ] as const) {
-    expect(
-      screen.getByRole('link', { name: new RegExp(name) }),
-    ).toHaveAttribute('href', `/places/${place}`);
-  }
-});
-
-test('is unfolded when a place is shown, and marks where the player is', () => {
-  render(
-    <MemoryRouter initialEntries={['/places/work']}>
-      <Sidebar
-        id="panel"
-        calories={50}
-        fridge={10}
-        body={getBody(0)}
-        brain={30}
-        dreamGauge={20}
-        dreams={2}
-        location="work"
-        isOpen
-        onClose={vi.fn()}
-        onRestart={vi.fn()}
-      />
-    </MemoryRouter>,
-  );
-  expect(screen.getByRole('button', { name: /Places/ })).toHaveAttribute(
-    'aria-expanded',
-    'true',
-  );
-  expect(screen.getByRole('link', { name: /Work/ })).toHaveTextContent(
-    'you are here',
-  );
-  expect(screen.getByRole('link', { name: /Work/ })).toHaveAttribute(
-    'aria-current',
-    'page',
+test('links to the places page', () => {
+  renderPanel(false);
+  expect(screen.getByRole('link', { name: 'Places' })).toHaveAttribute(
+    'href',
+    '/places',
   );
 });
 

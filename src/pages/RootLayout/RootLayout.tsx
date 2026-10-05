@@ -31,7 +31,6 @@ const Layout = () => {
     elapsedHours,
     history,
     job,
-    location,
     origin,
     restart,
   } = useGameContext();
@@ -89,7 +88,6 @@ const Layout = () => {
           brain={brain}
           dreamGauge={dreamGauge}
           dreams={dreams}
-          location={location}
           isOpen={isMenuOpen}
           onClose={closeMenu}
           onRestart={restart}
