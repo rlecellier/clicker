@@ -1,11 +1,13 @@
 import { Button } from '@base-ui/react/button';
-import { CalendarCheck, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarCheck, ChevronLeft, ChevronRight, ListX } from 'lucide-react';
 import { useState } from 'react';
 
+import { QueueList } from '@component/QueueList';
 import { CalendarGrid } from '@component/CalendarGrid';
 import { useGameContext } from '@context/GameContext';
 import { useCalendarDay } from '@hook/useCalendarDay';
 import { useMediaQuery } from '@hook/useMediaQuery';
+import { useQueue } from '@hook/useQueue';
 import { useSwipe } from '@hook/useSwipe';
 import { useZoom } from '@hook/useZoom';
 import { DAYS_PER_WEEK, HOURS_PER_DAY } from '@game/time';
@@ -22,7 +24,9 @@ const VIEWS: { view: CalendarView; label: string }[] = [
 // chosen), a single day on mobile, with a swipe to go to the next one. The
 // whole day fits the screen; ctrl + wheel or a pinch zooms in on the hours.
 export const CalendarPage = () => {
-  const { week, weekHour, origin, history, job } = useGameContext();
+  const { week, weekHour, origin, history, planned, job, clearQueue } =
+    useGameContext();
+  const queue = useQueue();
   const currentDay =
     week * DAYS_PER_WEEK + Math.floor(weekHour / HOURS_PER_DAY);
   const dayRatio = (weekHour % HOURS_PER_DAY) / HOURS_PER_DAY;
@@ -76,6 +80,13 @@ export const CalendarPage = () => {
           <Button aria-label="Today" onClick={goToToday} disabled={isOnToday}>
             <CalendarCheck aria-hidden size={18} />
           </Button>
+          <Button
+            aria-label="Cancel all planned"
+            onClick={clearQueue}
+            disabled={queue.items.length === 0}
+          >
+            <ListX aria-hidden size={18} />
+          </Button>
           {isLargeScreen && (
             <div role="group" aria-label="View" className={styles.views}>
               {VIEWS.map(({ view: option, label }) => (
@@ -98,12 +109,15 @@ export const CalendarPage = () => {
           origin={origin}
           days={days}
           history={history}
+          planned={planned}
+          onCancel={queue.remove}
           job={job}
           currentDay={currentDay}
           dayRatio={dayRatio}
           zoom={zoom}
         />
       </div>
+      <QueueList items={queue.items} onRemove={queue.remove} />
     </section>
   );
 };
