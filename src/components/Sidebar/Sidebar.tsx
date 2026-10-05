@@ -76,31 +76,33 @@ export const Sidebar = ({
         aria-hidden
       />
       <aside id={id} className={styles.panel} data-open={isOpen || undefined}>
-        <div className={styles.gauges}>
-          <CaloriesGauge calories={calories} />
-          <FridgeGauge fridge={fridge} />
-          <BodyGauge
-            fatPercent={body.fatPercent}
-            musclePercent={body.musclePercent}
-          />
-          <BrainGauge brain={brain} />
-          <DreamGauge dreamGauge={dreamGauge} dreams={dreams} />
+        <div className={styles.content}>
+          <div className={styles.gauges}>
+            <CaloriesGauge calories={calories} />
+            <FridgeGauge fridge={fridge} />
+            <BodyGauge
+              fatPercent={body.fatPercent}
+              musclePercent={body.musclePercent}
+            />
+            <BrainGauge brain={brain} />
+            <DreamGauge dreamGauge={dreamGauge} dreams={dreams} />
+          </div>
+          <nav aria-label="Pages" className={styles.nav}>
+            {LINKS.map(({ to, label, Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={to === '/'}
+                className={styles.link}
+                title={label}
+                onClick={onClose}
+              >
+                <Icon aria-hidden size={18} />
+                <span className={styles.label}>{label}</span>
+              </NavLink>
+            ))}
+          </nav>
         </div>
-        <nav aria-label="Pages" className={styles.nav}>
-          {LINKS.map(({ to, label, Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === '/'}
-              className={styles.link}
-              title={label}
-              onClick={onClose}
-            >
-              <Icon aria-hidden size={18} />
-              <span className={styles.label}>{label}</span>
-            </NavLink>
-          ))}
-        </nav>
         <button
           type="button"
           className={styles.restart}
