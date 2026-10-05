@@ -1,7 +1,7 @@
 import {
   DAYS_PER_WEEK,
   HOURS_PER_DAY,
-  STEP_HOURS,
+  START_HOUR,
   WEEKS_PER_YEAR,
 } from './constants';
 
@@ -24,26 +24,28 @@ const MONTHS = [
 
 // Where a game begins: the Monday of the week it starts in (`origin`, the
 // UTC midnight of that day) and the game hours of the moment it starts, which
-// is the date and time of the player (`startHours`, since that Monday 00:00).
+// is 08:00 the next morning (`startHours`, since that Monday 00:00).
 export type GameStart = {
   origin: number;
   startHours: number;
 };
 
-// The start of a game launched at the given moment, in the local time of the
-// player, rounded down to the half hour.
+// The start of a game launched at the given moment: 08:00 the next morning, in
+// the local time of the player.
 export const gameStartOf = (now: Date): GameStart => {
-  const weekdayOfNow = (now.getDay() + 6) % DAYS_PER_WEEK;
-  const hourOfDay =
-    Math.floor((now.getHours() + now.getMinutes() / 60) / STEP_HOURS) *
-    STEP_HOURS;
+  const tomorrow = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1,
+  );
+  const weekdayOfStart = (tomorrow.getDay() + 6) % DAYS_PER_WEEK;
   return {
     origin: Date.UTC(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() - weekdayOfNow,
+      tomorrow.getFullYear(),
+      tomorrow.getMonth(),
+      tomorrow.getDate() - weekdayOfStart,
     ),
-    startHours: weekdayOfNow * HOURS_PER_DAY + hourOfDay,
+    startHours: weekdayOfStart * HOURS_PER_DAY + START_HOUR,
   };
 };
 

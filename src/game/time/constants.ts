@@ -13,3 +13,6 @@ export const HOURS_PER_SECOND = 1;
 
 // Time moves by half hours: every action lasts a whole number of them.
 export const STEP_HOURS = 0.5;
+
+// The hour of the morning a new game starts at, the day after it is launched.
+export const START_HOUR = 8;

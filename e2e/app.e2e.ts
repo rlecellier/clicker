@@ -35,7 +35,7 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   await expect(page.getByText(/small apartment/)).toBeVisible();
   await expect(clock).toBeHidden();
   await startTheGame.click();
-  await expect(clock).toContainText('07:00');
+  await expect(clock).toContainText('08:00');
   await expect(lookForAJob).toBeVisible();
 
   // Folded on mobile: the menu icons are there, the gauges are not.
@@ -85,9 +85,9 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   await perform(page, /Have a snack/, 0.5);
   await getAJob(page);
   await page.getByRole('button', { name: 'Go to work' }).click();
-  await expect(clock).toContainText('08:30');
+  await expect(clock).toContainText('09:30');
   await page.reload();
-  await expect(clock).toContainText('08:30');
+  await expect(clock).toContainText('09:30');
   await expect(page.getByRole('meter', { name: 'Fridge' })).toHaveAttribute(
     'aria-valuetext',
     '9 / 10',
@@ -99,7 +99,7 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   await page.getByRole('button', { name: /Sleep 8h/ }).click();
   await elapse(page, 3);
   await page.reload();
-  await expect(clock).toContainText('08:30');
+  await expect(clock).toContainText('09:30');
   await expect(
     page.getByRole('meter', { name: 'Action in progress' }),
   ).toBeHidden();
@@ -113,7 +113,7 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   await page.reload();
   await expect(newGame).toBeVisible();
   await startNewGame(page);
-  await expect(clock).toContainText('07:00');
+  await expect(clock).toContainText('08:00');
   await expect(lookForAJob).toBeVisible();
 
   // A broken save is ignored: the player is back at the start screens.
@@ -124,7 +124,7 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   await page.reload();
   await expect(newGame).toBeVisible();
   await startNewGame(page);
-  await expect(clock).toContainText('07:00');
+  await expect(clock).toContainText('08:00');
 
   // No page scrolls sideways on a narrow phone.
   await page.setViewportSize({ width: 360, height: 700 });

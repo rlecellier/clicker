@@ -12,24 +12,24 @@ import {
 // Monday 5 October 2026, local time.
 const MONDAY = new Date(2026, 9, 5, 0, 0);
 
-test('a game starts on the Monday of the week of the player', () => {
+test('a game starts at 08:00 the next morning, in the week of that day', () => {
   const start = gameStartOf(new Date(2026, 9, 7, 14, 45));
   expect(start.origin).toBe(Date.UTC(2026, 9, 5));
-  // Wednesday 14:30: two days and a half, the quarter hour is dropped
-  expect(start.startHours).toBe(2 * 24 + 14.5);
+  // launched on Wednesday, it starts on Thursday 08:00
+  expect(start.startHours).toBe(3 * 24 + 8);
 });
 
-test('a game started on a Monday midnight has no offset', () => {
+test('a game launched on a Monday starts on the Tuesday', () => {
   expect(gameStartOf(MONDAY)).toEqual({
     origin: Date.UTC(2026, 9, 5),
-    startHours: 0,
+    startHours: 24 + 8,
   });
 });
 
-test('a Sunday belongs to the week that began the Monday before', () => {
+test('a game launched on a Sunday starts on the Monday of the next week', () => {
   const start = gameStartOf(new Date(2026, 9, 11, 23, 59));
-  expect(start.origin).toBe(Date.UTC(2026, 9, 5));
-  expect(start.startHours).toBe(6 * 24 + 23.5);
+  expect(start.origin).toBe(Date.UTC(2026, 9, 12));
+  expect(start.startHours).toBe(8);
 });
 
 test('days are counted from the origin', () => {
