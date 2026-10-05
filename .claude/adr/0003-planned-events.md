@@ -1,6 +1,6 @@
 # ADR 0003 — Obligations, événements prévus et déclenchement `ask`
 
-- **Statut** : accepté (à tester : le modèle peut être reversé)
+- **Statut** : remplacé par l'ADR 0004 (le prévu, `ask` et l'ajout d'événements ont été retirés)
 - **Date** : 2026-10-04
 - **Contexte de la décision** : `docs/idee-actions-prevues.md`
 
