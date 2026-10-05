@@ -75,20 +75,7 @@
     box-sizing: border-box;
   }
 
-  /* Browsers that ignore `overflow-x: clip` on #root still never scroll
-     sideways. */
-  html {
-    overflow-x: hidden;
-    /* The page only pans vertically by touch, whatever overflows (Firefox on
-       Android pans sideways otherwise), and a double-tap does not zoom it.
-       The pinch zoom stays. */
-    touch-action: pan-y pinch-zoom;
-    overscroll-behavior-x: none;
-  }
-
   body {
-    display: flex;
-    justify-content: center;
     margin: 0;
     background: var(--color-bg);
     color: var(--color-text);
@@ -97,24 +84,23 @@
 
   /* The app fills the screen on mobile and stops at a phone-like width; the
      sidebar sits beside the page from tablet up, which gets wider on a large
-     screen. */
+     screen. As a block it is never wider than the screen; what would still
+     stick out of it is cut rather than scrolled to. */
   #root {
-    flex: 1;
-    /* never wider than the screen, whatever the content */
-    min-width: 0;
-    max-width: min(480px, 100%);
+    max-width: 480px;
+    margin-inline: auto;
     overflow-x: clip;
   }
 
   @media (width >= 640px) {
     #root {
-      max-width: min(960px, 100%);
+      max-width: 960px;
     }
   }
 
   @media (width >= 1024px) {
     #root {
-      max-width: min(1280px, 100%);
+      max-width: 1280px;
     }
   }
 
@@ -136,6 +122,8 @@
     color: var(--button-color);
     font-size: 1.1rem;
     cursor: pointer;
+    /* fast taps are clicks, never a double-tap zoom */
+    touch-action: manipulation;
   }
 
   button:hover:enabled {
