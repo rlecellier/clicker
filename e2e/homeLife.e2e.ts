@@ -34,6 +34,18 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await demoShot(page, 'empty-calendar');
   await openPage(page, 'Game');
 
+  // The actions are split by where they come from: the place, the player.
+  await expect(
+    page
+      .getByRole('region', { name: 'At home' })
+      .getByRole('button', { name: 'Have a snack' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('region', { name: 'You' }).getByRole('button', {
+      name: 'Think 1h',
+    }),
+  ).toBeVisible();
+
   // The time only moves while an action runs.
   await elapse(page, 3);
   await expect(clock).toContainText('08:00');
