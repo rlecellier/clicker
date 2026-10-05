@@ -31,9 +31,19 @@ Conventions du projet : voir `.claude/adr/0001-project-structure.md`.
 
 - **Composant uniquement visuel : pas de test.** S'il n'a ni comportement ni
   logique (il affiche des props), on n'écrit ni test unitaire ni test de rendu.
-- **Toute action utilisateur fait partie d'au moins un parcours Playwright**
-  (`e2e/*.e2e.ts`). Une nouvelle action sans parcours qui la couvre est
-  incomplète : on ajoute l'action au parcours existant ou on en crée un.
+- **Les règles du jeu se testent en unitaire** (Vitest, sans navigateur) :
+  durées, calories, paie, fusion des entrées du calendrier, sauvegarde, etc.
+  vivent dans `src/game/` et les hooks, jamais dans un parcours e2e.
+- **Peu de parcours Playwright, longs** (`e2e/*.e2e.ts`) : un parcours raconte
+  une session de joueur (une journée à la maison, une matinée de travail, la
+  navigation et la sauvegarde, le calendrier) et enchaîne les actions dans un
+  même test. Un parcours démarre une seule fois la partie ; on n'écrit pas un
+  test par règle ou par bouton.
+- **Toute action utilisateur fait partie d'au moins un parcours.** Une nouvelle
+  action est ajoutée à un parcours existant ; on ne crée un parcours que pour un
+  nouveau pan de l'application (et on garde la suite sous une dizaine).
+- Dans un parcours, on vérifie qu'une action produit son effet visible, pas
+  chaque valeur : le détail chiffré est du ressort des tests unitaires.
 
 Rien d'autre n'est imposé. En particulier, pas de test « par principe » : on
 n'écrit pas de test unitaire pour satisfaire une règle de couverture.
