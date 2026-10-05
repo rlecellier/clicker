@@ -11,6 +11,10 @@ const gauge = cva(styles.root, {
       compact: styles.compact,
       full: styles.full,
     },
+    // on a phone, the title, the bar and the detail share a single line
+    inline: {
+      true: styles.inline,
+    },
     tone: {
       accent: styles.accent,
       success: styles.success,
@@ -42,11 +46,12 @@ export const Gauge = ({
   detail,
   size,
   tone,
+  inline,
 }: GaugeProps) => (
   <Meter.Root
     value={value}
     max={max}
-    className={gauge({ size, tone })}
+    className={gauge({ size, tone, inline })}
     aria-label={label}
     aria-valuetext={valueText}
   >

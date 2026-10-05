@@ -23,6 +23,7 @@ export const ActivityProgress = ({
       value={done}
       max={hours}
       size="full"
+      inline
       label="Action in progress"
       valueText={`${title}, ${percent}%`}
       title={

@@ -57,3 +57,32 @@
   border-radius: var(--radius-sm);
   background: var(--gauge-color);
 }
+
+@media (width < 640px) {
+  /* The header dissolves so the title, the bar and the detail sit in a row. */
+  .inline {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .inline .header {
+    display: contents;
+  }
+
+  .inline .title {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .inline .detail {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .inline .track {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
