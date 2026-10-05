@@ -14,7 +14,8 @@ on:
 
 concurrency:
   group: demo-${{ github.event.pull_request.number || github.event.issue.number }}
-  cancel-in-progress: false
+  # A merged or closed pull request cancels a demo still queued or running.
+  cancel-in-progress: true
 
 permissions: {}
 
