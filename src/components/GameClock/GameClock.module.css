@@ -1,7 +1,8 @@
+/* On mobile it sits in a bar of its own: date and time on one line. */
 .root {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: baseline;
+  gap: 0.5rem;
   margin: 0;
   line-height: 1.2;
 }
@@ -12,20 +13,20 @@
 }
 
 .time {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
-/* On mobile it sits in a bar of its own: date and time on one line. */
-@media (max-width: 639px) {
+/* From tablet up it sits in the header: the time under the date. */
+@media (width >= 640px) {
   .root {
-    flex-direction: row;
-    align-items: baseline;
-    gap: 0.5rem;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0;
   }
 
   .time {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
   }
 }

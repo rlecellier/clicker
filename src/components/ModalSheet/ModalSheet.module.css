@@ -1,16 +1,15 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  z-index: 10;
-  background: rgb(0 0 0 / 0.6);
+  z-index: var(--z-modal);
+  background: var(--color-backdrop);
 }
 
 /* Mobile: the sheet is the whole page. */
 .popup {
   position: fixed;
   inset: 0;
-  z-index: 11;
-  box-sizing: border-box;
+  z-index: var(--z-modal);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -21,14 +20,14 @@
 }
 
 /* From tablet up: a modal in the middle of the screen. */
-@media (min-width: 640px) {
+@media (width >= 640px) {
   .popup {
     inset: 50% auto auto 50%;
     width: min(26rem, 90vw);
     max-height: 90dvh;
     transform: translate(-50%, -50%);
-    border-radius: 12px;
     border: 1px solid var(--color-surface-raised);
+    border-radius: var(--radius-lg);
     box-shadow: 0 8px 32px rgb(0 0 0 / 0.5);
   }
 }
@@ -46,8 +45,10 @@
 }
 
 .close {
+  --button-bg: var(--color-surface);
+  --button-bg-hover: var(--color-surface-raised);
+
   padding: 0.4rem;
-  background: var(--color-surface);
 }
 
 .description {

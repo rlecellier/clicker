@@ -60,7 +60,8 @@ export const CalendarGrid = ({
         } as CSSProperties
       }
     >
-      <div className={styles.corner} />
+      {/* the empty corner above the hours */}
+      <div />
       {days.map((day) => (
         <div
           key={day}

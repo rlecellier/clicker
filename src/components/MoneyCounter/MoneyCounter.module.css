@@ -2,18 +2,18 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 1.5rem;
-  font-weight: 600;
   margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+@media (width >= 640px) {
+  .money {
+    font-size: 1.5rem;
+  }
 }
 
 /* Gold coins. */
 .icon {
   color: var(--color-warning-light);
-}
-
-@media (max-width: 639px) {
-  .money {
-    font-size: 1.1rem;
-  }
 }
