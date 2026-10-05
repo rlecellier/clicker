@@ -55,7 +55,7 @@ export const CalendarGrid = ({
       className={styles.root}
       style={
         {
-          gridTemplateColumns: `2.5rem repeat(${days.length}, 1fr)`,
+          gridTemplateColumns: `2.5rem repeat(${days.length}, minmax(0, 1fr))`,
           '--zoom': zoom,
         } as CSSProperties
       }
