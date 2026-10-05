@@ -40,6 +40,7 @@ const state = {
   readBookIds: ['animal-farm', 'dune'],
   job: hireAt('clothes-seller', 30),
   location: 'work' as const,
+  queue: [{ actionId: 'meal' as const, roll: 0.5 }],
   history: [{ kind: 'work' as const, title: 'Work', start: 122, end: 123.5 }],
 };
 
@@ -107,6 +108,8 @@ test('refuses a save with a missing or invalid field', () => {
   expect(broken({ readBookIds: ['hobbit'] })).toBeUndefined();
   expect(broken({ readBookIds: undefined })).toBeUndefined();
   expect(broken({ history: undefined })).toBeUndefined();
+  expect(broken({ queue: undefined })).toBeUndefined();
+  expect(broken({ queue: [{ actionId: 'fly', roll: 0 }] })).toBeUndefined();
   expect(
     broken({ history: [{ kind: 'dance', title: 'x', start: 1, end: 2 }] }),
   ).toBeUndefined();
