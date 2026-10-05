@@ -17,6 +17,9 @@ export type Action = {
   id: ActionId;
   // the button
   label: string;
+  // actions of one group share a row: the group's name, and the short name
+  // of this one in it
+  group?: { name: string; option: string };
   // what it is called in the calendar
   title: string;
   kind: EventKind;
