@@ -2,7 +2,7 @@ export { demoShot } from './demoShot';
 export { getAJob } from './getAJob';
 export {
   elapse,
-  MONDAY_MORNING,
+  SUNDAY_EVENING,
   openPage,
   openSite,
   perform,

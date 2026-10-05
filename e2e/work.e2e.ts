@@ -27,11 +27,11 @@ test('look for a job, work a morning, eat out and come back home', async ({
   await demoShot(page, 'look-for-a-job');
   await page.getByRole('button', { name: 'Close' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(clock).toContainText('07:00');
+  await expect(clock).toContainText('08:00');
 
   // Looking takes an hour, then the job is taken.
   await getAJob(page);
-  await expect(clock).toContainText('08:00');
+  await expect(clock).toContainText('09:00');
   await expect(
     page.getByRole('button', { name: 'Look for a job' }),
   ).toHaveCount(0);
@@ -40,34 +40,34 @@ test('look for a job, work a morning, eat out and come back home', async ({
   await expect(job).toContainText('10 coins / hour');
   await openPage(page, 'Calendar');
   await expect(page.getByTitle(/^Must: Sell clothes/)).toHaveCount(2);
-  await expect(page.getByTitle('Job hunt 07:00–08:00')).toBeVisible();
+  await expect(page.getByTitle('Job hunt 08:00–09:00')).toBeVisible();
   await openPage(page, 'Game');
 
   // Going to work takes no time; the pay comes in as the hours go by.
   await page.getByRole('button', { name: 'Go to work' }).click();
   await expect(location).toHaveAttribute('data-location', 'work');
-  await expect(clock).toContainText('08:00');
+  await expect(clock).toContainText('09:00');
   await expect(coins(page)).toHaveText('1,000');
   await page.getByRole('button', { name: /^Work/ }).click();
   await expect(page.getByRole('button', { name: 'Go home' })).toBeDisabled();
   await elapse(page, 0.5);
   await expect(coins(page)).toHaveText('1,005');
   await demoShot(page, 'working');
-  for (let click = 0; click < 7; click += 1) {
+  for (let click = 0; click < 5; click += 1) {
     await perform(page, /^Work/, 0.5);
   }
   await expect(clock).toContainText('12:00');
-  await expect(coins(page)).toHaveText('1,040');
+  await expect(coins(page)).toHaveText('1,030');
   await expect(job).toContainText('Next shift today, 13:00 – 18:00');
 
   await openPage(page, 'Calendar');
-  await expect(page.getByTitle('Work 08:00–12:00')).toBeVisible();
+  await expect(page.getByTitle('Work 09:00–12:00')).toBeVisible();
   await demoShot(page, 'merged-work');
   await openPage(page, 'Balance');
   await expect(page.getByText('Earned at work').locator('..')).toContainText(
-    '40',
+    '30',
   );
-  await expect(page.getByText('Time worked').locator('..')).toContainText('4h');
+  await expect(page.getByText('Time worked').locator('..')).toContainText('3h');
   await openPage(page, 'Game');
 
   // Noon is the lunch break: still at work, where lunch is paid for.
@@ -78,10 +78,10 @@ test('look for a job, work a morning, eat out and come back home', async ({
   );
   await perform(page, 'Eat out', 1);
   await expect(clock).toContainText('13:00');
-  await expect(coins(page)).toHaveText('1,032');
+  await expect(coins(page)).toHaveText('1,022');
   await demoShot(page, 'eat-out');
   await perform(page, /^Work/, 0.5);
-  await expect(coins(page)).toHaveText('1,037');
+  await expect(coins(page)).toHaveText('1,027');
 
   // Leaving costs no time; thinking is possible at work too.
   await page.getByRole('button', { name: 'Go home' }).click();

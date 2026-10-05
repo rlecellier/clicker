@@ -1,12 +1,12 @@
 import type { Page } from '@playwright/test';
 
-// Monday 5 October 2026, 07:00: the player's date and time when the game starts.
-export const MONDAY_MORNING = new Date(2026, 9, 5, 7, 0);
+// Sunday 4 October 2026, evening: the player's date and time when the game is launched, so it starts on Monday 5 October at 08:00.
+export const SUNDAY_EVENING = new Date(2026, 9, 4, 20, 0);
 
 // Opens the site at the given moment of the player's clock, without starting
 // a game. The browser clock is paused: the game only runs when `elapse` lets
 // time go by.
-export const openSite = async (page: Page, now = MONDAY_MORNING) => {
+export const openSite = async (page: Page, now = SUNDAY_EVENING) => {
   await page.clock.install({ time: new Date(now.getTime() - 1000) });
   await page.clock.pauseAt(now);
   await page.goto('/');
@@ -21,7 +21,7 @@ export const startNewGame = async (page: Page) => {
 };
 
 // Opens a new game, launched at the given moment of the player's clock.
-export const startGame = async (page: Page, now = MONDAY_MORNING) => {
+export const startGame = async (page: Page, now = SUNDAY_EVENING) => {
   await openSite(page, now);
   await startNewGame(page);
 };

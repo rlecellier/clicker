@@ -16,7 +16,7 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
 
   // A new game: at home, with a few coins and a full fridge, nothing done.
   await expect(clock).toContainText('Mon 1 Oct 2026');
-  await expect(clock).toContainText('07:00');
+  await expect(clock).toContainText('08:00');
   await expect(page.getByText('18 yo')).toBeVisible();
   await expect(page.getByRole('status', { name: 'Gold coins' })).toHaveText(
     '1,000',
@@ -34,14 +34,14 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
 
   // The time only moves while an action runs.
   await elapse(page, 3);
-  await expect(clock).toContainText('07:00');
+  await expect(clock).toContainText('08:00');
 
   // Meals: half an hour, then an hour. Two in a row are too much.
   await perform(page, /Have a snack/, 0.5);
-  await expect(clock).toContainText('07:30');
+  await expect(clock).toContainText('08:30');
   await expect(fridge).toHaveAttribute('aria-valuetext', '9 / 10');
   await perform(page, /Have a meal/, 1);
-  await expect(clock).toContainText('08:30');
+  await expect(clock).toContainText('09:30');
   await expect(fridge).toHaveAttribute('aria-valuetext', '8 / 10');
   const carrot = page.getByRole('button', { name: 'Calories status' });
   await expect(carrot).toHaveAttribute('data-status', 'overflowing');
@@ -50,13 +50,13 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
 
   // An hour to think while digesting.
   await perform(page, 'Think 1h', 1);
-  await expect(clock).toContainText('09:30');
+  await expect(clock).toContainText('10:30');
 
   // Shopping takes an hour and fills the fridge once it is over.
   await page.getByRole('button', { name: /Go shopping/ }).click();
   await expect(fridge).toHaveAttribute('aria-valuetext', '8 / 10');
   await elapse(page, 1);
-  await expect(clock).toContainText('10:30');
+  await expect(clock).toContainText('11:30');
   await expect(fridge).toHaveAttribute('aria-valuetext', '10 / 10');
   await expect(
     page.getByRole('button', { name: /Go shopping/ }),
@@ -65,15 +65,15 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
 
   // Time runs at one game hour per second, one action at a time.
   await page.getByRole('button', { name: /Sleep 4h/ }).click();
-  await expect(clock).toContainText('10:30');
+  await expect(clock).toContainText('11:30');
   await expect(progress).toHaveAttribute('aria-valuetext', 'Sleep, 0%');
   await elapse(page, 2);
-  await expect(clock).toContainText(/12:[3-5]\d/);
+  await expect(clock).toContainText(/13:[3-5]\d/);
   await expect(progress).toHaveAttribute('aria-valuetext', /Sleep, (5|6)\d%/);
   await demoShot(page, 'time-running');
   await expect(page.getByRole('button', { name: /Sleep 2h/ })).toBeDisabled();
   await elapse(page, 2);
-  await expect(clock).toContainText('14:30');
+  await expect(clock).toContainText('15:30');
   await expect(progress).toBeHidden();
 
   // Reading draws a book and moves it on; it is listed once read.
@@ -86,7 +86,7 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await expect(page.getByText('No book read yet.')).toBeVisible();
   await openPage(page, 'Game');
   await perform(page, 'Read 3h', 3);
-  await expect(clock).toContainText('20:30');
+  await expect(clock).toContainText('21:30');
   await openPage(page, 'Achievements');
   await expect(page.getByText('Books read (1)')).toBeVisible();
   await expect(page.getByText('George Orwell')).toBeVisible();
@@ -94,7 +94,6 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
 
   // Thinking, then a night's sleep that goes past midnight.
   await perform(page, 'Think 30 min', 0.5);
-  await perform(page, 'Think 1h', 1);
   await perform(page, 'Think 2h', 2);
   await expect(clock).toContainText('00:00');
   await perform(page, /Sleep 2h/, 2);
@@ -107,7 +106,7 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await expect(page.getByTitle('Sleep 00:00–08:00')).toBeVisible();
   await demoShot(page, 'merged-sleep');
   await page.getByRole('button', { name: 'Previous day' }).click();
-  await expect(page.getByTitle('Think 20:30–00:00')).toBeVisible();
+  await expect(page.getByTitle('Think 21:30–00:00')).toBeVisible();
 
   // The days strip follows the game time on every page.
   const strip = page.getByRole('img', { name: /Oct 2026, / });
