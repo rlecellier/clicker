@@ -2,7 +2,6 @@ import { Button } from '@base-ui/react/button';
 import { Briefcase, House } from 'lucide-react';
 
 import { ActionList } from '@component/ActionList';
-import { ActivityProgress } from '@component/ActivityProgress';
 import { BookProgress } from '@component/BookProgress';
 import { GetJob } from '@component/GetJob';
 import { JobStatus } from '@component/JobStatus';
@@ -41,7 +40,6 @@ export const GamePage = () => {
           </Button>
         )}
         <GetJob />
-        {activity && <ActivityProgress {...activity} />}
         <ActionList rows={rows} onPerform={perform} />
         <QueueList items={queue.items} onRemove={queue.remove} />
         {currentBook && (

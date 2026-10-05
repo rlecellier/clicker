@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Link, Outlet } from 'react-router';
 
+import { ActivityProgress } from '@component/ActivityProgress';
 import { AgeCounter } from '@component/AgeCounter';
 import { CaloriesStatus } from '@component/CaloriesStatus';
 import { DayTimeline } from '@component/DayTimeline';
@@ -24,6 +25,7 @@ type LayoutProps = {
 
 const Layout = ({ onRestart }: LayoutProps) => {
   const {
+    activity,
     age,
     coins,
     calories,
@@ -89,6 +91,9 @@ const Layout = ({ onRestart }: LayoutProps) => {
         dayPosition={elapsedHours / HOURS_PER_DAY}
         label={`${date}, ${time}`}
       />
+      <div className={styles.activity}>
+        {activity && <ActivityProgress {...activity} />}
+      </div>
       <div className={styles.body}>
         <Sidebar
           id="sidebar"
