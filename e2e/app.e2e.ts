@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-import { elapse, getAJob, perform, startGame } from './support';
+import { elapse, getAJob, openPage, perform, startGame } from './support';
 
-// On mobile: the menu, the places, then the save and the restart.
+// On mobile: the menu, the places page, then the save and the restart.
 test('navigate the menu, resume a saved game and restart it', async ({
   page,
 }) => {
@@ -15,19 +15,20 @@ test('navigate the menu, resume a saved game and restart it', async ({
   // Folded on mobile: the menu icons are there, the gauges are not.
   await expect(sidebar).not.toBeInViewport();
   await expect(page.getByRole('link', { name: 'Balance' })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Work/ })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Places' })).toBeVisible();
 
-  // The places menu unfolds and leads to the places; choosing closes the menu.
-  await menu.click();
-  const places = page.getByRole('button', { name: /Places/ });
-  await expect(places).toHaveAttribute('aria-expanded', 'false');
-  await places.click();
-  await expect(places).toHaveAttribute('aria-expanded', 'true');
+  // The places page has a button per place; choosing one closes the menu.
+  await openPage(page, 'Places');
+  await expect(page).toHaveURL(/\/places$/);
+  await expect(page.getByRole('heading', { name: 'Places' })).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: /Home.*You are here/ }),
+  ).toBeVisible();
   await page.getByRole('link', { name: /Work/ }).click();
   await expect(page).toHaveURL(/\/places\/work$/);
   await expect(page.getByText('You are not here')).toBeVisible();
   await expect(sidebar).not.toBeInViewport();
-  await menu.click();
+  await openPage(page, 'Places');
   await page.getByRole('link', { name: /Home/ }).click();
   await expect(page.getByText('You are here', { exact: true })).toBeVisible();
 

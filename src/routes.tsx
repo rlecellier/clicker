@@ -6,6 +6,7 @@ import { ErrorPage } from '@page/ErrorPage';
 import { BalancePage } from '@page/BalancePage';
 import { GamePage } from '@page/GamePage';
 import { PlacePage } from '@page/PlacePage';
+import { PlacesPage } from '@page/PlacesPage';
 import { ProfilePage } from '@page/ProfilePage';
 import { RootLayout } from '@page/RootLayout';
 import { isLocation } from '@game/location';
@@ -21,6 +22,7 @@ export const routes: RouteObject[] = [
       { path: 'balance', element: <BalancePage /> },
       { path: 'profile', element: <ProfilePage /> },
       { path: 'achievements', element: <AchievementsPage /> },
+      { path: 'places', element: <PlacesPage /> },
       {
         path: 'places/:place',
         element: <PlacePage />,
