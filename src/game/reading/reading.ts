@@ -1,5 +1,3 @@
-import { eventAt, type Schedule } from '@game/calendar';
-
 import { BOOKS, getBook } from './books';
 import type { Reading } from './types';
 
@@ -16,88 +14,45 @@ export const unreadBooks = (state: Reading) =>
 export const isLibraryRead = (state: Reading) =>
   unreadBooks(state).length === 0;
 
-// Whether a reading event runs at a given game hour.
-export const isReadingAt = (schedule: Schedule, hour: number) =>
-  eventAt(schedule, hour)?.kind === 'read';
-
-// Game hours of reading events between `from` and `to`. Events start and end
-// on half hours.
-const readingEventHoursBetween = (
-  schedule: Schedule,
-  from: number,
-  to: number,
-) => {
-  let hours = 0;
-  for (let time = from; time < to;) {
-    const end = Math.min(to, (Math.floor(time * 2) + 1) / 2);
-    if (isReadingAt(schedule, (time + end) / 2)) hours += end - time;
-    time = end;
-  }
-  return hours;
-};
-
-// Only the reading fields: the reducer spreads the result into the game state.
-const pickReading = ({ bookId, bookHours, readBookIds }: Reading): Reading => ({
-  bookId,
-  bookHours,
-  readBookIds,
-});
-
-// With no book on the go and a reading event between `from` and `to`, draws
-// a new book among the unread ones: `roll` is a number in [0, 1) that picks
-// it, so the randomness stays out of the rules.
-export const startBook = (
-  state: Reading & Schedule,
-  from: number,
-  to: number,
-  roll: number,
-): Reading => {
-  if (
-    getBook(state.bookId) ||
-    readingEventHoursBetween(state, from, to) === 0
-  ) {
-    return pickReading(state);
-  }
+// With no book on the go, draws a new book among the unread ones: `roll` is a
+// number in [0, 1) that picks it, so the randomness stays out of the rules.
+const drawBook = (state: Reading, roll: number): Reading => {
+  if (getBook(state.bookId)) return state;
   const unread = unreadBooks(state);
   const book = unread[Math.floor(roll * unread.length)];
-  return book
-    ? { ...pickReading(state), bookId: book.id, bookHours: 0 }
-    : pickReading(state);
+  return book ? { ...state, bookId: book.id, bookHours: 0 } : state;
 };
 
-// Game hours between `from` and `to` that go to the book on the go: the hours
-// of the reading events, until the book is finished.
-export const readingHoursBetween = (
-  state: Reading & Schedule,
-  from: number,
-  to: number,
-) => {
-  const book = getBook(state.bookId);
-  return book
-    ? Math.min(
-        readingEventHoursBetween(state, from, to),
-        book.hours - state.bookHours,
-      )
-    : 0;
+export type ReadingResult = {
+  reading: Reading;
+  // hours that went to the book, none when the whole library is read
+  hours: number;
 };
 
-// A finished book goes to the read ones; the next reading event draws another.
-export const stepReading = (
-  state: Reading & Schedule,
-  from: number,
-  to: number,
-): Reading => {
-  const book = getBook(state.bookId);
-  if (!book) return pickReading(state);
-  const bookHours = Math.min(
-    state.bookHours + readingHoursBetween(state, from, to),
-    book.hours,
-  );
-  return bookHours < book.hours
-    ? { ...pickReading(state), bookHours }
-    : {
-        bookId: undefined,
-        bookHours: 0,
-        readBookIds: [...state.readBookIds, book.id],
-      };
+// Reads for some hours: draws a book if there is none on the go, moves it on,
+// and puts it with the books read once its last page is turned. The hours past
+// the last page of a book are lost: the next book starts with the next
+// reading.
+export const readBook = (
+  state: Reading,
+  hours: number,
+  roll: number,
+): ReadingResult => {
+  const drawn = drawBook(state, roll);
+  const book = getBook(drawn.bookId);
+  if (!book) return { reading: drawn, hours: 0 };
+
+  const read = Math.min(hours, book.hours - drawn.bookHours);
+  const bookHours = drawn.bookHours + read;
+  return {
+    hours: read,
+    reading:
+      bookHours < book.hours
+        ? { ...drawn, bookHours }
+        : {
+            bookId: undefined,
+            bookHours: 0,
+            readBookIds: [...drawn.readBookIds, book.id],
+          },
+  };
 };

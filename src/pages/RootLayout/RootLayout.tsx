@@ -4,34 +4,31 @@ import { useCallback, useState } from 'react';
 import { Link, Outlet } from 'react-router';
 
 import { AgeCounter } from '@component/AgeCounter';
-import { AskPrompt } from '@component/AskPrompt';
 import { CaloriesStatus } from '@component/CaloriesStatus';
+import { GameClock } from '@component/GameClock';
+import { MoneyCounter } from '@component/MoneyCounter';
 import { Sidebar } from '@component/Sidebar';
-import { TimeControls } from '@component/TimeControls';
 import { GameProvider, useGameContext } from '@context/GameContext';
 import { birthDateOf } from '@game/age';
 import { newGameState } from '@game/gameState';
 import { getCaloriesStatus } from '@game/nutrition';
 import { readSave } from '@game/save';
+import { gameStartOf, momentOf } from '@game/time';
 
 import styles from './RootLayout.module.css';
 
 const Layout = () => {
   const {
     age,
-    balanceCents,
+    coins,
     calories,
     body,
     brain,
     dreamGauge,
     dreams,
-    isSleeping,
+    elapsedHours,
     location,
-    speed,
-    canSpeedUp,
-    canSlowDown,
-    faster,
-    slower,
+    origin,
     restart,
   } = useGameContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -65,6 +62,8 @@ const Layout = () => {
           </h1>
         </div>
         <div className={styles.status}>
+          <MoneyCounter coins={coins} />
+          <GameClock {...momentOf(origin, elapsedHours)} />
           <CaloriesStatus status={getCaloriesStatus(calories)} />
           <AgeCounter years={age} />
         </div>
@@ -72,31 +71,19 @@ const Layout = () => {
       <div className={styles.body}>
         <Sidebar
           id="sidebar"
-          balanceCents={balanceCents}
           calories={calories}
           body={body}
           brain={brain}
           dreamGauge={dreamGauge}
           dreams={dreams}
-          isSleeping={isSleeping}
           location={location}
           isOpen={isMenuOpen}
           onClose={closeMenu}
           onRestart={restart}
         />
         <main className={styles.main}>
-          <div className={styles.controls}>
-            <TimeControls
-              speed={speed}
-              canSpeedUp={canSpeedUp}
-              canSlowDown={canSlowDown}
-              onFaster={faster}
-              onSlower={slower}
-            />
-          </div>
           <Outlet />
         </main>
-        <AskPrompt />
       </div>
     </div>
   );
@@ -105,7 +92,16 @@ const Layout = () => {
 export const RootLayout = () => {
   // The saved game is read once, when the page opens.
   const [savedGame] = useState(
-    () => readSave(localStorage) ?? newGameState(birthDateOf(new Date())),
+    () =>
+      readSave(localStorage) ??
+      (() => {
+        // a new game starts at the date and time of the player
+        const now = new Date();
+        return newGameState({
+          ...gameStartOf(now),
+          birthDate: birthDateOf(now),
+        });
+      })(),
   );
 
   return (

@@ -1,30 +1,12 @@
 import { act, renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import { expect, test, vi } from 'vitest';
 
-import { totalExpensesCents } from '@game/expenses';
-import { INITIAL_CALORIES, SNACK_CALORIES } from '@game/nutrition';
-import { DEFAULT_SPEED, HOURS_PER_SECOND, HOURS_PER_WEEK } from '@game/time';
+import { INITIAL_CALORIES } from '@game/nutrition';
 import { gameStateFactory } from '@test/factories/gameStateFactory';
-import { WORKING_STATE } from '@test/schedules';
 
 import { GameProvider } from './GameProvider';
-import type { GameContextValue } from './types';
 import { useGameContext } from './useGameContext';
-
-// Real milliseconds needed for the game to run the given number of hours.
-const hoursToMs = (hours: number) =>
-  (hours * 1000) / (HOURS_PER_SECOND * DEFAULT_SPEED);
-
-beforeEach(() => {
-  vi.useFakeTimers({
-    toFake: ['requestAnimationFrame', 'cancelAnimationFrame', 'performance'],
-  });
-});
-
-afterEach(() => {
-  vi.useRealTimers();
-});
 
 const renderGame = (
   initialState?: Parameters<typeof GameProvider>[0]['initialState'],
@@ -38,12 +20,15 @@ const renderGame = (
 test('starts with the given state', () => {
   const state = gameStateFactory.build();
   const { result } = renderGame(state);
-  expect(result.current.balanceCents).toBe(state.balanceCents);
+  expect(result.current.coins).toBe(state.coins);
 });
 
-test('starts broke by default', () => {
+test('starts at home, broke and jobless by default', () => {
   const { result } = renderGame();
-  expect(result.current.balanceCents).toBe(0);
+  expect(result.current.coins).toBe(0);
+  expect(result.current.job).toBeUndefined();
+  expect(result.current.location).toBe('home');
+  expect(result.current.history).toEqual([]);
 });
 
 test('needs a provider', () => {
@@ -52,151 +37,84 @@ test('needs a provider', () => {
   error.mockRestore();
 });
 
-test('a snack adds calories at once', () => {
+test('time stands still until the player acts', async () => {
+  vi.useFakeTimers();
   const { result } = renderGame();
+  const { elapsedHours } = result.current;
 
-  act(() => {
-    result.current.snack();
-  });
+  await vi.advanceTimersByTimeAsync(60_000);
 
-  expect(result.current.calories).toBe(INITIAL_CALORIES + SNACK_CALORIES);
+  expect(result.current.elapsedHours).toBe(elapsedHours);
+  vi.useRealTimers();
 });
 
-test('calories go down during the night', () => {
+test('an action moves the game clock and fills the history', () => {
   const { result } = renderGame();
+  const { elapsedHours } = result.current;
 
   act(() => {
-    vi.advanceTimersByTime(hoursToMs(6));
+    result.current.perform('breakfast');
   });
 
-  expect(result.current.calories).toBeLessThan(INITIAL_CALORIES);
+  expect(result.current.elapsedHours).toBe(elapsedHours + 0.5);
+  expect(result.current.history).toHaveLength(1);
+  expect(result.current.calories).not.toBe(INITIAL_CALORIES);
 });
 
-test('enjoying a cake lasts 30 game minutes', () => {
+test('offers the actions of the place the player is at', () => {
   const { result } = renderGame();
-
-  act(() => {
-    result.current.cake();
-  });
-  act(() => {
-    vi.advanceTimersByTime(hoursToMs(0.25));
-  });
-  expect(result.current.isEnjoyingCake).toBe(true);
-
-  act(() => {
-    vi.advanceTimersByTime(hoursToMs(0.5));
-  });
-  expect(result.current.isEnjoyingCake).toBe(false);
-});
-
-// Salary banked so far: the balance before the bills were paid.
-const earnedCents = (game: GameContextValue) =>
-  game.balanceCents + totalExpensesCents(game.expenses);
-
-test('earns the weekly pay while working, banked once the week ends', () => {
-  const { result } = renderGame(
-    gameStateFactory.build({
-      overrides: { ...WORKING_STATE, balanceCents: 0 },
-    }),
+  expect(result.current.actions.map(({ action }) => action.id)).toContain(
+    'sleep-8',
   );
-
-  act(() => {
-    vi.advanceTimersByTime(hoursToMs(18.5));
-  });
-  expect(result.current.isEarning).toBe(false);
-  expect(result.current.pendingPayCents).toBeGreaterThan(0);
-  expect(earnedCents(result.current)).toBe(0);
-
-  act(() => {
-    vi.advanceTimersByTime(hoursToMs(HOURS_PER_WEEK - 18.5) + 100);
-  });
-  expect(earnedCents(result.current)).toBe(25_000);
-  expect(result.current.pendingPayCents).toBe(0);
-});
-
-test('speeding up the time brings the end of the week closer', () => {
-  const { result } = renderGame(
-    gameStateFactory.build({
-      overrides: { ...WORKING_STATE, balanceCents: 0 },
-    }),
+  expect(result.current.actions.map(({ action }) => action.id)).not.toContain(
+    'work',
   );
-
-  act(() => {
-    result.current.faster();
-  });
-  act(() => {
-    vi.advanceTimersByTime(hoursToMs(HOURS_PER_WEEK / 2) + 100);
-  });
-
-  expect(result.current.speed).toBe(DEFAULT_SPEED * 2);
-  expect(earnedCents(result.current)).toBe(25_000);
 });
 
-test('slowing down stops at the slowest speed', () => {
+test('looking for a job takes the job and an hour', () => {
   const { result } = renderGame();
-
-  act(() => {
-    for (let index = 0; index < 20; index += 1) result.current.slower();
-  });
-
-  expect(result.current.canSlowDown).toBe(false);
-});
-
-test('takes a job, which plans the work and pays for it', () => {
-  const { result } = renderGame();
-  expect(result.current.job).toBeUndefined();
+  const { elapsedHours } = result.current;
 
   act(() => {
     result.current.takeJob('clothes-seller');
   });
 
   expect(result.current.job?.id).toBe('clothes-seller');
-  expect(result.current.obligations.map((event) => event.title)).toContain(
-    'Sell clothes',
-  );
-  expect(result.current.schedule.plan.map((event) => event.title)).toContain(
-    'Go to work',
-  );
+  expect(result.current.elapsedHours).toBe(elapsedHours + 1);
 });
 
-test('an ask event pauses the game until the player answers', () => {
+test('the player goes to work and works during a shift', () => {
+  // Monday 08:00, a clothes seller
   const { result } = renderGame(
     gameStateFactory.build({
-      overrides: {
-        ...WORKING_STATE,
-        plan: [
-          ...WORKING_STATE.plan,
-          {
-            id: 'read-ask',
-            title: 'Read a book',
-            kind: 'read',
-            mode: 'ask',
-            recurrence: { type: 'weekly', days: [0, 1, 2, 3, 4, 5, 6] },
-            start: 20,
-            end: 22,
-          },
-        ],
-      },
+      traits: ['working'],
+      overrides: { elapsedHours: 8, coins: 0 },
     }),
   );
 
   act(() => {
-    vi.advanceTimersByTime(hoursToMs(21));
+    result.current.goTo('work');
   });
-  expect(result.current.asking?.event.id).toBe('read-ask');
-  expect(result.current.elapsedHours).toBe(20);
+  expect(result.current.location).toBe('work');
+  expect(result.current.currentShift?.id).toBe('work-morning');
 
   act(() => {
-    vi.advanceTimersByTime(hoursToMs(5));
+    result.current.perform('work');
   });
-  expect(result.current.elapsedHours).toBe(20);
+  expect(result.current.coins).toBe(5);
+  expect(result.current.elapsedHours).toBe(8.5);
+});
+
+test('restarting gives a brand new game', () => {
+  const { result } = renderGame(
+    gameStateFactory.build({ traits: ['working'] }),
+  );
 
   act(() => {
-    result.current.answerAsk(true);
+    result.current.restart();
   });
-  act(() => {
-    vi.advanceTimersByTime(hoursToMs(1));
-  });
-  expect(result.current.asking).toBeUndefined();
-  expect(result.current.isReadingNow).toBe(true);
+
+  expect(result.current.coins).toBe(0);
+  expect(result.current.job).toBeUndefined();
+  expect(result.current.history).toEqual([]);
 });

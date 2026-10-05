@@ -5,7 +5,7 @@ import { JobPicker } from '@component/JobPicker';
 import { ModalSheet } from '@component/ModalSheet';
 import { useGetJob } from '@hook/useGetJob';
 
-// The "Get a Job" button and the sheet of jobs it opens.
+// The "Look for a job" button and the sheet of jobs it opens.
 export const GetJob = () => {
   const { canGetJob, isOpen, jobs, open, close, pick } = useGetJob();
   if (!canGetJob) return;
@@ -13,12 +13,12 @@ export const GetJob = () => {
   return (
     <>
       <Button onClick={open}>
-        <Briefcase aria-hidden size={18} /> Get a Job
+        <Briefcase aria-hidden size={18} /> Look for a job
       </Button>
       <ModalSheet
         isOpen={isOpen}
-        title="Get a Job"
-        description="Pick the job you want to do."
+        title="Look for a job"
+        description="Pick the job you want to do. Looking takes an hour."
         onClose={close}
       >
         <JobPicker jobs={jobs} onPick={pick} />

@@ -14,13 +14,11 @@ const renderPanel = (isOpen: boolean) => {
     <MemoryRouter>
       <Sidebar
         id="panel"
-        balanceCents={1250}
         calories={50}
         body={getBody(0)}
         brain={30}
         dreamGauge={20}
         dreams={2}
-        isSleeping={false}
         location="home"
         isOpen={isOpen}
         onClose={onClose}
@@ -46,13 +44,11 @@ test('is marked as open only when it is open', () => {
     <MemoryRouter>
       <Sidebar
         id="panel"
-        balanceCents={1250}
         calories={50}
         body={getBody(0)}
         brain={30}
         dreamGauge={20}
         dreams={2}
-        isSleeping={false}
         location="home"
         isOpen
         onClose={vi.fn()}
@@ -124,7 +120,6 @@ test('unfolds the places and links to each of them', async () => {
   for (const [name, place] of [
     ['Home', 'home'],
     ['Work', 'work'],
-    ['Restaurant', 'restaurant'],
   ] as const) {
     expect(
       screen.getByRole('link', { name: new RegExp(name) }),
@@ -137,14 +132,12 @@ test('is unfolded when a place is shown, and marks where the player is', () => {
     <MemoryRouter initialEntries={['/places/work']}>
       <Sidebar
         id="panel"
-        balanceCents={1250}
         calories={50}
         body={getBody(0)}
         brain={30}
         dreamGauge={20}
         dreams={2}
-        isSleeping={false}
-        location="restaurant"
+        location="work"
         isOpen
         onClose={vi.fn()}
         onRestart={vi.fn()}
@@ -155,7 +148,7 @@ test('is unfolded when a place is shown, and marks where the player is', () => {
     'aria-expanded',
     'true',
   );
-  expect(screen.getByRole('link', { name: /Restaurant/ })).toHaveTextContent(
+  expect(screen.getByRole('link', { name: /Work/ })).toHaveTextContent(
     'you are here',
   );
   expect(screen.getByRole('link', { name: /Work/ })).toHaveAttribute(

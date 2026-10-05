@@ -111,8 +111,13 @@
   border-left-color: var(--color-success);
 }
 
-.event[data-mode='ask'] {
-  border-style: dashed;
+.event[data-kind='search'] {
+  background: linear-gradient(
+    180deg,
+    var(--color-orange),
+    var(--color-warning)
+  );
+  border-left-color: var(--color-warning-pale);
 }
 
 .event[data-kind='sleep'] {

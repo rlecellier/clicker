@@ -1,0 +1,31 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+
+.icon {
+  flex: none;
+  color: var(--color-accent-light);
+}
+
+.title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.pay {
+  color: var(--color-warning-light);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.shift {
+  margin: 0.15rem 0 0;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}

@@ -19,19 +19,20 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-test('the cake can be enjoyed once at a time', async () => {
-  const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-  renderApp();
-  await user.click(screen.getByRole('button', { name: /Enjoy a cake/ }));
-  expect(
-    screen.getByRole('button', { name: /Enjoying a cake/ }),
-  ).toBeDisabled();
-});
-
-test('shows the calories gauge and the snack action', () => {
+test('shows the calories gauge and the gold coins', () => {
   renderApp();
   expect(screen.getByRole('meter', { name: 'Calories' })).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /Eat a snack/ })).toBeEnabled();
+  expect(screen.getByRole('status', { name: 'Gold coins' })).toHaveTextContent(
+    '0',
+  );
+});
+
+test('a new game starts at home, with the actions of the apartment', () => {
+  renderApp();
+  expect(screen.getByText('Home', { selector: 'strong' })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /Look for a job/ })).toBeEnabled();
+  expect(screen.getByRole('button', { name: /Sleep 8h/ })).toBeEnabled();
+  expect(screen.queryByRole('button', { name: /Go to work/ })).toBeNull();
 });
 
 test('shows the brain gauge', () => {
@@ -53,13 +54,13 @@ test('the menu button opens and closes the gauges sidebar', async () => {
   expect(menu).toHaveAttribute('aria-expanded', 'false');
 });
 
-test('the sidebar opens the balance page, with the rent and the meals', async () => {
+test('the sidebar opens the balance page, with what work paid', async () => {
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
   renderApp();
   await user.click(screen.getByRole('link', { name: 'Balance' }));
   expect(screen.getByRole('heading', { name: 'Balance' })).toBeInTheDocument();
-  for (const name of ['Rent', 'Breakfast', 'Lunch', 'Dinner']) {
-    expect(screen.getByRole('rowheader', { name })).toBeInTheDocument();
+  for (const name of ['Gold coins', 'Earned at work', 'Time worked']) {
+    expect(screen.getByText(name)).toBeInTheDocument();
   }
 });
 
@@ -79,11 +80,11 @@ test('the sidebar unfolds the places and opens one with its banner', async () =>
   const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
   renderApp();
   await user.click(screen.getByRole('button', { name: /Places/ }));
-  await user.click(screen.getByRole('link', { name: /Restaurant/ }));
+  await user.click(screen.getByRole('link', { name: /Work/ }));
   expect(
-    await screen.findByRole('heading', { name: 'Restaurant' }),
+    await screen.findByRole('heading', { name: 'Work' }),
   ).toBeInTheDocument();
-  // a new game starts asleep at home
+  // a new game starts at home
   expect(screen.getByText('You are not here')).toBeInTheDocument();
 });
 

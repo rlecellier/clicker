@@ -2,13 +2,13 @@ import { useParams } from 'react-router';
 
 import { PlaceBanner } from '@component/PlaceBanner';
 import { useGameContext } from '@context/GameContext';
-import { activityAt, isLocation } from '@game/location';
+import { isLocation } from '@game/location';
 
 import styles from './PlacePage.module.css';
 
 export const PlacePage = () => {
   const { place } = useParams();
-  const { location, elapsedHours, schedule } = useGameContext();
+  const { location } = useGameContext();
 
   if (!isLocation(place)) {
     // the route loader already answered 404: this only narrows the type
@@ -17,11 +17,7 @@ export const PlacePage = () => {
 
   return (
     <div className={styles.root}>
-      <PlaceBanner
-        place={place}
-        location={location}
-        activity={activityAt(schedule, elapsedHours)}
-      />
+      <PlaceBanner place={place} location={location} />
     </div>
   );
 };

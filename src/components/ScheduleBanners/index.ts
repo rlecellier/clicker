@@ -1,1 +1,0 @@
-export { ScheduleBanners } from './ScheduleBanners';

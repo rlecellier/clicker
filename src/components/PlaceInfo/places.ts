@@ -1,4 +1,4 @@
-import { Briefcase, House, Utensils, type LucideIcon } from 'lucide-react';
+import { Briefcase, House, type LucideIcon } from 'lucide-react';
 
 import type { Location } from '@game/location';
 
@@ -13,16 +13,11 @@ export const PLACES = {
   home: {
     label: 'Home',
     Icon: House,
-    purpose: 'Sleep, read and rest between two events.',
+    purpose: 'Look for a job, eat, read and sleep.',
   },
   work: {
     label: 'Work',
     Icon: Briefcase,
-    purpose: 'Work on weekdays to earn your salary.',
-  },
-  restaurant: {
-    label: 'Restaurant',
-    Icon: Utensils,
-    purpose: 'Eat breakfast, lunch and dinner to fill the calories gauge.',
+    purpose: 'Work during your shifts to earn gold coins.',
   },
 } satisfies Record<Location, PlaceInfo>;

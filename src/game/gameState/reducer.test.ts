@@ -1,302 +1,189 @@
 import { expect, test } from 'vitest';
 
-import {
-  MEAL_PRICES_CENTS,
-  totalExpensesCents,
-  WEEKLY_RENT_CENTS,
-} from '@game/expenses';
-import { INITIAL_CALORIES, SNACK_CALORIES } from '@game/nutrition';
-import {
-  DEFAULT_SPEED,
-  HOURS_PER_SECOND,
-  HOURS_PER_WEEK,
-  SPEEDS,
-} from '@game/time';
+import { BOOKS } from '@game/reading';
+import { gameStateFactory } from '@test/factories/gameStateFactory';
 
-import { EVENING_READING, WORKING_STATE } from '@test/schedules';
+import { gameReducer, type GameAction } from './reducer';
+import { INITIAL_GAME_STATE, newGameState } from './types';
 
-import { gameReducer } from './reducer';
-import { INITIAL_GAME_STATE, type GameState } from './types';
+const perform = (
+  actionId: Extract<GameAction, { type: 'perform' }>['actionId'],
+) => ({ type: 'perform', actionId, roll: 0 }) as const;
 
-// Real seconds needed for the game to run the given number of hours.
-const hoursToSeconds = (hours: number) =>
-  hours / (HOURS_PER_SECOND * DEFAULT_SPEED);
+// Monday 07:00, a clothes seller, at home.
+const SELLER = gameStateFactory.build({ traits: ['working'] });
+const AT_WORK_8 = { ...SELLER, elapsedHours: 8, location: 'work' as const };
 
-const WORKING: GameState = { ...INITIAL_GAME_STATE, ...WORKING_STATE };
-
-const run = (state: GameState, hours: number) =>
-  gameReducer(state, {
-    type: 'elapse',
-    seconds: hoursToSeconds(hours),
-    roll: 0,
+test('a new game starts at home, jobless, with no coin and an empty calendar', () => {
+  const state = newGameState({
+    origin: Date.UTC(2026, 9, 5),
+    startHours: 2 * 24 + 14.5,
+    birthDate: '2008-10-07',
   });
-
-// Salary banked so far: the balance before the bills were paid.
-const earnedCents = (state: GameState) =>
-  state.balanceCents + totalExpensesCents(state.expenses);
-
-test('starts on Monday midnight, at the default speed, with fifty percent', () => {
-  expect(INITIAL_GAME_STATE).toMatchObject({
-    elapsedHours: 0,
-    balanceCents: 0,
-    calories: INITIAL_CALORIES,
+  expect(state).toMatchObject({
+    location: 'home',
+    coins: 0,
+    history: [],
+    elapsedHours: 2 * 24 + 14.5,
+    startHours: 2 * 24 + 14.5,
   });
-  expect(SPEEDS[INITIAL_GAME_STATE.speedIndex]).toBe(DEFAULT_SPEED);
+  expect(state.job).toBeUndefined();
 });
 
-test('is plain JSON, so it can be saved as it is', () => {
-  const state = run(INITIAL_GAME_STATE, 30);
-  expect(structuredClone(state)).toEqual(state);
-});
-
-test('runs the game hours that match the real seconds and the speed', () => {
-  const state = run(INITIAL_GAME_STATE, 5);
-  expect(state.elapsedHours).toBeCloseTo(5, 5);
-});
-
-test('does not change the state it is given', () => {
-  const state = { ...INITIAL_GAME_STATE };
-  run(state, 12);
-  expect(state).toEqual(INITIAL_GAME_STATE);
-});
-
-test('pays nothing without a job', () => {
-  const state = run(INITIAL_GAME_STATE, 2 * HOURS_PER_WEEK);
-  expect(earnedCents(state)).toBe(0);
-});
-
-test('pays the weekly salary once the week is over, not before', () => {
-  const midWeek = run(WORKING, HOURS_PER_WEEK - 1);
-  expect(earnedCents(midWeek)).toBe(0);
-
-  const nextWeek = run(midWeek, 2);
-  expect(earnedCents(nextWeek)).toBe(25_000);
-});
-
-test('pays every week that went by in a long frame', () => {
-  // Weeks 0 to 3 are in February, a 28-day month.
-  const state = run(WORKING, 4 * HOURS_PER_WEEK + 1);
-  expect(earnedCents(state)).toBe(4 * 25_000);
-});
-
-test('a long frame gives the same result as many short ones', () => {
-  const long = run(WORKING, 3 * 24 + 5);
-  let short = WORKING;
-  for (let index = 0; index < 77; index += 1) short = run(short, 1);
-
-  expect(long.elapsedHours).toBeCloseTo(short.elapsedHours, 5);
-  expect(long.calories).toBeCloseTo(short.calories, 5);
-  expect(long.fat).toBeCloseTo(short.fat, 5);
-});
-
-test('a snack adds calories at once', () => {
-  const state = gameReducer(INITIAL_GAME_STATE, { type: 'eatSnack' });
-  expect(state.calories).toBe(INITIAL_CALORIES + SNACK_CALORIES);
-});
-
-test('a cake lasts 30 game minutes and cannot be restarted meanwhile', () => {
-  const started = gameReducer(INITIAL_GAME_STATE, { type: 'enjoyCake' });
-  expect(started.cakeUntil).toBeCloseTo(0.5, 5);
-
-  const later = run(started, 0.25);
-  expect(gameReducer(later, { type: 'enjoyCake' })).toBe(later);
-
-  const over = run(later, 0.5);
-  const again = gameReducer(over, { type: 'enjoyCake' });
-  expect(again.cakeUntil).toBeGreaterThan(over.elapsedHours);
-});
-
-test('speeds up and slows down within the available speeds', () => {
-  let state = INITIAL_GAME_STATE;
-  for (let index = 0; index < SPEEDS.length; index += 1) {
-    state = gameReducer(state, { type: 'speedUp' });
-  }
-  expect(SPEEDS[state.speedIndex]).toBe(SPEEDS.at(-1));
-
-  for (let index = 0; index < SPEEDS.length * 2; index += 1) {
-    state = gameReducer(state, { type: 'slowDown' });
-  }
-  expect(SPEEDS[state.speedIndex]).toBe(SPEEDS[0]);
-});
-
-test('a speed change never moves the time already elapsed', () => {
-  const before = run(INITIAL_GAME_STATE, 4);
-  const after = gameReducer(before, { type: 'speedUp' });
-  expect(after.elapsedHours).toBe(before.elapsedHours);
-
-  const faster = gameReducer(after, {
-    type: 'elapse',
-    seconds: hoursToSeconds(3),
-    roll: 0,
+test('time does not move until the player acts', () => {
+  const state = gameReducer(INITIAL_GAME_STATE, {
+    type: 'goTo',
+    place: 'home',
   });
-  expect(faster.elapsedHours - after.elapsedHours).toBeCloseTo(6, 5);
+  expect(state.elapsedHours).toBe(INITIAL_GAME_STATE.elapsedHours);
 });
 
-test('the brain fills during the day and empties during the night', () => {
-  // Monday 00:00 to 07:00: the rest of the night empties the gauge
-  const morning = run(WORKING, 7);
-  expect(morning.brain).toBeCloseTo(0, 5);
-  expect(morning.dreams).toBe(0);
-
-  // a working day fills about a third of it
-  const evening = run(morning, 16);
-  expect(evening.brain).toBeGreaterThan(25);
-  expect(evening.brain).toBeLessThan(40);
-
-  // the night empties it and what is left over fills the dream gauge
-  const nextMorning = run(evening, 8);
-  expect(nextMorning.brain).toBeCloseTo(0, 5);
-  expect(nextMorning.dreamGauge).toBeCloseTo(80 - evening.brain, 5);
+test('an action moves the clock by its duration and is written down', () => {
+  const state = gameReducer(INITIAL_GAME_STATE, perform('lunch'));
+  expect(state.elapsedHours).toBe(INITIAL_GAME_STATE.elapsedHours + 1);
+  expect(state.history).toEqual([
+    { kind: 'meal', title: 'Lunch', start: 7, end: 8 },
+  ]);
 });
 
-test('pays each meal when it starts', () => {
-  const state = run(INITIAL_GAME_STATE, 7.5);
-  expect(state.expenses.breakfast).toBe(MEAL_PRICES_CENTS.breakfast);
-  expect(state.balanceCents).toBe(-MEAL_PRICES_CENTS.breakfast);
+test('sleeping lasts as long as chosen and empties the brain', () => {
+  const awake = { ...INITIAL_GAME_STATE, brain: 50 };
+  const state = gameReducer(awake, perform('sleep-4'));
+  expect(state.elapsedHours).toBe(11);
+  expect(state.brain).toBeCloseTo(10, 5);
 });
 
-test('pays the rent when the week ends and keeps the bills in the balance', () => {
-  const state = run(WORKING, HOURS_PER_WEEK + 1);
-  expect(state.expenses.rent).toBe(WEEKLY_RENT_CENTS);
-  expect(state.balanceCents).toBe(25_000 - totalExpensesCents(state.expenses));
+test('a meal fills the calories', () => {
+  const state = gameReducer(
+    { ...INITIAL_GAME_STATE, calories: 30 },
+    perform('dinner'),
+  );
+  expect(state.calories).toBeGreaterThan(30);
 });
 
-test('restarts a brand new game, whatever the current one', () => {
-  const played = gameReducer(run(INITIAL_GAME_STATE, 100), {
-    type: 'eatSnack',
+test('actions done in a row are merged in the history', () => {
+  const slept = gameReducer(
+    gameReducer(INITIAL_GAME_STATE, perform('sleep-2')),
+    perform('sleep-4'),
+  );
+  expect(slept.history).toEqual([
+    { kind: 'sleep', title: 'Sleep', start: 7, end: 13 },
+  ]);
+});
+
+test('an action of another place is not done', () => {
+  expect(gameReducer(INITIAL_GAME_STATE, perform('work'))).toBe(
+    INITIAL_GAME_STATE,
+  );
+  expect(gameReducer(AT_WORK_8, perform('lunch'))).toBe(AT_WORK_8);
+});
+
+test('reading draws a book and moves it on', () => {
+  const state = gameReducer(INITIAL_GAME_STATE, perform('read'));
+  expect(state.bookId).toBe(BOOKS[0]?.id);
+  expect(state.bookHours).toBe(1);
+});
+
+test('reading is not possible once the whole library is read', () => {
+  const done = {
+    ...INITIAL_GAME_STATE,
+    readBookIds: BOOKS.map((book) => book.id),
+  };
+  expect(gameReducer(done, perform('read'))).toBe(done);
+});
+
+test('looking for a job takes an hour and hires the player', () => {
+  const state = gameReducer(INITIAL_GAME_STATE, {
+    type: 'takeJob',
+    jobId: 'clothes-seller',
   });
-  expect(played).not.toEqual(INITIAL_GAME_STATE);
+  expect(state.job).toEqual({ id: 'clothes-seller', since: 8 });
+  expect(state.elapsedHours).toBe(8);
+  expect(state.history).toEqual([
+    { kind: 'search', title: 'Job hunt', start: 7, end: 8 },
+  ]);
+});
+
+test('a player who has a job cannot take another one', () => {
   expect(
-    gameReducer(played, { type: 'restart', birthDate: '2008-10-04' }),
-  ).toEqual({ ...INITIAL_GAME_STATE, birthDate: '2008-10-04' });
+    gameReducer(SELLER, { type: 'takeJob', jobId: 'clothes-seller' }),
+  ).toBe(SELLER);
 });
 
-test('the book moves during the reading events', () => {
-  const reader = gameReducer(WORKING, {
-    type: 'planEvent',
-    event: EVENING_READING,
-  });
-  // Monday 00:00 to 22:00: the reading event runs from 20:00
-  const evening = run(reader, 22);
-  // the reading event draws the first book of the library (roll 0)
-  expect(evening.bookId).toBe('animal-farm');
-  expect(evening.bookHours).toBeCloseTo(2, 5);
-  // without a reading event the book stays where it is
-  expect(run(WORKING, 22).bookHours).toBe(0);
+test('the player cannot look for a job from work', () => {
+  const state = { ...INITIAL_GAME_STATE, location: 'work' as const };
+  expect(gameReducer(state, { type: 'takeJob', jobId: 'clothes-seller' })).toBe(
+    state,
+  );
 });
 
-test('the brain fills faster while reading', () => {
-  const reader = gameReducer(WORKING, {
-    type: 'planEvent',
-    event: EVENING_READING,
-  });
-  expect(run(reader, 22).brain).toBeGreaterThan(run(WORKING, 22).brain);
+test('the player goes to work with a job, and back home', () => {
+  const atWork = gameReducer(SELLER, { type: 'goTo', place: 'work' });
+  expect(atWork.location).toBe('work');
+  // travelling takes no time
+  expect(atWork.elapsedHours).toBe(SELLER.elapsedHours);
+  expect(gameReducer(atWork, { type: 'goTo', place: 'home' }).location).toBe(
+    'home',
+  );
 });
 
-test('taking a job plans the work, and the pay starts at the hire', () => {
-  const hired = gameReducer(run(INITIAL_GAME_STATE, 2 * 24 + 8), {
-    type: 'takeJob',
-    jobId: 'clothes-seller',
-  });
-  expect(hired.job).toEqual({ id: 'clothes-seller', since: 2 * 24 + 8 });
-  expect(hired.plan.map((event) => event.title)).toContain('Go to work');
-  expect(earnedCents(run(hired, HOURS_PER_WEEK))).toBe(15_000);
+test('the player cannot go to work without a job', () => {
+  expect(gameReducer(INITIAL_GAME_STATE, { type: 'goTo', place: 'work' })).toBe(
+    INITIAL_GAME_STATE,
+  );
 });
 
-test('a job is taken once', () => {
-  const again = gameReducer(WORKING, {
-    type: 'takeJob',
-    jobId: 'clothes-seller',
-  });
-  expect(again).toBe(WORKING);
+test('each click at work is half an hour of work, paid at once', () => {
+  const worked = gameReducer(AT_WORK_8, perform('work'));
+  expect(worked.elapsedHours).toBe(8.5);
+  // 10 coins an hour
+  expect(worked.coins).toBe(AT_WORK_8.coins + 5);
+  expect(worked.location).toBe('work');
+  expect(gameReducer(worked, perform('work')).coins).toBe(AT_WORK_8.coins + 10);
 });
 
-test('plans an event that fits, with an id of its own', () => {
-  const planned = gameReducer(WORKING, {
-    type: 'planEvent',
-    event: EVENING_READING,
-  });
-  expect(planned.plan).toHaveLength(WORKING.plan.length + 1);
-  const ids = planned.plan.map((event) => event.id);
-  expect(new Set(ids).size).toBe(ids.length);
+test('work done in a row is a single entry of the calendar', () => {
+  const worked = gameReducer(
+    gameReducer(AT_WORK_8, perform('work')),
+    perform('work'),
+  );
+  expect(worked.history).toEqual([
+    { kind: 'work', title: 'Work', start: 8, end: 9 },
+  ]);
 });
 
-test('refuses an event that overlaps the plan', () => {
-  const clash = gameReducer(WORKING, {
-    type: 'planEvent',
-    event: { ...EVENING_READING, start: 9, end: 10 },
-  });
-  expect(clash).toBe(WORKING);
+test('work is only possible during the working hours', () => {
+  const early = { ...AT_WORK_8, elapsedHours: 6 };
+  expect(gameReducer(early, perform('work'))).toBe(early);
+  const lunchTime = { ...AT_WORK_8, elapsedHours: 12.5 };
+  expect(gameReducer(lunchTime, perform('work'))).toBe(lunchTime);
+  // Saturday
+  const weekend = { ...AT_WORK_8, elapsedHours: 5 * 24 + 9 };
+  expect(gameReducer(weekend, perform('work'))).toBe(weekend);
 });
 
-const ASKING: GameState = {
-  ...WORKING,
-  plan: [
-    ...WORKING.plan,
-    { ...EVENING_READING, id: 'read-ask', mode: 'ask' as const },
-  ],
-};
-
-test('the game stops where an ask event starts and waits for the answer', () => {
-  const stopped = run(ASKING, 30);
-  expect(stopped.asking).toEqual({ eventId: 'read-ask', day: 0 });
-  expect(stopped.elapsedHours).toBe(20);
-  // time does not move while waiting
-  expect(run(stopped, 5)).toBe(stopped);
+test('at the end of the shift, the player goes home', () => {
+  const nearlyDone = { ...AT_WORK_8, elapsedHours: 11.5 };
+  const state = gameReducer(nearlyDone, perform('work'));
+  expect(state.elapsedHours).toBe(12);
+  expect(state.location).toBe('home');
+  expect(state.coins).toBe(nearlyDone.coins + 5);
 });
 
-test('accepting an ask event lets it run', () => {
-  const stopped = run(ASKING, 30);
-  const accepted = gameReducer(stopped, {
-    type: 'answerAsk',
-    isAccepted: true,
-  });
-  expect(accepted.asking).toBeUndefined();
-  expect(run(accepted, 3).bookHours).toBeCloseTo(3, 5);
-  // the next day asks again
-  expect(run(accepted, 30).asking).toEqual({ eventId: 'read-ask', day: 1 });
+test('working burns more calories than reading', () => {
+  const rested = { ...AT_WORK_8, calories: 50 };
+  const worked = gameReducer(rested, perform('work'));
+  const read = gameReducer({ ...rested, location: 'home' }, perform('read'));
+  expect(50 - worked.calories).toBeGreaterThan((50 - read.calories) / 2);
 });
 
-test('declining an ask event skips that occurrence only', () => {
-  const stopped = run(ASKING, 30);
-  const declined = gameReducer(stopped, {
-    type: 'answerAsk',
-    isAccepted: false,
-  });
-  expect(declined.declined).toEqual(['read-ask@0']);
-  expect(run(declined, 3).bookHours).toBe(0);
-  expect(run(declined, 30).asking).toEqual({ eventId: 'read-ask', day: 1 });
-});
-
-test('an ask event planned while it should run asks at once', () => {
-  const evening = run(WORKING, 21);
-  const planned = gameReducer(evening, {
-    type: 'planEvent',
-    event: { ...EVENING_READING, mode: 'ask' },
-  });
-  expect(planned.asking).toEqual({
-    eventId: planned.plan.at(-1)?.id,
-    day: 0,
-  });
-  // an auto one just runs
-  const auto = gameReducer(evening, {
-    type: 'planEvent',
-    event: EVENING_READING,
-  });
-  expect(auto.asking).toBeUndefined();
-});
-
-test('forgets the declined occurrences of the days gone by', () => {
-  const stopped = run(ASKING, 30);
-  const declined = gameReducer(stopped, {
-    type: 'answerAsk',
-    isAccepted: false,
-  });
-  expect(run(declined, 24).declined).toEqual([]);
-});
-
-test('answering with no question changes nothing', () => {
-  expect(gameReducer(WORKING, { type: 'answerAsk', isAccepted: true })).toBe(
-    WORKING,
+test('restarting gives a brand new game', () => {
+  const game = {
+    origin: Date.UTC(2026, 9, 5),
+    startHours: 10,
+    birthDate: '2008-10-05',
+  };
+  expect(gameReducer(AT_WORK_8, { type: 'restart', game })).toEqual(
+    newGameState(game),
   );
 });

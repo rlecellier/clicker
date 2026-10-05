@@ -5,8 +5,7 @@ import { useGameContext } from '@context/GameContext';
 import styles from './AchievementsPage.module.css';
 
 export const AchievementsPage = () => {
-  const { currentBook, bookHours, isReadingNow, readBooks, isLibraryRead } =
-    useGameContext();
+  const { currentBook, bookHours, readBooks, isLibraryRead } = useGameContext();
 
   return (
     <section className={styles.root}>
@@ -22,7 +21,6 @@ export const AchievementsPage = () => {
             title={currentBook.title}
             hoursRead={bookHours}
             totalHours={currentBook.hours}
-            isReading={isReadingNow}
           />
         </>
       ) : (

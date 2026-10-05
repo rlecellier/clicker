@@ -1,24 +1,24 @@
 import { expect, test } from '@playwright/test';
 
-// The game runs eight times faster than real time by default.
-const HOUR_MS = 1000 / 8;
+import { startGame } from './support';
 
 test('Restart Game starts a new game', async ({ page }) => {
-  await page.clock.install({ time: 0 });
-  await page.clock.pauseAt(1000);
-  await page.goto('/');
-  await page.evaluate(() => {
-    localStorage.clear();
-  });
-  await page.reload();
+  await startGame(page);
+  const clock = page.getByRole('timer', { name: 'Game time' });
 
-  const calendar = page.getByRole('img');
-  await page.clock.fastForward(24 * HOUR_MS);
-  await expect(calendar).toHaveAccessibleName('Tue, 00:00');
+  await page.getByRole('button', { name: /Look for a job/ }).click();
+  await page.getByRole('button', { name: 'Clothes seller' }).click();
+  await page.getByRole('button', { name: /Sleep 8h/ }).click();
+  await expect(clock).toContainText('16:00');
 
   await page.getByRole('button', { name: 'Menu' }).click();
   await page.getByRole('button', { name: 'Restart Game' }).click();
-  await expect(calendar).toHaveAccessibleName('Mon, 00:00');
+
+  // The new game begins at the date and time of the player.
+  await expect(clock).toContainText('07:00');
+  await expect(
+    page.getByRole('button', { name: 'Look for a job' }),
+  ).toBeVisible();
   await expect(page.getByRole('meter', { name: 'Calories' })).toHaveAttribute(
     'aria-valuetext',
     '60%',
@@ -26,5 +26,8 @@ test('Restart Game starts a new game', async ({ page }) => {
 
   // The new game is the one saved: it is still there after a reload.
   await page.reload();
-  await expect(calendar).toHaveAccessibleName('Mon, 00:00');
+  await expect(clock).toContainText('07:00');
+  await expect(
+    page.getByRole('button', { name: 'Look for a job' }),
+  ).toBeVisible();
 });

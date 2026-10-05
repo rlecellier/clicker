@@ -1,27 +1,16 @@
 import { expect, test } from '@playwright/test';
 
-// The game runs eight times faster than real time by default.
-const HOUR_MS = 1000 / 8;
-const HOURS_PER_YEAR = 365 * 24;
+import { startGame } from './support';
 
-test('the header shows the age, 18 at the start and one more each year', async ({
+test('the header shows the age, the gold coins and the game time', async ({
   page,
 }) => {
-  await page.clock.install({ time: 0 });
-  await page.clock.pauseAt(1000);
-  await page.goto('/');
-  await page.evaluate(() => {
-    localStorage.clear();
-  });
-  await page.reload();
+  await startGame(page);
 
   const header = page.getByRole('banner');
   await expect(header.getByText('18 yo')).toBeVisible();
-  await expect(header.getByText(/\$/)).toBeHidden();
-
-  await page.clock.fastForward((HOURS_PER_YEAR - 1) * HOUR_MS);
-  await expect(header.getByText('18 yo')).toBeVisible();
-
-  await page.clock.fastForward(2 * HOUR_MS);
-  await expect(header.getByText('19 yo')).toBeVisible();
+  await expect(header.getByRole('status', { name: 'Gold coins' })).toHaveText(
+    '0',
+  );
+  await expect(header.getByRole('timer')).toContainText('Mon 5 Oct 2026');
 });

@@ -1,59 +1,49 @@
 import { Button } from '@base-ui/react/button';
-import { Cake, Cookie } from 'lucide-react';
+import { Briefcase, House } from 'lucide-react';
 
+import { ActionList } from '@component/ActionList';
 import { BookProgress } from '@component/BookProgress';
 import { GetJob } from '@component/GetJob';
+import { JobStatus } from '@component/JobStatus';
 import { LocationIndicator } from '@component/LocationIndicator';
-import { MoneyCounter } from '@component/MoneyCounter';
-import { PendingPay } from '@component/PendingPay';
-import { ScheduleBanners } from '@component/ScheduleBanners';
 import { useGameContext } from '@context/GameContext';
-import { SNACK_CALORIES } from '@game/nutrition';
+import { useGamePanel } from '@hook/useGamePanel';
 
 import styles from './GamePage.module.css';
 
 export const GamePage = () => {
-  const {
-    balanceCents,
-    pendingPayCents,
-    isEarning,
-    location,
-    isEnjoyingCake,
-    snack,
-    cake,
-    currentBook,
-    bookHours,
-    isReadingNow,
-  } = useGameContext();
+  const { currentBook, bookHours } = useGameContext();
+  const { location, job, travel, actions, perform, goTo } = useGamePanel();
 
   return (
-    <>
-      <ScheduleBanners />
-      <div className={styles.content}>
-        <LocationIndicator location={location} />
-        <PendingPay cents={pendingPayCents} isEarning={isEarning} />
-        <div className={styles.cash}>
-          <MoneyCounter cents={balanceCents} />
-        </div>
-        <div className={styles.actions}>
-          <GetJob />
-          <Button onClick={snack}>
-            <Cookie aria-hidden size={18} /> Eat a snack (+{SNACK_CALORIES}%)
+    <div className={styles.content}>
+      <LocationIndicator location={location} />
+      {job && <JobStatus {...job} />}
+      <div className={styles.actions}>
+        {travel && (
+          <Button
+            onClick={() => {
+              goTo(travel.place);
+            }}
+          >
+            {travel.place === 'work' ? (
+              <Briefcase aria-hidden size={18} />
+            ) : (
+              <House aria-hidden size={18} />
+            )}{' '}
+            {travel.label}
           </Button>
-          <Button onClick={cake} disabled={isEnjoyingCake}>
-            <Cake aria-hidden size={18} />{' '}
-            {isEnjoyingCake ? 'Enjoying a cake…' : 'Enjoy a cake (30 min)'}
-          </Button>
-          {currentBook && (
-            <BookProgress
-              title={currentBook.title}
-              hoursRead={bookHours}
-              totalHours={currentBook.hours}
-              isReading={isReadingNow}
-            />
-          )}
-        </div>
+        )}
+        <GetJob />
+        <ActionList actions={actions} onPerform={perform} />
+        {currentBook && (
+          <BookProgress
+            title={currentBook.title}
+            hoursRead={bookHours}
+            totalHours={currentBook.hours}
+          />
+        )}
       </div>
-    </>
+    </div>
   );
 };

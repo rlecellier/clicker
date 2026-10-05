@@ -1,11 +1,10 @@
 import { Button } from '@base-ui/react/button';
-import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import { CalendarCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
-import { AddEvent } from '@component/AddEvent';
 import { CalendarGrid } from '@component/CalendarGrid';
 import { useGameContext } from '@context/GameContext';
-import { useCalendarFollow } from '@hook/useCalendarFollow';
+import { useCalendarDay } from '@hook/useCalendarDay';
 import { useMediaQuery } from '@hook/useMediaQuery';
 import { useSwipe } from '@hook/useSwipe';
 import { useZoom } from '@hook/useZoom';
@@ -19,18 +18,17 @@ const VIEWS: { view: CalendarView; label: string }[] = [
   { view: 'week', label: 'Week' },
 ];
 
-// The days of the game (following the game while playing, free to browse when
-// paused): a week at once on a large screen (or a single day if
+// The days of the game, starting on the current one and free to browse: a week at once on a large screen (or a single day if
 // chosen), a single day on mobile, with a swipe to go to the next one. The
 // whole day fits the screen; ctrl + wheel or a pinch zooms in on the hours.
 export const CalendarPage = () => {
-  const { week, weekHour, schedule, obligations } = useGameContext();
+  const { week, weekHour, origin, history, job } = useGameContext();
   const currentDay =
     week * DAYS_PER_WEEK + Math.floor(weekHour / HOURS_PER_DAY);
   const dayRatio = (weekHour % HOURS_PER_DAY) / HOURS_PER_DAY;
 
-  const { isPlaying, selectedDay, toggle, move } =
-    useCalendarFollow(currentDay);
+  const { selectedDay, isOnToday, move, goToToday } =
+    useCalendarDay(currentDay);
   const [chosenView, setChosenView] = useState<CalendarView>('week');
   // the view toggle only exists from tablet up: mobile always shows one day
   const isLargeScreen = useMediaQuery('(min-width: 640px)');
@@ -60,29 +58,23 @@ export const CalendarPage = () => {
             onClick={() => {
               move(-step);
             }}
-            disabled={isPlaying || days[0] === 0}
+            disabled={days[0] === 0}
           >
             <ChevronLeft aria-hidden size={18} />
           </Button>
-          <h2 className={styles.title}>{rangeLabel(days)}</h2>
+          <h2 className={styles.title}>{rangeLabel(origin, days)}</h2>
           <Button
             aria-label={`Next ${unit}`}
             onClick={() => {
               move(step);
             }}
-            disabled={isPlaying}
           >
             <ChevronRight aria-hidden size={18} />
           </Button>
         </div>
         <div className={styles.actions}>
-          <AddEvent shownDay={selectedDay} />
-          <Button aria-label={isPlaying ? 'Pause' : 'Play'} onClick={toggle}>
-            {isPlaying ? (
-              <Pause aria-hidden size={18} />
-            ) : (
-              <Play aria-hidden size={18} />
-            )}
+          <Button aria-label="Today" onClick={goToToday} disabled={isOnToday}>
+            <CalendarCheck aria-hidden size={18} />
           </Button>
           {isLargeScreen && (
             <div role="group" aria-label="View" className={styles.views}>
@@ -103,9 +95,10 @@ export const CalendarPage = () => {
       </header>
       <div className={styles.grid} ref={scroller} {...swipe}>
         <CalendarGrid
+          origin={origin}
           days={days}
-          schedule={schedule}
-          obligations={obligations}
+          history={history}
+          job={job}
           currentDay={currentDay}
           dayRatio={dayRatio}
           zoom={zoom}

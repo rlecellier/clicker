@@ -3,14 +3,15 @@ import { useState } from 'react';
 import { useGameContext } from '@context/GameContext';
 import { isJobId, JOB_IDS, JOBS } from '@game/jobs';
 
-// The "Get a Job" button: it opens the list of jobs, and picking one takes it.
-// Only a player without a job can get one.
+// The "Look for a job" button: it opens the list of jobs, and picking one takes
+// it, after an hour of searching. Only a player at home without a job can look
+// for one.
 export const useGetJob = () => {
-  const { job, takeJob } = useGameContext();
+  const { job, location, takeJob } = useGameContext();
   const [isOpen, setIsOpen] = useState(false);
 
   return {
-    canGetJob: !job,
+    canGetJob: !job && location === 'home',
     isOpen,
     jobs: JOB_IDS.map((id) => ({ id, title: JOBS[id].title })),
     open: () => {

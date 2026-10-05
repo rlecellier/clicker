@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+import { startGame } from './support';
+
 test.beforeEach(async ({ page }) => {
-  await page.clock.install({ time: 0 });
-  await page.clock.pauseAt(1000);
-  await page.goto('/');
+  await startGame(page);
 });
 
 test('the places menu unfolds and leads to the places', async ({ page }) => {
@@ -50,7 +50,9 @@ test('the menu leads to the balance and back to the game', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Menu' }).click();
   await page.getByRole('link', { name: 'Game' }).click();
-  await expect(page.getByRole('button', { name: /Eat a snack/ })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /Look for a job/ }),
+  ).toBeVisible();
 });
 
 test('an unknown page offers a way back to the game', async ({ page }) => {
@@ -58,7 +60,9 @@ test('an unknown page offers a way back to the game', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /404/ })).toBeVisible();
 
   await page.getByRole('link', { name: 'Back to the game' }).click();
-  await expect(page.getByRole('button', { name: /Eat a snack/ })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /Look for a job/ }),
+  ).toBeVisible();
 });
 
 test('the title leads back to the game', async ({ page }) => {
@@ -67,5 +71,7 @@ test('the title leads back to the game', async ({ page }) => {
 
   await page.getByRole('link', { name: 'Clicker' }).click();
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.getByRole('button', { name: /Eat a snack/ })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /Look for a job/ }),
+  ).toBeVisible();
 });

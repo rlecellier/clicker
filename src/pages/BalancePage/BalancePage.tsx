@@ -1,146 +1,43 @@
-import { useState } from 'react';
-
 import { useGameContext } from '@context/GameContext';
-import { payBetween } from '@game/earnings';
-import {
-  EXPENSE_IDS,
-  expensesBetween,
-  MEAL_PRICES_CENTS,
-  totalExpensesCents,
-  WEEKLY_RENT_CENTS,
-  type ExpenseId,
-} from '@game/expenses';
-import { formatMoney } from '@game/money';
-import { PERIODS, periodRange, type Period } from '@game/period';
-import { useSwipe } from '@hook/useSwipe';
+import { formatCoins } from '@game/coins';
+import { hoursDone } from '@game/history';
+import { JOBS } from '@game/jobs';
+import { formatDuration } from '@game/time';
 
 import styles from './BalancePage.module.css';
 
-const LINES: Record<ExpenseId, { label: string; price: string }> = {
-  rent: {
-    label: 'Rent',
-    price: `${formatMoney(WEEKLY_RENT_CENTS, { alwaysCents: true })} / week`,
-  },
-  breakfast: {
-    label: 'Breakfast',
-    price: `${formatMoney(MEAL_PRICES_CENTS.breakfast, { alwaysCents: true })} / meal`,
-  },
-  lunch: {
-    label: 'Lunch',
-    price: `${formatMoney(MEAL_PRICES_CENTS.lunch, { alwaysCents: true })} / meal`,
-  },
-  dinner: {
-    label: 'Dinner',
-    price: `${formatMoney(MEAL_PRICES_CENTS.dinner, { alwaysCents: true })} / meal`,
-  },
-};
-
-const PERIOD_LABELS: Record<Period, { tab: string; current: string }> = {
-  week: { tab: 'Week', current: 'this week' },
-  month: { tab: 'Month', current: 'this month' },
-  year: { tab: 'Year', current: 'this year' },
-};
-
 export const BalancePage = () => {
-  const { balanceCents, elapsedHours, pendingPayCents, job, schedule } =
-    useGameContext();
-  const [period, setPeriod] = useState<Period>('week');
-  const { from, to } = periodRange(period, elapsedHours);
-  const expenses = expensesBetween(schedule, from, to);
-  // what was paid out plus what the ongoing week has earned so far
-  const incomeCents = payBetween(job, from, to) + pendingPayCents;
-  const costsCents = totalExpensesCents(expenses);
-  const savingsCents = incomeCents - costsCents;
-  const label = PERIOD_LABELS[period].current;
-
-  // Swiping left goes to the next period, right to the previous one.
-  const goTo = (step: number) => {
-    const next = PERIODS[PERIODS.indexOf(period) + step];
-    if (next !== undefined) setPeriod(next);
-  };
-  const swipe = useSwipe({
-    onSwipeLeft: () => {
-      goTo(1);
-    },
-    onSwipeRight: () => {
-      goTo(-1);
-    },
-  });
+  const { coins, history, job } = useGameContext();
+  const hourlyCoins = job ? JOBS[job.id].hourlyCoins : 0;
+  const workedHours = hoursDone(history, 'work');
 
   return (
-    <section className={styles.root} {...swipe}>
+    <section className={styles.root}>
       <h2 className={styles.title}>Balance</h2>
-      <div className={styles.tabs} role="tablist" aria-label="Period">
-        {PERIODS.map((id) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={id === period}
-            className={styles.tab}
-            onClick={() => {
-              setPeriod(id);
-            }}
-          >
-            {PERIOD_LABELS[id].tab}
-          </button>
-        ))}
-      </div>
       <dl className={styles.summary}>
         <div>
-          <dt>In the bank</dt>
-          <dd>{formatMoney(balanceCents, { alwaysCents: true })}</dd>
+          <dt>Gold coins</dt>
+          <dd>{formatCoins(coins)}</dd>
         </div>
         <div>
-          <dt>Income {label}</dt>
+          <dt>Earned at work</dt>
           <dd className={styles.income}>
-            {formatMoney(incomeCents, { alwaysCents: true })}
+            {formatCoins(workedHours * hourlyCoins)}
           </dd>
         </div>
         <div>
-          <dt>Expenses {label}</dt>
-          <dd className={styles.expense}>
-            {formatMoney(costsCents, { alwaysCents: true })}
-          </dd>
+          <dt>Time worked</dt>
+          <dd>{workedHours === 0 ? '0h' : formatDuration(workedHours)}</dd>
         </div>
         <div>
-          <dt>Savings {label}</dt>
-          <dd className={savingsCents >= 0 ? styles.income : styles.expense}>
-            {formatMoney(savingsCents, { alwaysCents: true })}
-          </dd>
+          <dt>Pay</dt>
+          <dd>{job ? `${hourlyCoins} coins / hour` : 'No job'}</dd>
         </div>
       </dl>
-      <h3 className={styles.subtitle}>Expenses</h3>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th scope="col">Expense</th>
-            <th scope="col">Price</th>
-            <th scope="col">Paid {label}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {EXPENSE_IDS.map((id) => (
-            <tr key={id}>
-              <th scope="row">{LINES[id].label}</th>
-              <td className={styles.price}>{LINES[id].price}</td>
-              <td className={styles.amount}>
-                {formatMoney(expenses[id], { alwaysCents: true })}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr>
-            <th scope="row" colSpan={2}>
-              Total
-            </th>
-            <td className={styles.amount}>
-              {formatMoney(costsCents, { alwaysCents: true })}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+      <p className={styles.note}>
+        Pay lands in your pocket with every half hour you work. Nothing to pay
+        for yet: the flat has no rent and the meals are free.
+      </p>
     </section>
   );
 };

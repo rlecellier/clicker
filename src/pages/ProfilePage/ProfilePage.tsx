@@ -3,21 +3,13 @@ import { BrainGauge } from '@component/BrainGauge';
 import { GaugeList } from '@component/GaugeList';
 import { useGameContext } from '@context/GameContext';
 import { formatBirthDate, formatLifeTime, lifeTimeAt } from '@game/age';
-import { formatMoney } from '@game/money';
+import { formatCoins } from '@game/coins';
 
 import styles from './ProfilePage.module.css';
 
 export const ProfilePage = () => {
-  const {
-    age,
-    balanceCents,
-    birthDate,
-    elapsedHours,
-    dreams,
-    body,
-    brain,
-    isSleeping,
-  } = useGameContext();
+  const { age, coins, birthDate, playedHours, dreams, body, brain } =
+    useGameContext();
 
   return (
     <section className={styles.root}>
@@ -33,11 +25,11 @@ export const ProfilePage = () => {
         </div>
         <div>
           <dt>Played</dt>
-          <dd>{formatLifeTime(lifeTimeAt(elapsedHours))}</dd>
+          <dd>{formatLifeTime(lifeTimeAt(playedHours))}</dd>
         </div>
         <div>
-          <dt>Cash</dt>
-          <dd>{formatMoney(balanceCents)}</dd>
+          <dt>Gold coins</dt>
+          <dd>{formatCoins(coins)}</dd>
         </div>
         <div>
           <dt>Dreams</dt>
@@ -53,7 +45,7 @@ export const ProfilePage = () => {
         </div>
       </dl>
       <GaugeList>
-        <BrainGauge size="full" brain={brain} isSleeping={isSleeping} />
+        <BrainGauge size="full" brain={brain} />
         <BodyGauge
           size="full"
           fatPercent={body.fatPercent}
