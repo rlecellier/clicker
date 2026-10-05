@@ -16,7 +16,7 @@ export const isLibraryRead = (state: Reading) =>
 
 // With no book on the go, draws a new book among the unread ones: `roll` is a
 // number in [0, 1) that picks it, so the randomness stays out of the rules.
-const drawBook = (state: Reading, roll: number): Reading => {
+export const drawBook = (state: Reading, roll: number): Reading => {
   if (getBook(state.bookId)) return state;
   const unread = unreadBooks(state);
   const book = unread[Math.floor(roll * unread.length)];

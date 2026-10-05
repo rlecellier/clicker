@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { demoShot, openPage, startGame } from './support';
+import { demoShot, elapse, openPage, perform, startGame } from './support';
 
 test('a new game starts at home, at the date and time of the player, with nothing done', async ({
   page,
@@ -15,11 +15,16 @@ test('a new game starts at home, at the date and time of the player, with nothin
     'data-location',
     'home',
   );
+  // A few coins and a full fridge to begin with.
   await expect(page.getByRole('status', { name: 'Gold coins' })).toHaveText(
-    '0',
+    '20',
+  );
+  await expect(page.getByRole('meter', { name: 'Fridge' })).toHaveAttribute(
+    'aria-valuetext',
+    '10 / 10',
   );
 
-  // At home: look for a job, eat, read and sleep. No work without a job.
+  // At home: look for a job, eat, read, sleep and think. No work without a job.
   await expect(
     page.getByRole('button', { name: 'Look for a job' }),
   ).toBeEnabled();
@@ -34,6 +39,9 @@ test('a new game starts at home, at the date and time of the player, with nothin
     'Sleep 4h',
     'Sleep 6h',
     'Sleep 8h',
+    'Think 30 min',
+    'Think 1h',
+    'Think 2h',
   ]) {
     await expect(
       page.getByRole('button', { name: new RegExp(name) }),
@@ -47,15 +55,18 @@ test('a new game starts at home, at the date and time of the player, with nothin
   await demoShot(page, 'empty-calendar');
 });
 
-test('the game time only moves when the player acts', async ({ page }) => {
+test('the game time only moves while an action runs', async ({ page }) => {
   await startGame(page);
   const clock = page.getByRole('timer', { name: 'Game time' });
   await expect(clock).toContainText('07:00');
 
-  await page.waitForTimeout(1500);
+  await elapse(page, 3);
   await expect(clock).toContainText('07:00');
 
-  await page.getByRole('button', { name: /Have breakfast/ }).click();
+  await perform(page, /Have breakfast/, 0.5);
+  await expect(clock).toContainText('07:30');
+
+  await elapse(page, 3);
   await expect(clock).toContainText('07:30');
 });
 
@@ -66,7 +77,7 @@ test('the days strip scrolls with the game time on every page', async ({
   const strip = page.getByRole('img', { name: /Oct 2026, / });
   await expect(strip).toHaveAccessibleName('Mon 5 Oct 2026, 07:00');
 
-  await page.getByRole('button', { name: /Sleep 8h/ }).click();
+  await perform(page, /Sleep 8h/, 8);
   await expect(strip).toHaveAccessibleName('Mon 5 Oct 2026, 15:00');
 
   for (const name of ['Calendar', 'Balance', 'Profile', 'Game']) {

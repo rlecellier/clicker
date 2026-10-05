@@ -1,3 +1,9 @@
 export { demoShot } from './demoShot';
 export { getAJob } from './getAJob';
-export { MONDAY_MORNING, openPage, startGame } from './startGame';
+export {
+  elapse,
+  MONDAY_MORNING,
+  openPage,
+  perform,
+  startGame,
+} from './startGame';

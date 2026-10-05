@@ -2,6 +2,8 @@ import { act, renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { expect, test, vi } from 'vitest';
 
+import { INITIAL_COINS } from '@game/coins';
+import { FRIDGE_MAX } from '@game/fridge';
 import { INITIAL_CALORIES } from '@game/nutrition';
 import { gameStateFactory } from '@test/factories/gameStateFactory';
 
@@ -23,12 +25,14 @@ test('starts with the given state', () => {
   expect(result.current.coins).toBe(state.coins);
 });
 
-test('starts at home, broke and jobless by default', () => {
+test('starts at home, jobless, with a few coins and a full fridge by default', () => {
   const { result } = renderGame();
-  expect(result.current.coins).toBe(0);
+  expect(result.current.coins).toBe(INITIAL_COINS);
+  expect(result.current.fridge).toBe(FRIDGE_MAX);
   expect(result.current.job).toBeUndefined();
   expect(result.current.location).toBe('home');
   expect(result.current.history).toEqual([]);
+  expect(result.current.activity).toBeUndefined();
 });
 
 test('needs a provider', () => {
@@ -48,17 +52,33 @@ test('time stands still until the player acts', async () => {
   vi.useRealTimers();
 });
 
-test('an action moves the game clock and fills the history', () => {
+test('an action runs in real time, one game hour per second', async () => {
+  vi.useFakeTimers();
   const { result } = renderGame();
   const { elapsedHours } = result.current;
 
   act(() => {
-    result.current.perform('breakfast');
+    result.current.perform('lunch');
   });
+  // the time has not jumped: the action is in progress
+  expect(result.current.elapsedHours).toBe(elapsedHours);
+  expect(result.current.activity).toMatchObject({ title: 'Lunch', hours: 1 });
 
-  expect(result.current.elapsedHours).toBe(elapsedHours + 0.5);
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(500);
+  });
+  expect(result.current.elapsedHours).toBeCloseTo(elapsedHours + 0.5, 1);
+  expect(result.current.activity).toBeDefined();
+
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(1000);
+  });
+  expect(result.current.elapsedHours).toBe(elapsedHours + 1);
+  expect(result.current.activity).toBeUndefined();
   expect(result.current.history).toHaveLength(1);
   expect(result.current.calories).not.toBe(INITIAL_CALORIES);
+  expect(result.current.fridge).toBe(FRIDGE_MAX - 1);
+  vi.useRealTimers();
 });
 
 test('offers the actions of the place the player is at', () => {
@@ -71,19 +91,27 @@ test('offers the actions of the place the player is at', () => {
   );
 });
 
-test('looking for a job takes the job and an hour', () => {
+test('looking for a job takes an hour, then the player is hired', async () => {
+  vi.useFakeTimers();
   const { result } = renderGame();
   const { elapsedHours } = result.current;
 
   act(() => {
     result.current.takeJob('clothes-seller');
   });
+  expect(result.current.job).toBeUndefined();
+
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(1100);
+  });
 
   expect(result.current.job?.id).toBe('clothes-seller');
   expect(result.current.elapsedHours).toBe(elapsedHours + 1);
+  vi.useRealTimers();
 });
 
-test('the player goes to work and works during a shift', () => {
+test('the player goes to work and works during a shift', async () => {
+  vi.useFakeTimers();
   // Monday 08:00, a clothes seller
   const { result } = renderGame(
     gameStateFactory.build({
@@ -101,8 +129,12 @@ test('the player goes to work and works during a shift', () => {
   act(() => {
     result.current.perform('work');
   });
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(600);
+  });
   expect(result.current.coins).toBe(5);
   expect(result.current.elapsedHours).toBe(8.5);
+  vi.useRealTimers();
 });
 
 test('restarting gives a brand new game', () => {
@@ -114,7 +146,7 @@ test('restarting gives a brand new game', () => {
     result.current.restart();
   });
 
-  expect(result.current.coins).toBe(0);
+  expect(result.current.coins).toBe(INITIAL_COINS);
   expect(result.current.job).toBeUndefined();
   expect(result.current.history).toEqual([]);
 });

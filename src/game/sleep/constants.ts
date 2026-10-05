@@ -15,6 +15,8 @@ export const BRAIN_ACTIVITY_FILL_PER_HOUR = {
   meal: 1.6,
   read: 0,
   search: 1,
+  think: 0,
+  shopping: 1,
 };
 // A full night empties 80% of the gauge.
 export const BRAIN_SLEEP_DRAIN = 80;

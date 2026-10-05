@@ -1,6 +1,14 @@
 import type { DoneEntry } from './types';
 
-const KINDS = new Set(['work', 'meal', 'sleep', 'read', 'search']);
+const KINDS = new Set([
+  'work',
+  'meal',
+  'sleep',
+  'read',
+  'search',
+  'think',
+  'shopping',
+]);
 
 // A save comes from outside: an entry is checked before it joins the history.
 export const isDoneEntry = (value: unknown): value is DoneEntry => {

@@ -15,6 +15,7 @@ const renderPanel = (isOpen: boolean) => {
       <Sidebar
         id="panel"
         calories={50}
+        fridge={10}
         body={getBody(0)}
         brain={30}
         dreamGauge={20}
@@ -45,6 +46,7 @@ test('is marked as open only when it is open', () => {
       <Sidebar
         id="panel"
         calories={50}
+        fridge={10}
         body={getBody(0)}
         brain={30}
         dreamGauge={20}
@@ -133,6 +135,7 @@ test('is unfolded when a place is shown, and marks where the player is', () => {
       <Sidebar
         id="panel"
         calories={50}
+        fridge={10}
         body={getBody(0)}
         brain={30}
         dreamGauge={20}
