@@ -69,6 +69,10 @@ export const CalendarGrid = ({
         >
           <span className={styles.number}>{dayOfMonth(origin, day)}</span>
           <span>{weekdayLabel(origin, day)}</span>
+          <span className={styles.lanes} aria-hidden>
+            <span>Must</span>
+            <span>Done</span>
+          </span>
         </div>
       ))}
       <div className={styles.hours} aria-hidden>
