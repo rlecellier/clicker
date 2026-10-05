@@ -10,3 +10,13 @@
 .job {
   width: 100%;
 }
+
+/* Where the job is searched, beside its title. */
+.source {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-inline-start: 0.5rem;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}

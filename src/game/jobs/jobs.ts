@@ -9,6 +9,7 @@ export const JOBS: Record<JobId, Job> = {
   'clothes-seller': {
     id: 'clothes-seller',
     title: 'Clothes seller',
+    source: 'phone',
     hourlyCoins: 10,
     shifts: [
       {
