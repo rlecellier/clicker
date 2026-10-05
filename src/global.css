@@ -39,20 +39,23 @@ body {
 /* The app fills the screen on mobile and stops at a phone-like width. */
 #root {
   flex: 1;
-  max-width: 480px;
+  /* Never wider than the screen, whatever the content. */
+  min-width: 0;
+  max-width: min(480px, 100%);
+  overflow-x: clip;
 }
 
 /* The sidebar sits beside the page from tablet up, which gets wider on a
    large screen. */
 @media (min-width: 640px) {
   #root {
-    max-width: 960px;
+    max-width: min(960px, 100%);
   }
 }
 
 @media (min-width: 1024px) {
   #root {
-    max-width: 1280px;
+    max-width: min(1280px, 100%);
   }
 }
 
