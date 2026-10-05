@@ -10,8 +10,9 @@
     --strip-height: 3.5rem;
     /* the game clock between the header and the strip, on mobile only */
     --clock-height: 2.25rem;
-    /* the action in progress, right under the strip: always reserved */
-    --activity-height: 3rem;
+    /* the action in progress, right under the strip: always reserved. One line
+       on mobile, two from tablet up */
+    --activity-height: 2.25rem;
     /* what the header, the clock, the strip and the action in progress take
        at the top of the page */
     --top-height: calc(
@@ -64,6 +65,7 @@
   @media (width >= 640px) {
     :root {
       --clock-height: 0rem;
+      --activity-height: 3rem;
     }
   }
 
