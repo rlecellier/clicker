@@ -114,10 +114,11 @@ The game needed a second way to earn money that trades clicking for waiting.
 
 ## 5. Demo
 
-The demo is automatic and never adds demo-only code. The `MR demo` workflow
-(`.github/workflows/demo.yml`) runs the Playwright e2e journeys (`e2e/*.e2e.ts`)
-on every push to the MR, and posts as a comment the screenshots that this MR
-lists in `e2e/demo.json`.
+The demo is on demand and never adds demo-only code. Commenting `/demo` on the
+MR (a collaborator only) starts the `MR demo` workflow
+(`.github/workflows/demo.yml`): it runs the Playwright e2e journeys
+(`e2e/*.e2e.ts`) on the current head and posts as a comment the screenshots that
+this MR lists in `e2e/demo.json`. Comment again after a push to refresh it.
 
 To show a feature, add `await demoShot(page, 'my-shot')` (from
 `e2e/support`) at the right step of a journey that is a real test:
