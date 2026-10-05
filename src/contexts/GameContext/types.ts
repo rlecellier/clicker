@@ -2,7 +2,7 @@ import type { ActionId } from '@game/actions';
 import type { Action } from '@game/actions';
 import type { Body } from '@game/body';
 import type { GameState } from '@game/gameState';
-import type { DoneEntry } from '@game/history';
+import type { DoneEntry, PlannedEntry } from '@game/history';
 import type { Employment, JobId, Shift, ShiftOccurrence } from '@game/jobs';
 import type { Location } from '@game/location';
 import type { CatalogBook } from '@game/reading';
@@ -59,10 +59,14 @@ export type GameContextValue = {
   actionsAt: (place: Location) => { action: Action; blocker?: string }[];
   // the actions waiting for the player to be at their place, in order
   queue: Action[];
+  // the queue laid out in time, up to the first action of another place
+  planned: PlannedEntry[];
   // starts an action of the place the player is at, queues one of another place
   perform: (actionId: ActionId) => void;
   // takes the action at that rank off the queue
   unqueue: (index: number) => void;
+  // takes everything off the queue
+  clearQueue: () => void;
   goTo: (place: Location) => void;
   takeJob: (jobId: JobId) => void;
 };

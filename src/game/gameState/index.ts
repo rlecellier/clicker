@@ -8,6 +8,7 @@ export {
   currentShiftOf,
   nextShiftOf,
   playedHoursOf,
+  plannedOf,
   queuedActionsOf,
   weekHourOf,
   weekOf,

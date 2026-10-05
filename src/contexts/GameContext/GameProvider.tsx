@@ -11,6 +11,7 @@ import {
   INITIAL_GAME_STATE,
   nextShiftOf,
   playedHoursOf,
+  plannedOf,
   queuedActionsOf,
   weekHourOf,
   weekOf,
@@ -63,11 +64,15 @@ export const GameProvider = ({
       nextShift: nextShiftOf(state),
       actionsAt: (place) => actionsOfPlace(state, place),
       queue: queuedActionsOf(state),
+      planned: plannedOf(state),
       perform: (actionId) => {
         dispatch({ type: 'perform', actionId, roll: Math.random() });
       },
       unqueue: (index) => {
         dispatch({ type: 'unqueue', index });
+      },
+      clearQueue: () => {
+        dispatch({ type: 'clearQueue' });
       },
       goTo: (place) => {
         dispatch({ type: 'goTo', place });

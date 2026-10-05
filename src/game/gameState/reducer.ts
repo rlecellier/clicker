@@ -16,6 +16,8 @@ export type GameAction =
   | { type: 'perform'; actionId: ActionId; roll: number }
   // the player takes an action off the queue
   | { type: 'unqueue'; index: number }
+  // the player takes everything off the queue
+  | { type: 'clearQueue' }
   // real time goes by: the game hours of the action in progress go by with it
   | { type: 'tick'; hours: number }
   // the player goes to a place: work, if they have a job, or back home
@@ -163,6 +165,9 @@ export const gameReducer = (
         ...state,
         queue: state.queue.filter((_, index) => index !== action.index),
       };
+    }
+    case 'clearQueue': {
+      return state.queue.length > 0 ? { ...state, queue: [] } : state;
     }
     case 'tick': {
       return elapse(state, action.hours);

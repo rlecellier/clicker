@@ -6,6 +6,7 @@ import { BOOKS } from '@game/reading';
 import { gameStateFactory } from '@test/factories/gameStateFactory';
 
 import { gameReducer, type GameAction } from './reducer';
+import { plannedOf } from './selectors';
 import { INITIAL_GAME_STATE, newGameState, type GameState } from './types';
 
 const perform = (
@@ -358,4 +359,26 @@ test('working burns more calories than reading', () => {
   const worked = doAction(rested, 'work');
   const read = doAction({ ...rested, location: 'home' }, 'read-1');
   expect(50 - worked.calories).toBeGreaterThan((50 - read.calories) / 2);
+});
+
+test('the queue is laid out after the action in progress, up to an action of another place', () => {
+  let busy = gameReducer(INITIAL_GAME_STATE, perform('think-60'));
+  busy = gameReducer(busy, perform('think-30'));
+  busy = gameReducer(busy, perform('think-60'));
+  expect(plannedOf(busy)).toEqual([
+    { index: 0, kind: 'think', title: 'Think', start: 8, end: 8.5 },
+    { index: 1, kind: 'think', title: 'Think', start: 8.5, end: 9.5 },
+  ]);
+
+  // an action of another place waits for the player to go there
+  const waiting = gameReducer(AT_WORK_8, perform('meal'));
+  expect(plannedOf(waiting)).toEqual([]);
+});
+
+test('the player can take everything off the queue at once', () => {
+  let busy = gameReducer(INITIAL_GAME_STATE, perform('think-60'));
+  busy = gameReducer(busy, perform('think-60'));
+  const cleared = gameReducer(busy, { type: 'clearQueue' });
+  expect(cleared.queue).toEqual([]);
+  expect(cleared.activity).toEqual(busy.activity);
 });
