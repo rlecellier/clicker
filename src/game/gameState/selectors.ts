@@ -6,6 +6,7 @@ import {
   type Action,
 } from '@game/actions';
 import { FRIDGE_MAX } from '@game/fridge';
+import type { PlannedEntry } from '@game/history';
 import type { Location } from '@game/location';
 import { getBook, isLibraryRead } from '@game/reading';
 import { nextShiftAfter, shiftAt } from '@game/jobs';
@@ -90,3 +91,21 @@ export const currentActivityOf = (state: GameState) =>
     done: state.activity.done,
     hours: stepOf(state.activity).hours,
   };
+
+// The queue laid out in time: each action starts as the previous is over,
+// the first one when the activity in progress ends. It stops at the first
+// action of another place, which waits for the player to go there.
+export const plannedOf = (state: GameState): PlannedEntry[] => {
+  const planned: PlannedEntry[] = [];
+  let start = state.activity
+    ? state.activity.from + stepOf(state.activity).hours
+    : state.elapsedHours;
+  for (const [index, { actionId }] of state.queue.entries()) {
+    const action = ACTIONS[actionId];
+    if (!isDoableAt(action, state.location)) break;
+    const end = start + action.hours;
+    planned.push({ index, kind: action.kind, title: action.title, start, end });
+    start = end;
+  }
+  return planned;
+};

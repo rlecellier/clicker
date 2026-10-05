@@ -19,15 +19,17 @@ export const recordDone = (
 
 // The entries of one day of the game. An entry that goes over midnight is cut
 // at the end of the day, and continues on the next.
-export const doneOnDay = (history: DoneEntry[], day: number): DayEntry[] => {
+export const doneOnDay = <T extends DoneEntry>(
+  history: T[],
+  day: number,
+): DayEntry<T>[] => {
   const dayStart = day * HOURS_PER_DAY;
   const dayEnd = dayStart + HOURS_PER_DAY;
   return history
     .filter((entry) => entry.start < dayEnd && entry.end > dayStart)
     .map((entry) => ({
+      ...entry,
       id: `${entry.kind}@${entry.start}`,
-      kind: entry.kind,
-      title: entry.title,
       start: Math.max(entry.start, dayStart) - dayStart,
       end: Math.min(entry.end, dayEnd) - dayStart,
     }));
