@@ -346,14 +346,3 @@ test('working burns more calories than reading', () => {
   const read = doAction({ ...rested, location: 'home' }, 'read-1');
   expect(50 - worked.calories).toBeGreaterThan((50 - read.calories) / 2);
 });
-
-test('restarting gives a brand new game', () => {
-  const game = {
-    origin: Date.UTC(2026, 9, 5),
-    startHours: 10,
-    birthDate: '2008-10-05',
-  };
-  expect(gameReducer(AT_WORK_8, { type: 'restart', game })).toEqual(
-    newGameState(game),
-  );
-});

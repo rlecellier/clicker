@@ -1,4 +1,5 @@
 export {
+  clearSave,
   parseSave,
   readSave,
   SAVE_KEY,

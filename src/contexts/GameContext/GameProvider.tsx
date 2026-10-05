@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useReducer } from 'react';
 
-import { ageAt, birthDateOf } from '@game/age';
+import { ageAt } from '@game/age';
 import { getBody } from '@game/body';
 import {
   actionsOfPlace,
@@ -15,7 +15,6 @@ import {
   weekHourOf,
   weekOf,
 } from '@game/gameState';
-import { gameStartOf } from '@game/time';
 import { getBook, isLibraryRead } from '@game/reading';
 import { useActionClock } from '@hook/useActionClock';
 import { useAutoSave } from '@hook/useAutoSave';
@@ -75,13 +74,6 @@ export const GameProvider = ({
       },
       takeJob: (jobId) => {
         dispatch({ type: 'takeJob', jobId });
-      },
-      restart: () => {
-        const now = new Date();
-        dispatch({
-          type: 'restart',
-          game: { ...gameStartOf(now), birthDate: birthDateOf(now) },
-        });
       },
     }),
     [state],

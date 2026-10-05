@@ -130,3 +130,11 @@ export const writeSave = (storage: SaveStorage, state: GameState) => {
     // quota exceeded or blocked: the game goes on without saving
   }
 };
+
+export const clearSave = (storage: Pick<Storage, 'removeItem'>) => {
+  try {
+    storage.removeItem(SAVE_KEY);
+  } catch {
+    // blocked storage: there was nothing saved to clear
+  }
+};
