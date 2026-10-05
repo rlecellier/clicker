@@ -3,9 +3,8 @@ import type { Location } from '@game/location';
 
 export type ActionId =
   | 'work'
-  | 'breakfast'
-  | 'lunch'
-  | 'dinner'
+  | 'snack'
+  | 'meal'
   | 'read-1'
   | 'read-2'
   | 'read-3'

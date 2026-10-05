@@ -49,7 +49,7 @@ maison comme au travail et laisse simplement passer le temps (`kind: 'think'`).
 
 - Le joueur commence avec **20 pièces** (`INITIAL_COINS`) et un frigo plein.
 - `GameState.fridge`, de 0 à 10 (`FRIDGE_MAX`) : chaque repas à la maison
-  (petit-déjeuner, déjeuner, dîner) prend une portion, au démarrage. Frigo vide :
+  (snack, meal) prend une portion, au démarrage. Frigo vide :
   plus de repas à la maison.
 - **Go shopping** (maison, 1 h) remplit le frigo à la fin. Bloqué si le frigo est
   plein.

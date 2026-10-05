@@ -33,8 +33,8 @@ depuis `origin`, plus depuis une constante.
 `GameState.location` (`home` | `work`) décide des actions offertes
 (`actionsAt`) :
 
-- **Appartement** (sans loyer) : chercher un job, manger (petit-déj 30 min,
-  déj 1 h, dîner 1 h), lire (1 h), dormir 2, 4, 6 ou 8 h, aller au travail si
+- **Appartement** (sans loyer) : chercher un job, manger (snack 30 min,
+  repas 1 h), lire (1 h), dormir 2, 4, 6 ou 8 h, aller au travail si
   on a un job.
 - **Travail** : travailler (un clic = 30 min de jeu), rentrer à la maison.
 

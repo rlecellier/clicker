@@ -67,14 +67,14 @@ test('the time of an action is never more than its duration', () => {
 });
 
 test('many small ticks give the same hours as one big one', () => {
-  let state = gameReducer(INITIAL_GAME_STATE, perform('lunch'));
+  let state = gameReducer(INITIAL_GAME_STATE, perform('meal'));
   for (let frame = 0; frame < 300; frame += 1) {
     state = gameReducer(state, { type: 'tick', hours: 0.01 });
   }
   expect(state.activity).toBeUndefined();
   expect(state.elapsedHours).toBe(8);
   expect(state.history).toEqual([
-    { kind: 'meal', title: 'Lunch', start: 7, end: 8 },
+    { kind: 'meal', title: 'Meal', start: 7, end: 8 },
   ]);
 });
 
@@ -88,10 +88,10 @@ test('only one action runs at a time', () => {
 });
 
 test('an action moves the clock by its duration and is written down', () => {
-  const state = doAction(INITIAL_GAME_STATE, 'lunch');
+  const state = doAction(INITIAL_GAME_STATE, 'meal');
   expect(state.elapsedHours).toBe(INITIAL_GAME_STATE.elapsedHours + 1);
   expect(state.history).toEqual([
-    { kind: 'meal', title: 'Lunch', start: 7, end: 8 },
+    { kind: 'meal', title: 'Meal', start: 7, end: 8 },
   ]);
 });
 
@@ -103,7 +103,7 @@ test('sleeping lasts as long as chosen and empties the brain', () => {
 });
 
 test('a meal fills the calories', () => {
-  const state = doAction({ ...INITIAL_GAME_STATE, calories: 30 }, 'dinner');
+  const state = doAction({ ...INITIAL_GAME_STATE, calories: 30 }, 'meal');
   expect(state.calories).toBeGreaterThan(30);
 });
 
@@ -118,7 +118,7 @@ test('an action of another place is not done', () => {
   expect(gameReducer(INITIAL_GAME_STATE, perform('work'))).toBe(
     INITIAL_GAME_STATE,
   );
-  expect(gameReducer(AT_WORK_8, perform('lunch'))).toBe(AT_WORK_8);
+  expect(gameReducer(AT_WORK_8, perform('meal'))).toBe(AT_WORK_8);
 });
 
 test('thinking is possible anywhere and lets 30 min, 1 or 2 hours go by', () => {
@@ -251,14 +251,14 @@ test('the player stays at work until they leave, even after the shift', () => {
 });
 
 test('a meal at home comes out of the fridge', () => {
-  const started = gameReducer(INITIAL_GAME_STATE, perform('lunch'));
+  const started = gameReducer(INITIAL_GAME_STATE, perform('meal'));
   expect(started.fridge).toBe(FRIDGE_MAX - 1);
-  expect(doAction(INITIAL_GAME_STATE, 'dinner').fridge).toBe(FRIDGE_MAX - 1);
+  expect(doAction(INITIAL_GAME_STATE, 'meal').fridge).toBe(FRIDGE_MAX - 1);
 });
 
 test('no meal at home with an empty fridge', () => {
   const empty = { ...INITIAL_GAME_STATE, fridge: 0 };
-  expect(gameReducer(empty, perform('breakfast'))).toBe(empty);
+  expect(gameReducer(empty, perform('snack'))).toBe(empty);
 });
 
 test('shopping fills the fridge once it is over, and costs an hour', () => {

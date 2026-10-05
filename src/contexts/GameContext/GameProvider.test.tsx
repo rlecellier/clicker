@@ -58,11 +58,11 @@ test('an action runs in real time, one game hour per second', async () => {
   const { elapsedHours } = result.current;
 
   act(() => {
-    result.current.perform('lunch');
+    result.current.perform('meal');
   });
   // the time has not jumped: the action is in progress
   expect(result.current.elapsedHours).toBe(elapsedHours);
-  expect(result.current.activity).toMatchObject({ title: 'Lunch', hours: 1 });
+  expect(result.current.activity).toMatchObject({ title: 'Meal', hours: 1 });
 
   await act(async () => {
     await vi.advanceTimersByTimeAsync(500);
