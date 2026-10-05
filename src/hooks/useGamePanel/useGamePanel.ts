@@ -3,8 +3,8 @@ import { usePlaceActions } from '@hook/usePlaceActions';
 import { JOBS } from '@game/jobs';
 import { formatClock, HOURS_PER_DAY, weekdayLabel } from '@game/time';
 
-// What the home page shows: the job, the way to the other place, and the
-// actions of the place the player is at.
+// What the home page shows: the job and the actions of the place the player
+// is at.
 export const useGamePanel = () => {
   const {
     location,
@@ -14,7 +14,6 @@ export const useGamePanel = () => {
     nextShift,
     elapsedHours,
     origin,
-    goTo,
   } = useGameContext();
   const { rows, perform } = usePlaceActions(location);
 
@@ -40,17 +39,7 @@ export const useGamePanel = () => {
       pay: `${jobDefinition.hourlyCoins} coins / hour`,
       shift,
     },
-    // a job is what takes the player to work
-    travel: (() => {
-      if (location === 'work') {
-        return { label: 'Go home', place: 'home' } as const;
-      }
-      return job
-        ? ({ label: 'Go to work', place: 'work' } as const)
-        : undefined;
-    })(),
     rows,
     perform,
-    goTo,
   };
 };

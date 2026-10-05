@@ -49,3 +49,11 @@ export const perform = async (
   await page.getByRole('button', { name }).click();
   await elapse(page, hours);
 };
+
+// Moves to a place from the destination list and the Go button.
+export const moveTo = async (page: Page, place: string) => {
+  await page.getByRole('combobox', { name: 'Destination' }).selectOption({
+    label: place,
+  });
+  await page.getByRole('button', { name: 'Go', exact: true }).click();
+};
