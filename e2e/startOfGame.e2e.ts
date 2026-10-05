@@ -58,3 +58,21 @@ test('the game time only moves when the player acts', async ({ page }) => {
   await page.getByRole('button', { name: /Have breakfast/ }).click();
   await expect(clock).toContainText('07:30');
 });
+
+test('the days strip scrolls with the game time on every page', async ({
+  page,
+}) => {
+  await startGame(page);
+  const strip = page.getByRole('img', { name: /Oct 2026, / });
+  await expect(strip).toHaveAccessibleName('Mon 5 Oct 2026, 07:00');
+
+  await page.getByRole('button', { name: /Sleep 8h/ }).click();
+  await expect(strip).toHaveAccessibleName('Mon 5 Oct 2026, 15:00');
+
+  for (const name of ['Calendar', 'Balance', 'Profile', 'Game']) {
+    await openPage(page, name);
+    await expect(strip).toBeVisible();
+    await expect(strip).toHaveAccessibleName('Mon 5 Oct 2026, 15:00');
+  }
+  await demoShot(page, 'days-strip');
+});
