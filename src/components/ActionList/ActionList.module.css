@@ -45,3 +45,18 @@
   color: var(--color-muted);
   font-size: 0.8rem;
 }
+
+/* On a very narrow phone, the choices of a group go under its name. */
+@media (max-width: 359px) {
+  .row {
+    flex-wrap: wrap;
+  }
+
+  .name {
+    flex-basis: 100%;
+  }
+
+  .action {
+    flex-basis: 6rem;
+  }
+}

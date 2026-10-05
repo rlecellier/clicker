@@ -30,6 +30,13 @@
   font-size: 1rem;
 }
 
+/* On the narrowest phones, the title gives way so the toolbar still fits. */
+@media (max-width: 319px) {
+  .title {
+    min-width: 6rem;
+  }
+}
+
 .views {
   display: flex;
   gap: 1px;
