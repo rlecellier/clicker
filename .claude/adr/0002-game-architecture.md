@@ -79,8 +79,9 @@ ce n'est pas décidé ici.
 ### 6. Tests
 
 - Politique : voir `CLAUDE.md` (« Politique de test »). Pas de test pour un
-  composant uniquement visuel ; toute action utilisateur est couverte par au
-  moins un parcours Playwright.
+  composant uniquement visuel ; les règles se testent en unitaire ; toute
+  action utilisateur est couverte par au moins un parcours Playwright, peu
+  nombreux et longs.
 - La logique de `game/` se teste sans React, avec des tests unitaires simples.
 - Les parcours e2e (`e2e/*.e2e.ts`) restent de vrais tests ; ils servent aussi de
   démo de MR (skill `merge-request`).
