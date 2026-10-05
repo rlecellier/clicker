@@ -19,7 +19,7 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await expect(clock).toContainText('07:00');
   await expect(page.getByText('18 yo')).toBeVisible();
   await expect(page.getByRole('status', { name: 'Gold coins' })).toHaveText(
-    '20',
+    '1,000',
   );
   await expect(page.locator('[data-location]')).toHaveAttribute(
     'data-location',
