@@ -22,7 +22,9 @@ permissions:
   id-token: write
 
 # A burst of merges deploys once: a newer push cancels the deploy still running
-# for an older commit, so only the latest `main` ends up published.
+# for an older commit, so only the latest `main` ends up published. Runs can
+# queue out of order (a rebase merge pushes several commits at once), so the
+# build always checks out the tip of `main`, not the commit that triggered it.
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -32,6 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
