@@ -5,6 +5,7 @@ import { Link, Outlet } from 'react-router';
 
 import { AgeCounter } from '@component/AgeCounter';
 import { CaloriesStatus } from '@component/CaloriesStatus';
+import { DayTimeline } from '@component/DayTimeline';
 import { GameClock } from '@component/GameClock';
 import { MoneyCounter } from '@component/MoneyCounter';
 import { Sidebar } from '@component/Sidebar';
@@ -13,7 +14,7 @@ import { birthDateOf } from '@game/age';
 import { newGameState } from '@game/gameState';
 import { getCaloriesStatus } from '@game/nutrition';
 import { readSave } from '@game/save';
-import { gameStartOf, momentOf } from '@game/time';
+import { gameStartOf, HOURS_PER_DAY, momentOf } from '@game/time';
 
 import styles from './RootLayout.module.css';
 
@@ -27,10 +28,13 @@ const Layout = () => {
     dreamGauge,
     dreams,
     elapsedHours,
+    history,
+    job,
     location,
     origin,
     restart,
   } = useGameContext();
+  const { date, time } = momentOf(origin, elapsedHours);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
@@ -63,7 +67,7 @@ const Layout = () => {
         </div>
         <div className={styles.status}>
           <MoneyCounter coins={coins} />
-          <GameClock {...momentOf(origin, elapsedHours)} />
+          <GameClock date={date} time={time} />
           <CaloriesStatus status={getCaloriesStatus(calories)} />
           <AgeCounter years={age} />
         </div>
@@ -82,6 +86,13 @@ const Layout = () => {
           onRestart={restart}
         />
         <main className={styles.main}>
+          <DayTimeline
+            origin={origin}
+            history={history}
+            job={job}
+            dayPosition={elapsedHours / HOURS_PER_DAY}
+            label={`${date}, ${time}`}
+          />
           <Outlet />
         </main>
       </div>
