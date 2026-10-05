@@ -36,22 +36,25 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await elapse(page, 3);
   await expect(clock).toContainText('07:00');
 
-  // Meals: half an hour, an hour, an hour. Three in a row are too much.
-  await perform(page, /Have breakfast/, 0.5);
+  // Meals: half an hour, then an hour. Two in a row are too much.
+  await perform(page, /Have a snack/, 0.5);
   await expect(clock).toContainText('07:30');
   await expect(fridge).toHaveAttribute('aria-valuetext', '9 / 10');
-  await perform(page, /Have lunch/, 1);
-  await perform(page, /Have dinner/, 1);
-  await expect(clock).toContainText('09:30');
-  await expect(fridge).toHaveAttribute('aria-valuetext', '7 / 10');
+  await perform(page, /Have a meal/, 1);
+  await expect(clock).toContainText('08:30');
+  await expect(fridge).toHaveAttribute('aria-valuetext', '8 / 10');
   const carrot = page.getByRole('button', { name: 'Calories status' });
   await expect(carrot).toHaveAttribute('data-status', 'overflowing');
   await carrot.click();
   await expect(page.getByText('Too much energy')).toBeVisible();
 
+  // An hour to think while digesting.
+  await perform(page, 'Think 1h', 1);
+  await expect(clock).toContainText('09:30');
+
   // Shopping takes an hour and fills the fridge once it is over.
   await page.getByRole('button', { name: /Go shopping/ }).click();
-  await expect(fridge).toHaveAttribute('aria-valuetext', '7 / 10');
+  await expect(fridge).toHaveAttribute('aria-valuetext', '8 / 10');
   await elapse(page, 1);
   await expect(clock).toContainText('10:30');
   await expect(fridge).toHaveAttribute('aria-valuetext', '10 / 10');

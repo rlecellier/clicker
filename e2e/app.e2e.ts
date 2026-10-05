@@ -53,7 +53,7 @@ test('navigate the menu, resume a saved game and restart it', async ({
   await expect(lookForAJob).toBeVisible();
 
   // The game is saved and resumed when the page is reloaded.
-  await perform(page, /Have breakfast/, 0.5);
+  await perform(page, /Have a snack/, 0.5);
   await getAJob(page);
   await page.getByRole('button', { name: 'Go to work' }).click();
   await expect(clock).toContainText('08:30');
@@ -85,7 +85,7 @@ test('navigate the menu, resume a saved game and restart it', async ({
   await expect(lookForAJob).toBeVisible();
 
   // A broken save is ignored and a new game starts.
-  await perform(page, /Have breakfast/, 0.5);
+  await perform(page, /Have a snack/, 0.5);
   await page.evaluate(() => {
     localStorage.setItem('clicker.save', '{"version":1,"state":{"oops":true}}');
   });

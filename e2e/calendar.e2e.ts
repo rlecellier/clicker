@@ -10,7 +10,7 @@ test('on desktop: the sidebar stays, the calendar shows a week or a day and zoom
   await expect(page.getByRole('meter', { name: 'Calories' })).toBeInViewport();
   await expect(page.getByRole('button', { name: 'Menu' })).toBeHidden();
 
-  await perform(page, /Have lunch/, 1);
+  await perform(page, /Have a meal/, 1);
   await openPage(page, 'Calendar');
   const title = page.getByRole('heading', { level: 2 });
   await expect(page.getByRole('main').getByRole('list')).toHaveCount(7);
@@ -28,7 +28,7 @@ test('on desktop: the sidebar stays, the calendar shows a week or a day and zoom
       (element) => element.scrollHeight <= element.clientHeight,
     ),
   ).toBe(true);
-  const lunch = page.getByTitle(/^Lunch/).first();
+  const lunch = page.getByTitle(/^Meal/).first();
   const before = (await lunch.boundingBox())!;
   await page.mouse.move(before.x + 5, before.y);
   await page.keyboard.down('Control');
@@ -66,7 +66,7 @@ test('on mobile: the calendar shows one day, swipes to the next and pinches to z
   });
   const page = await context.newPage();
   await startGame(page);
-  await perform(page, /Have lunch/, 1);
+  await perform(page, /Have a meal/, 1);
   await openPage(page, 'Calendar');
   await expect(page.getByRole('main').getByRole('list')).toHaveCount(1);
   const title = page.getByRole('heading', { level: 2 });
@@ -90,7 +90,7 @@ test('on mobile: the calendar shows one day, swipes to the next and pinches to z
   await expect(title).toHaveText('Mon 1 Oct 2026');
 
   // Nor a pinch: two fingers are moved apart by hand.
-  const lunch = page.getByTitle(/^Lunch/);
+  const lunch = page.getByTitle(/^Meal/);
   await expect.poll(() => lunch.boundingBox()).not.toBeNull();
   const before = (await lunch.boundingBox())!;
   const cdp = await context.newCDPSession(page);

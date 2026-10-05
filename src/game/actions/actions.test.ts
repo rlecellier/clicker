@@ -4,9 +4,8 @@ import { ACTIONS, actionsAt, isActionId } from './actions';
 
 test('at home the player eats, reads, sleeps, thinks and goes shopping', () => {
   expect(actionsAt('home').map(({ id }) => id)).toEqual([
-    'breakfast',
-    'lunch',
-    'dinner',
+    'snack',
+    'meal',
     'read-1',
     'read-2',
     'read-3',
@@ -40,8 +39,8 @@ test('thinking lasts 30 min, 1 hour or 2 hours', () => {
 });
 
 test('a meal at home takes a portion of the fridge, a meal out costs coins', () => {
-  expect(ACTIONS.lunch.portions).toBe(1);
-  expect(ACTIONS.lunch.cost).toBeUndefined();
+  expect(ACTIONS.meal.portions).toBe(1);
+  expect(ACTIONS.meal.cost).toBeUndefined();
   expect(ACTIONS['eat-out'].cost).toBeGreaterThan(0);
   expect(ACTIONS['eat-out'].portions).toBeUndefined();
 });
