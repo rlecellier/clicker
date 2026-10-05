@@ -1,6 +1,6 @@
 import type { Location } from '@game/location';
 
-import type { Action, ActionId } from './types';
+import type { Action, ActionBase, ActionCategory, ActionId } from './types';
 
 const sleep = (hours: number): Action => ({
   id: `sleep-${hours}` as ActionId,
@@ -8,6 +8,7 @@ const sleep = (hours: number): Action => ({
   group: { name: 'Sleep', option: `${hours}h` },
   title: 'Sleep',
   kind: 'sleep',
+  category: 'place',
   place: 'home',
   hours,
 });
@@ -18,6 +19,7 @@ const read = (hours: number): Action => ({
   group: { name: 'Read', option: `${hours}h` },
   title: 'Read',
   kind: 'read',
+  category: 'place',
   place: 'home',
   hours,
 });
@@ -28,14 +30,18 @@ const think = (minutes: number, option: string): Action => ({
   group: { name: 'Think', option },
   title: 'Think',
   kind: 'think',
-  place: 'anywhere',
+  category: 'self',
   hours: minutes / 60,
 });
 
 // A meal at home comes out of the fridge.
-const homeMeal = (
-  action: Omit<Action, 'kind' | 'place' | 'portions'>,
-): Action => ({ ...action, kind: 'meal', place: 'home', portions: 1 });
+const homeMeal = (action: Omit<ActionBase, 'kind' | 'portions'>): Action => ({
+  ...action,
+  kind: 'meal',
+  category: 'place',
+  place: 'home',
+  portions: 1,
+});
 
 export const ACTIONS: Record<ActionId, Action> = {
   work: {
@@ -43,6 +49,7 @@ export const ACTIONS: Record<ActionId, Action> = {
     label: 'Work',
     title: 'Work',
     kind: 'work',
+    category: 'place',
     place: 'work',
     hours: 0.5,
   },
@@ -67,6 +74,7 @@ export const ACTIONS: Record<ActionId, Action> = {
     label: 'Eat out',
     title: 'Lunch out',
     kind: 'meal',
+    category: 'place',
     place: 'work',
     hours: 1,
     calories: 21,
@@ -87,6 +95,7 @@ export const ACTIONS: Record<ActionId, Action> = {
     label: 'Go shopping',
     title: 'Shopping',
     kind: 'shopping',
+    category: 'place',
     place: 'home',
     hours: 1,
     restocks: true,
@@ -106,8 +115,20 @@ export const ACTION_IDS = Object.keys(ACTIONS) as ActionId[];
 export const isActionId = (value: unknown): value is ActionId =>
   typeof value === 'string' && Object.hasOwn(ACTIONS, value);
 
+// Whether the player can do an action where they are: the actions of the
+// player and of their phone follow them, the others stay at their place.
+export const isDoableAt = (action: Action, location: Location): boolean =>
+  action.category !== 'place' || action.place === location;
+
 // The actions the player can do at a place, in the order they are offered.
 export const actionsAt = (place: Location): Action[] =>
-  ACTION_IDS.map((id) => ACTIONS[id]).filter(
-    (action) => action.place === place || action.place === 'anywhere',
+  ACTION_IDS.map((id) => ACTIONS[id]).filter((action) =>
+    isDoableAt(action, place),
   );
+
+// The categories, in the order they are shown.
+export const ACTION_CATEGORIES: readonly ActionCategory[] = [
+  'place',
+  'self',
+  'online',
+];

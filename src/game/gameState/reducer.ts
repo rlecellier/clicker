@@ -1,4 +1,4 @@
-import { ACTIONS, type ActionId } from '@game/actions';
+import { ACTIONS, isDoableAt, type ActionId } from '@game/actions';
 import { recordDone } from '@game/history';
 import { hireAt, JOBS, type JobId } from '@game/jobs';
 import type { Location } from '@game/location';
@@ -131,9 +131,7 @@ const startQueued = (state: GameState): GameState => {
   let current = state;
   while (!current.activity) {
     const [head, ...queue] = current.queue;
-    if (!head) break;
-    const { place } = ACTIONS[head.actionId];
-    if (place !== 'anywhere' && place !== current.location) break;
+    if (!head || !isDoableAt(ACTIONS[head.actionId], current.location)) break;
     current = begin({ ...current, queue }, head.actionId, head.roll);
   }
   return current;
@@ -146,8 +144,7 @@ export const gameReducer = (
   switch (action.type) {
     case 'perform': {
       const done = ACTIONS[action.actionId];
-      const isHere = done.place === 'anywhere' || done.place === state.location;
-      if (isHere && !state.activity) {
+      if (isDoableAt(done, state.location) && !state.activity) {
         return begin(state, action.actionId, action.roll);
       }
       // busy, or another place: it waits for the player to be free and there

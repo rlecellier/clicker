@@ -1,6 +1,12 @@
 import { expect, test } from 'vitest';
 
-import { ACTIONS, actionsAt, isActionId } from './actions';
+import {
+  ACTION_CATEGORIES,
+  ACTIONS,
+  actionsAt,
+  isActionId,
+  isDoableAt,
+} from './actions';
 
 test('at home the player eats, reads, sleeps, thinks and goes shopping', () => {
   expect(actionsAt('home').map(({ id }) => id)).toEqual([
@@ -64,4 +70,20 @@ test('every action lasts a whole number of half hours', () => {
 test('recognises the actions of the game', () => {
   expect(isActionId('read-2')).toBe(true);
   expect(isActionId('fly')).toBe(false);
+});
+
+test('thinking comes from the player and follows them everywhere', () => {
+  expect(ACTIONS['think-60'].category).toBe('self');
+  expect(isDoableAt(ACTIONS['think-60'], 'home')).toBe(true);
+  expect(isDoableAt(ACTIONS['think-60'], 'work')).toBe(true);
+});
+
+test('the actions of a place stay at that place', () => {
+  expect(ACTIONS.work.category).toBe('place');
+  expect(isDoableAt(ACTIONS.work, 'work')).toBe(true);
+  expect(isDoableAt(ACTIONS.work, 'home')).toBe(false);
+});
+
+test('the categories are shown place first, then the player, then the phone', () => {
+  expect(ACTION_CATEGORIES).toEqual(['place', 'self', 'online']);
 });

@@ -1,8 +1,10 @@
 export {
+  ACTION_CATEGORIES,
   ACTION_IDS,
   ACTIONS,
   actionsAt,
+  isDoableAt,
   isActionId,
   JOB_SEARCH,
 } from './actions';
-export type { Action, ActionId } from './types';
+export type { Action, ActionCategory, ActionId } from './types';

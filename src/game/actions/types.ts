@@ -18,8 +18,13 @@ export type ActionId =
   | 'eat-out'
   | 'shopping';
 
-// What the player can do where they are: the game clock runs for `hours`.
-export type Action = {
+// Where an action comes from: the player themselves (think, and later talk,
+// clown around), their phone (and later text, call a friend), or the place
+// they are at.
+export type ActionCategory = 'self' | 'online' | 'place';
+
+// What the player can do: the game clock runs for `hours`.
+export type ActionBase = {
   id: ActionId;
   // the button
   label: string;
@@ -29,8 +34,6 @@ export type Action = {
   // what it is called in the calendar
   title: string;
   kind: EventKind;
-  // where the player must be, or `anywhere`
-  place: Location | 'anywhere';
   // game hours it takes
   hours: number;
   // calories (in % of the gauge) added over the whole action
@@ -42,3 +45,13 @@ export type Action = {
   // fills the fridge once it is over
   restocks?: boolean;
 };
+
+export type Action = ActionBase &
+  (
+    | {
+        category: 'place';
+        // where the player must be
+        place: Location;
+      }
+    | { category: 'self' | 'online'; place?: undefined }
+  );

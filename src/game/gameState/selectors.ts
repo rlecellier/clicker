@@ -1,4 +1,10 @@
-import { ACTIONS, actionsAt, JOB_SEARCH, type Action } from '@game/actions';
+import {
+  ACTIONS,
+  actionsAt,
+  isDoableAt,
+  JOB_SEARCH,
+  type Action,
+} from '@game/actions';
 import { FRIDGE_MAX } from '@game/fridge';
 import type { Location } from '@game/location';
 import { getBook, isLibraryRead } from '@game/reading';
@@ -36,9 +42,7 @@ export const blockerOf = (
   action: Action,
 ): string | undefined => {
   if (state.activity) return 'Busy';
-  if (action.place !== 'anywhere' && action.place !== state.location) {
-    return 'Not here';
-  }
+  if (!isDoableAt(action, state.location)) return 'Not here';
   if (action.kind === 'work' && !currentShiftOf(state)) {
     return 'Not your working hours';
   }
