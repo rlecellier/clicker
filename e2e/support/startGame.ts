@@ -33,10 +33,8 @@ export const elapse = async (page: Page, hours: number) => {
   await page.clock.runFor(hours * 1000 + 300);
 };
 
-// Opens a page of the menu (the menu is closed on mobile).
+// Opens a page of the menu (on mobile the icon rail is there, folded or not).
 export const openPage = async (page: Page, name: string) => {
-  const menu = page.getByRole('button', { name: 'Menu' });
-  if (await menu.isVisible()) await menu.click();
   await page.getByRole('link', { name, exact: true }).click();
 };
 
