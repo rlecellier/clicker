@@ -25,8 +25,7 @@
   gap: 1.25rem;
   width: var(--rail-width);
   padding: 1rem;
-  /* On a short screen the content scrolls instead of leaving the screen. */
-  overflow: hidden auto;
+  overflow: hidden;
   border-right: 1px solid var(--color-surface);
   background: var(--color-bg);
   transition: width 0.2s ease-in-out;
@@ -34,6 +33,17 @@
 
 .panel[data-open] {
   width: 200px;
+}
+
+/* Everything but the restart button: on a short screen it scrolls on its own,
+   so the button below it never moves. */
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-height: 0;
+  overflow: hidden auto;
 }
 
 .gauges {
@@ -71,18 +81,13 @@
   color: var(--color-text);
 }
 
-/* Pushed to the bottom of the panel, and stuck there while the content scrolls. */
+/* At the bottom of the panel, under the content. */
 .restart {
   --button-bg: var(--color-bg);
   --button-bg-hover: var(--color-surface);
 
-  position: sticky;
-  bottom: 1rem;
   flex-shrink: 0;
   justify-content: flex-start;
-  margin-top: auto;
-  /* hides what scrolls under it, down to the screen edge */
-  box-shadow: 0 1rem 0 var(--color-bg);
   font-size: inherit;
 }
 
@@ -92,8 +97,12 @@
 
 /* Mobile, folded: only the icons are left, the gauges give way to them. */
 @media (width < 640px) {
-  .panel:not([data-open]) {
+  .panel:not([data-open]),
+  .panel:not([data-open]) .content {
     gap: 0.5rem;
+  }
+
+  .panel:not([data-open]) {
     padding: 0.5rem;
   }
 
