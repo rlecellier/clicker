@@ -1,6 +1,6 @@
-/* Compact: it lives in the sidebar. */
+/* Compact: it lives in the sidebar and takes its width. */
 .root {
-  width: 100px;
+  width: 100%;
 }
 
 .header {
