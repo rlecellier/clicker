@@ -25,6 +25,7 @@ test('look for a job, work a morning, eat out and come back home', async ({
   await expect(
     page.getByRole('dialog', { name: 'Look for a job' }),
   ).toBeVisible();
+  await expect(page.getByRole('dialog')).toContainText('On your phone');
   await demoShot(page, 'look-for-a-job');
   await page.getByRole('button', { name: 'Close' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);

@@ -11,9 +11,14 @@ export type Shift = {
   end: number;
 };
 
+// What the player uses to look for a job: for now only their phone.
+export type JobSource = 'phone';
+
 export type Job = {
   id: JobId;
   title: string;
+  // what the player searches with
+  source: JobSource;
   // gold coins earned for each hour worked
   hourlyCoins: number;
   // the hours the player must work

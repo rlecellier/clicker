@@ -15,7 +15,11 @@ export const useGetJob = () => {
     // one thing at a time
     isBusy: activity !== undefined,
     isOpen,
-    jobs: JOB_IDS.map((id) => ({ id, title: JOBS[id].title })),
+    jobs: JOB_IDS.map((id) => ({
+      id,
+      title: JOBS[id].title,
+      source: JOBS[id].source,
+    })),
     open: () => {
       setIsOpen(true);
     },
