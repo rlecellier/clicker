@@ -9,7 +9,7 @@ test('a new game starts at home, at the date and time of the player, with nothin
 
   // Wednesday 14:45 is played from 14:30: time moves by half hours.
   const clock = page.getByRole('timer', { name: 'Game time' });
-  await expect(clock).toContainText('Wed 7 Oct 2026');
+  await expect(clock).toContainText('Wed 3 Oct 2026');
   await expect(clock).toContainText('14:30');
   await expect(page.locator('[data-location]')).toHaveAttribute(
     'data-location',
@@ -75,15 +75,15 @@ test('the days strip scrolls with the game time on every page', async ({
 }) => {
   await startGame(page);
   const strip = page.getByRole('img', { name: /Oct 2026, / });
-  await expect(strip).toHaveAccessibleName('Mon 5 Oct 2026, 07:00');
+  await expect(strip).toHaveAccessibleName('Mon 1 Oct 2026, 07:00');
 
   await perform(page, /Sleep 8h/, 8);
-  await expect(strip).toHaveAccessibleName('Mon 5 Oct 2026, 15:00');
+  await expect(strip).toHaveAccessibleName('Mon 1 Oct 2026, 15:00');
 
   for (const name of ['Calendar', 'Balance', 'Profile', 'Game']) {
     await openPage(page, name);
     await expect(strip).toBeVisible();
-    await expect(strip).toHaveAccessibleName('Mon 5 Oct 2026, 15:00');
+    await expect(strip).toHaveAccessibleName('Mon 1 Oct 2026, 15:00');
   }
   await demoShot(page, 'days-strip');
 });

@@ -1,7 +1,8 @@
 import { expect, test } from 'vitest';
 
+import { HOURS_PER_YEAR } from '@game/time';
+
 import { birthDateOf, lifeTimeAt } from './age';
-import { HOURS_PER_YEAR } from './constants';
 import { formatBirthDate, formatLifeTime } from './format';
 
 test('the player was born 18 years before the day the game is launched', () => {

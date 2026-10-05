@@ -136,7 +136,7 @@ test('sleeping lasts 2, 4, 6 or 8 hours, and sleeps in a row are one entry of th
   await expect(clock).toContainText('19:00');
   await perform(page, /Sleep 8h/, 8);
   // Past midnight: Tuesday 03:00.
-  await expect(clock).toContainText('Tue 6 Oct 2026');
+  await expect(clock).toContainText('Tue 2 Oct 2026');
   await expect(clock).toContainText('03:00');
 
   // 20 hours of sleep in a row: the calendar cuts them at midnight, Tuesday up

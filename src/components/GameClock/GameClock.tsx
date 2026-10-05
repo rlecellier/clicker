@@ -1,7 +1,7 @@
 import styles from './GameClock.module.css';
 
 type GameClockProps = {
-  // "Mon 5 Oct 2026"
+  // "Mon 1 Oct 2026"
   date: string;
   // "14:30"
   time: string;

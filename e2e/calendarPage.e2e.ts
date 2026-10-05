@@ -14,7 +14,7 @@ test('on mobile, the calendar page shows one day and swipes to the next', async 
   await openPage(page, 'Calendar');
   await expect(page.getByRole('list')).toHaveCount(1);
   const title = page.getByRole('heading', { level: 2 });
-  await expect(title).toHaveText('Mon 5 Oct 2026');
+  await expect(title).toHaveText('Mon 1 Oct 2026');
   // On the current day: there is nothing to come back to.
   await expect(page.getByRole('button', { name: 'Today' })).toBeDisabled();
 
@@ -26,10 +26,10 @@ test('on mobile, the calendar page shows one day and swipes to the next', async 
   await grid.dispatchEvent('touchend', {
     changedTouches: [{ identifier: 0, clientX: 100, clientY: 300 }],
   });
-  await expect(title).toHaveText('Tue 6 Oct 2026');
+  await expect(title).toHaveText('Tue 2 Oct 2026');
 
   await page.getByRole('button', { name: 'Today' }).click();
-  await expect(title).toHaveText('Mon 5 Oct 2026');
+  await expect(title).toHaveText('Mon 1 Oct 2026');
   await context.close();
 });
 
@@ -47,16 +47,16 @@ test('on desktop, the calendar page shows the week and can show a day', async ({
     page.getByRole('button', { name: 'Previous week' }),
   ).toBeDisabled();
   await page.getByRole('button', { name: 'Next week' }).click();
-  await expect(title).toHaveText('12 – 18 Oct 2026');
+  await expect(title).toHaveText('1 – 7 Nov 2026');
   await page.getByRole('button', { name: 'Previous week' }).click();
-  await expect(title).toHaveText('5 – 11 Oct 2026');
+  await expect(title).toHaveText('1 – 7 Oct 2026');
 
   await page.getByRole('button', { name: 'Day', exact: true }).click();
   await expect(page.getByRole('list')).toHaveCount(1);
   await page.getByRole('button', { name: 'Next day' }).click();
-  await expect(title).toHaveText('Tue 6 Oct 2026');
+  await expect(title).toHaveText('Tue 2 Oct 2026');
   await page.getByRole('button', { name: 'Today' }).click();
-  await expect(title).toHaveText('Mon 5 Oct 2026');
+  await expect(title).toHaveText('Mon 1 Oct 2026');
 
   await page.getByRole('button', { name: 'Week', exact: true }).click();
   await expect(page.getByRole('list')).toHaveCount(7);
@@ -128,7 +128,7 @@ test('on mobile, a pinch zooms in without changing the day', async ({
     .poll(async () => (await lunch.boundingBox())!.height)
     .toBeGreaterThan(before.height * 2);
   await expect(page.getByRole('heading', { level: 2 })).toHaveText(
-    'Mon 5 Oct 2026',
+    'Mon 1 Oct 2026',
   );
   await context.close();
 });

@@ -24,17 +24,9 @@ test('labels a week within one month', () => {
   expect(rangeLabel(ORIGIN, visibleDays(0, 'week'))).toBe('1 – 7 Feb 2027');
 });
 
-test('names both months when the week spans two of them', () => {
-  // 22 February to 28 February, then 1 March to 7 March
-  expect(rangeLabel(ORIGIN, visibleDays(24, 'week'))).toBe('22 – 28 Feb 2027');
-  expect(rangeLabel(ORIGIN, [24, 25, 26, 27, 28, 29, 30])).toBe(
-    '25 Feb – 3 Mar 2027',
-  );
-});
-
-test('names both years when the week spans two of them', () => {
-  // 1 January 2028 is day 334; the week of Monday 27 December 2027 is 329-335
-  expect(rangeLabel(ORIGIN, [329, 330, 331, 332, 333, 334, 335])).toBe(
-    '27 Dec 2027 – 2 Jan 2028',
-  );
+test('a week is a month: it always stays within one month and one year', () => {
+  // week 1 of February 2027 is March, week 10 is December, week 11 is January
+  expect(rangeLabel(ORIGIN, visibleDays(7, 'week'))).toBe('1 – 7 Mar 2027');
+  expect(rangeLabel(ORIGIN, visibleDays(77, 'week'))).toBe('1 – 7 Jan 2028');
+  expect(rangeLabel(ORIGIN, [76])).toBe('Sun 7 Dec 2027');
 });
