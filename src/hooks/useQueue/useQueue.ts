@@ -6,10 +6,14 @@ export const useQueue = () => {
   const { queue, unqueue } = useGameContext();
 
   return {
-    items: queue.map(({ id, label, place }) => ({
+    items: queue.map(({ id, label, category, place }) => ({
       key: id,
       label,
-      place: place === 'anywhere' ? 'anywhere' : PLACES[place].label,
+      where: {
+        place: `at ${place ? PLACES[place].label : ''}`,
+        self: 'anywhere',
+        online: 'on your phone',
+      }[category],
     })),
     remove: unqueue,
   };
