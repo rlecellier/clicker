@@ -11,6 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
   height: var(--header-height);
   padding: 0 0.5rem;
   border-bottom: 1px solid var(--color-surface);
@@ -24,9 +25,23 @@
   gap: 0.5rem;
 }
 
+/* With large text, the title gives way to the figures on its right. */
+.brand {
+  min-width: 0;
+}
+
+.status {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .title {
+  min-width: 0;
   margin: 0;
+  overflow: hidden;
   font-size: 1.1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .titleLink {

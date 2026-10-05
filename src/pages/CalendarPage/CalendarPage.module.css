@@ -20,17 +20,12 @@
   font-size: 0.9rem;
 }
 
+/* A steady width keeps the arrows in place from one day to the next, unless
+   the screen is too narrow for it. */
 .title {
-  min-width: 9rem;
+  min-width: min(9rem, 100vw - 13rem);
   margin: 0;
   font-size: 1rem;
-}
-
-/* On the narrowest phones, the title gives way so the toolbar still fits. */
-@media (width < 320px) {
-  .title {
-    min-width: 6rem;
-  }
 }
 
 .views {

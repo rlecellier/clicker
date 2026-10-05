@@ -1,4 +1,5 @@
 .root {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -7,9 +8,11 @@
   list-style: none;
 }
 
-/* The choices of a group share the line with its name. */
+/* The choices of a group share the line with its name, and go under it when
+   they do not fit (narrow phone, large text). */
 .row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
@@ -18,23 +21,33 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  min-width: 5.5rem;
+  min-width: 5rem;
   text-align: left;
 }
 
+/* With large text, the detail goes under the label. */
 .action {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  flex: 1;
-  min-width: 0;
+  /* Equal shares of the line, but never narrower than the text: the row
+     wraps instead. */
+  flex: 1 1 0;
+  min-width: fit-content;
   text-align: left;
 }
 
+/* As wide as its text: when the detail does not fit beside it, the detail
+   goes under it rather than the label breaking. */
 .label {
-  flex: 1;
+  flex: 1 1 auto;
   text-align: left;
+}
+
+.name ~ .action {
+  padding-inline: 0.4rem;
 }
 
 .name ~ .action .label {
@@ -46,17 +59,11 @@
   font-size: 0.8rem;
 }
 
-/* On a very narrow phone, the choices of a group go under its name. */
-@media (width < 360px) {
-  .row {
-    flex-wrap: wrap;
-  }
-
+/* When a group no longer fits on one line (narrow phone, large text: the
+   threshold is in em, so it follows the text size), its name goes above and
+   its choices share the line below. */
+@container (width < 16.5em) {
   .name {
     flex-basis: 100%;
-  }
-
-  .action {
-    flex-basis: 6rem;
   }
 }
