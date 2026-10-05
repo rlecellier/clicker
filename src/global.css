@@ -2,8 +2,12 @@
   --header-height: 3.5rem;
   /* the days strip, right under the header */
   --strip-height: 3.5rem;
-  /* what the header and the strip take at the top of the page */
-  --top-height: calc(var(--header-height) + var(--strip-height));
+  /* the game clock between the header and the strip, on mobile only */
+  --clock-height: 2.25rem;
+  /* what the header, the clock and the strip take at the top of the page */
+  --top-height: calc(
+    var(--header-height) + var(--clock-height) + var(--strip-height)
+  );
   /* Width of the folded sidebar on mobile: icons only. */
   --rail-width: 3.5rem;
   --color-bg: #1b1d23;
@@ -50,6 +54,10 @@ body {
 /* The sidebar sits beside the page from tablet up, which gets wider on a
    large screen. */
 @media (min-width: 640px) {
+  :root {
+    --clock-height: 0rem;
+  }
+
   #root {
     max-width: min(960px, 100%);
   }
