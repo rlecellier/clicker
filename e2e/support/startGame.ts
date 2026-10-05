@@ -12,9 +12,11 @@ export const openSite = async (page: Page, now = MONDAY_MORNING) => {
   await page.goto('/');
 };
 
-// Goes through the start screens: New Game, then Start the game.
+// Goes through the start screens: New Game, who the player is, then Start the
+// game.
 export const startNewGame = async (page: Page) => {
   await page.getByRole('button', { name: 'New Game' }).click();
+  await page.getByRole('button', { name: 'A boy' }).click();
   await page.getByRole('button', { name: 'Start the game' }).click();
 };
 
