@@ -12,8 +12,5 @@ export const WORK_BURN = 3.4;
 // Share of the excess over 80% turned into fat each game hour; the bigger
 // the excess, the more calories are converted per hour.
 export const FAT_CONVERSION_RATE = 1.5;
-export const SNACK_CALORIES = 10;
-export const CAKE_CALORIES = 20;
-export const CAKE_DURATION_HOURS = 0.5;
-// Game hours simulated in one step, so that a long frame is not skipped.
+// Game hours simulated in one step, so that a long action is not skipped.
 export const STEP_HOURS = 0.05;

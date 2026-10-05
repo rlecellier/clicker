@@ -1,27 +1,21 @@
-import { useCallback, useMemo, useReducer } from 'react';
+import { useMemo, useReducer } from 'react';
 
 import { ageAt, birthDateOf } from '@game/age';
 import { getBody } from '@game/body';
 import {
-  askingOf,
-  canSlowDown,
-  canSpeedUp,
+  availableActionsOf,
+  currentBookOf,
+  currentShiftOf,
   gameReducer,
   INITIAL_GAME_STATE,
-  isEarning,
-  isEnjoyingCakeNow,
-  isReadingNow,
-  isSleepingNow,
-  locationOf,
-  pendingPayOf,
-  speedOf,
+  nextShiftOf,
+  playedHoursOf,
   weekHourOf,
   weekOf,
 } from '@game/gameState';
-import { JOBS } from '@game/jobs';
+import { gameStartOf } from '@game/time';
 import { getBook, isLibraryRead } from '@game/reading';
 import { useAutoSave } from '@hook/useAutoSave';
-import { useFrameLoop } from '@hook/useFrameLoop';
 
 import { GameContext } from './GameContext';
 import type { GameContextValue, GameProviderProps } from './types';
@@ -32,68 +26,49 @@ export const GameProvider = ({
   persist = false,
 }: GameProviderProps) => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
-  useAutoSave(state, persist);
 
-  useFrameLoop(
-    useCallback((seconds: number) => {
-      dispatch({ type: 'elapse', seconds, roll: Math.random() });
-    }, []),
-  );
+  useAutoSave(state, persist);
 
   const value = useMemo<GameContextValue>(
     () => ({
-      balanceCents: state.balanceCents,
-      expenses: state.expenses,
+      coins: state.coins,
       elapsedHours: state.elapsedHours,
+      origin: state.origin,
       birthDate: state.birthDate,
-      age: ageAt(state.elapsedHours),
+      playedHours: playedHoursOf(state),
+      age: ageAt(playedHoursOf(state)),
       week: weekOf(state),
       weekHour: weekHourOf(state),
-      speed: speedOf(state),
-      canSpeedUp: canSpeedUp(state),
-      canSlowDown: canSlowDown(state),
-      pendingPayCents: pendingPayOf(state),
-      isEarning: isEarning(state),
-      location: locationOf(state),
+      location: state.location,
       calories: state.calories,
       body: getBody(state.fat),
       brain: state.brain,
       dreamGauge: state.dreamGauge,
       dreams: state.dreams,
-      isSleeping: isSleepingNow(state),
-      isEnjoyingCake: isEnjoyingCakeNow(state),
       bookHours: state.bookHours,
-      currentBook: getBook(state.bookId),
+      currentBook: currentBookOf(state),
       readBooks: state.readBookIds.flatMap((id) => getBook(id) ?? []),
       isLibraryRead: isLibraryRead(state),
-      isReadingNow: isReadingNow(state),
-      schedule: { plan: state.plan, declined: state.declined },
+      history: state.history,
       job: state.job,
-      obligations: state.job ? JOBS[state.job.id].obligations : [],
-      asking: askingOf(state),
-      faster: () => {
-        dispatch({ type: 'speedUp' });
+      currentShift: currentShiftOf(state),
+      nextShift: nextShiftOf(state),
+      actions: availableActionsOf(state),
+      perform: (actionId) => {
+        dispatch({ type: 'perform', actionId, roll: Math.random() });
       },
-      slower: () => {
-        dispatch({ type: 'slowDown' });
-      },
-      snack: () => {
-        dispatch({ type: 'eatSnack' });
-      },
-      cake: () => {
-        dispatch({ type: 'enjoyCake' });
+      goTo: (place) => {
+        dispatch({ type: 'goTo', place });
       },
       takeJob: (jobId) => {
         dispatch({ type: 'takeJob', jobId });
       },
-      planEvent: (event) => {
-        dispatch({ type: 'planEvent', event });
-      },
-      answerAsk: (isAccepted) => {
-        dispatch({ type: 'answerAsk', isAccepted });
-      },
       restart: () => {
-        dispatch({ type: 'restart', birthDate: birthDateOf(new Date()) });
+        const now = new Date();
+        dispatch({
+          type: 'restart',
+          game: { ...gameStartOf(now), birthDate: birthDateOf(now) },
+        });
       },
     }),
     [state],

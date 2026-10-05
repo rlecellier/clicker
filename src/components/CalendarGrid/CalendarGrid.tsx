@@ -1,22 +1,25 @@
 import type { CSSProperties } from 'react';
 
+import { doneOnDay, type DoneEntry } from '@game/history';
+import { shiftsOnDay, type Employment } from '@game/jobs';
 import {
-  eventsOnDay,
-  occursOn,
-  type CalendarEvent,
-  type Schedule,
-} from '@game/calendar';
-import { dayOfMonth, HOURS_PER_DAY, weekdayLabel } from '@game/time';
+  dayOfMonth,
+  formatClock,
+  HOURS_PER_DAY,
+  weekdayLabel,
+} from '@game/time';
 
 import styles from './CalendarGrid.module.css';
 
 type CalendarGridProps = {
+  // UTC midnight, in ms, of day 0 of the game
+  origin: number;
   // days of the game to show side by side, as days since the start of the game
   days: number[];
-  // what the player plans to do, in the main lane of each day
-  schedule: Schedule;
-  // what the player must do, in a thin lane beside it
-  obligations: CalendarEvent[];
+  // what the player did, in the main lane of each day
+  history: DoneEntry[];
+  // the job whose shifts the player must work, in a thin lane beside it
+  job?: Employment;
   // the day the game is on, which gets the cursor
   currentDay: number;
   // ratio of the current day already gone, between 0 and 1
@@ -33,14 +36,16 @@ const HOUR_LABELS = Array.from(
 
 const percentOfDay = (hour: number) => `${(hour / HOURS_PER_DAY) * 100}%`;
 
-const formatHour = (hour: number) => `${String(hour).padStart(2, '0')}:00`;
+const range = (start: number, end: number) =>
+  `${formatClock(start)}–${formatClock(end)}`;
 
-// Days side by side, one column each, with the events of the day at their
-// hours.
+// Days side by side, one column each, with what the player must do (thin
+// lane) and what they did (main lane) at their hours.
 export const CalendarGrid = ({
+  origin,
   days,
-  schedule,
-  obligations,
+  history,
+  job,
   currentDay,
   dayRatio,
   zoom = 1,
@@ -62,11 +67,10 @@ export const CalendarGrid = ({
           className={styles.heading}
           data-current={day === currentDay || undefined}
         >
-          <span className={styles.number}>{dayOfMonth(day)}</span>
-          <span>{weekdayLabel(day)}</span>
+          <span className={styles.number}>{dayOfMonth(origin, day)}</span>
+          <span>{weekdayLabel(origin, day)}</span>
         </div>
       ))}
-
       <div className={styles.hours} aria-hidden>
         {HOUR_LABELS.map((hour) => (
           <span
@@ -74,7 +78,7 @@ export const CalendarGrid = ({
             className={styles.hour}
             style={{ top: percentOfDay(hour) }}
           >
-            {formatHour(hour)}
+            {String(hour).padStart(2, '0')}:00
           </span>
         ))}
       </div>
@@ -85,36 +89,33 @@ export const CalendarGrid = ({
             key={day}
             className={styles.day}
             data-current={isCurrent || undefined}
-            aria-label={`${weekdayLabel(day)} ${dayOfMonth(day)}`}
+            aria-label={`${weekdayLabel(origin, day)} ${dayOfMonth(origin, day)}`}
           >
-            {obligations
-              .filter((event) => occursOn(event, day))
-              .map((event) => (
-                <li
-                  key={`must-${event.id}`}
-                  className={styles.obligation}
-                  style={{
-                    top: percentOfDay(event.start),
-                    height: percentOfDay(event.end - event.start),
-                  }}
-                  title={`Must: ${event.title} ${formatHour(event.start)}–${formatHour(event.end)}`}
-                >
-                  <span className={styles.hidden}>Must: {event.title}</span>
-                </li>
-              ))}
-            {eventsOnDay(schedule, day).map((event) => (
+            {shiftsOnDay(job, day).map((shift) => (
               <li
-                key={event.id}
-                className={styles.event}
-                data-kind={event.kind}
-                data-mode={event.mode}
+                key={`must-${shift.id}`}
+                className={styles.obligation}
                 style={{
-                  top: percentOfDay(event.start),
-                  height: percentOfDay(event.end - event.start),
+                  top: percentOfDay(shift.start),
+                  height: percentOfDay(shift.end - shift.start),
                 }}
-                title={`${event.title} ${formatHour(event.start)}–${formatHour(event.end)}`}
+                title={`Must: ${shift.title} ${range(shift.start, shift.end)}`}
               >
-                {event.title}
+                <span className={styles.hidden}>Must: {shift.title}</span>
+              </li>
+            ))}
+            {doneOnDay(history, day).map((entry) => (
+              <li
+                key={entry.id}
+                className={styles.event}
+                data-kind={entry.kind}
+                style={{
+                  top: percentOfDay(entry.start),
+                  height: percentOfDay(entry.end - entry.start),
+                }}
+                title={`${entry.title} ${range(entry.start, entry.end)}`}
+              >
+                {entry.title}
               </li>
             ))}
             {isCurrent && (

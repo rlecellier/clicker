@@ -1,1 +1,0 @@
-export { PendingPay } from './PendingPay';

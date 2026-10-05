@@ -1,2 +1,2 @@
-export { activityAt, isLocation, locationAt, LOCATIONS } from './location';
-export type { Activity, Location } from './types';
+export { isLocation, LOCATIONS } from './location';
+export type { Location } from './types';

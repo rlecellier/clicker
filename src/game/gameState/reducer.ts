@@ -1,95 +1,56 @@
-import {
-  eventAt,
-  fitsInPlan,
-  nextAskStart,
-  type CalendarEvent,
-  occurrenceKey,
-} from '@game/calendar';
-import { payBetween } from '@game/earnings';
-import {
-  addExpenses,
-  expensesBetween,
-  totalExpensesCents,
-} from '@game/expenses';
-import { hireAt, JOBS, type JobId } from '@game/jobs';
-import {
-  eatSnack,
-  isEnjoyingCake,
-  startCake,
-  stepNutrition,
-} from '@game/nutrition';
-import { readingHoursBetween, startBook, stepReading } from '@game/reading';
+import { ACTIONS, JOB_SEARCH, type ActionId } from '@game/actions';
+import { recordDone, type EventKind } from '@game/history';
+import { hireAt, JOBS, shiftAt, type JobId } from '@game/jobs';
+import type { Location } from '@game/location';
+import { stepNutrition } from '@game/nutrition';
+import { readBook } from '@game/reading';
 import { stepSleep } from '@game/sleep';
-import { HOURS_PER_DAY, HOURS_PER_SECOND, SPEEDS } from '@game/time';
-import { newGameState, type GameState } from './types';
+
+import { blockerOf } from './selectors';
+import { newGameState, type GameState, type NewGame } from './types';
 
 export type GameAction =
-  // real seconds went by: the game runs at its current speed. `roll` in
-  // [0, 1) draws the next book when a reading event starts without one
-  | { type: 'elapse'; seconds: number; roll: number }
-  | { type: 'eatSnack' }
-  | { type: 'enjoyCake' }
-  | { type: 'speedUp' }
-  | { type: 'slowDown' }
-  // the player takes a job: its hours become their duty and their plan
+  // the player does an action of the place they are at. `roll` in [0, 1)
+  // draws the book when a reading starts without one
+  | { type: 'perform'; actionId: ActionId; roll: number }
+  // the player goes to a place: work, if they have a job, or back home
+  | { type: 'goTo'; place: Location }
+  // the player looks for a job and takes the one they pick
   | { type: 'takeJob'; jobId: JobId }
-  // the player adds an event to their plan, if it fits
-  | { type: 'planEvent'; event: Omit<CalendarEvent, 'id'> }
-  // the player answers the `ask` event the game is waiting on
-  | { type: 'answerAsk'; isAccepted: boolean }
   // a brand new game, whatever the current one
-  | { type: 'restart'; birthDate: string };
+  | { type: 'restart'; game: NewGame };
 
-// The day of an occurrence key (see `occurrenceKey`).
-const dayOfKey = (key: string) => Number(key.split('@', 2)[1]);
-
-// Runs the game hours between `from` and `to`, with no pause in between.
-const run = (
-  previous: GameState,
-  from: number,
-  to: number,
-  roll: number,
-): GameState => {
-  const state = { ...previous, ...startBook(previous, from, to, roll) };
-  const paid = expensesBetween(state, from, to);
-  const today = Math.floor(to / HOURS_PER_DAY);
-  return {
-    ...state,
-    ...stepNutrition(state, from, to),
-    ...stepSleep(state, from, to, readingHoursBetween(state, from, to)),
-    ...stepReading(state, from, to),
-    elapsedHours: to,
-    // the balance can go below zero: the bills are paid anyway
-    balanceCents:
-      state.balanceCents +
-      payBetween(state.job, from, to) -
-      totalExpensesCents(paid),
-    expenses: addExpenses(state.expenses, paid),
-    // the days gone by need no memory of what was declined
-    declined: state.declined.filter((key) => dayOfKey(key) >= today),
-  };
+type Step = {
+  kind: EventKind;
+  title: string;
+  hours: number;
+  calories?: number;
+  // hours that go to the book
+  readingHours?: number;
+  coins?: number;
 };
 
-// Runs `hours` game hours, however many there are: a hidden tab comes back
-// with all the time that went by and the game catches up. It stops at the
-// first `ask` event, until the player answers, and does not run while waiting.
-const advance = (state: GameState, hours: number, roll: number): GameState => {
-  if (state.asking) return state;
+// Lets the hours of a step go by, and writes them in the history. At the end
+// of a shift, the player goes home.
+const run = (state: GameState, step: Step): GameState => {
   const from = state.elapsedHours;
-  const to = from + hours;
-  const ask = nextAskStart(state, from, to);
-  if (!ask) return run(state, from, to, roll);
-  return {
-    ...run(state, from, ask.time, roll),
-    asking: { eventId: ask.event.id, day: ask.day },
+  const to = from + step.hours;
+  const next: GameState = {
+    ...state,
+    ...stepNutrition(state, step),
+    ...stepSleep(state, step, step.readingHours),
+    elapsedHours: to,
+    coins: state.coins + (step.coins ?? 0),
+    history: recordDone(state.history, {
+      kind: step.kind,
+      title: step.title,
+      start: from,
+      end: to,
+    }),
   };
-};
-
-// An id that no event of the plan has yet.
-const freeId = (plan: CalendarEvent[], kind: string) => {
-  let count = plan.length;
-  while (plan.some((event) => event.id === `${kind}-${count}`)) count += 1;
-  return `${kind}-${count}`;
+  return state.location === 'work' && !shiftAt(state.job, to)
+    ? { ...next, location: 'home' }
+    : next;
 };
 
 export const gameReducer = (
@@ -97,77 +58,33 @@ export const gameReducer = (
   action: GameAction,
 ): GameState => {
   switch (action.type) {
-    case 'elapse': {
-      const speed = SPEEDS[state.speedIndex] ?? 1;
-      return advance(
-        state,
-        action.seconds * HOURS_PER_SECOND * speed,
-        action.roll,
-      );
+    case 'perform': {
+      const done = ACTIONS[action.actionId];
+      if (blockerOf(state, done)) return state;
+      if (done.kind === 'read') {
+        const { reading, hours } = readBook(state, done.hours, action.roll);
+        return run({ ...state, ...reading }, { ...done, readingHours: hours });
+      }
+      const hourlyCoins = state.job ? JOBS[state.job.id].hourlyCoins : 0;
+      return run(state, {
+        ...done,
+        coins: done.kind === 'work' ? hourlyCoins * done.hours : 0,
+      });
     }
-    case 'eatSnack': {
-      return { ...state, ...eatSnack(state) };
-    }
-    case 'enjoyCake': {
-      return isEnjoyingCake(state, state.elapsedHours)
+    case 'goTo': {
+      if (action.place === state.location) return state;
+      // only the job takes the player to work
+      return action.place === 'work' && !state.job
         ? state
-        : { ...state, ...startCake(state, state.elapsedHours) };
-    }
-    case 'speedUp': {
-      return {
-        ...state,
-        speedIndex: Math.min(state.speedIndex + 1, SPEEDS.length - 1),
-      };
-    }
-    case 'slowDown': {
-      return { ...state, speedIndex: Math.max(state.speedIndex - 1, 0) };
+        : { ...state, location: action.place };
     }
     case 'takeJob': {
-      if (state.job) return state;
-      const planned = JOBS[action.jobId].plan.filter((event) =>
-        fitsInPlan(state.plan, event),
-      );
-      return {
-        ...state,
-        job: hireAt(action.jobId, state.elapsedHours),
-        plan: [...state.plan, ...planned],
-      };
-    }
-    case 'planEvent': {
-      const event = {
-        ...action.event,
-        id: freeId(state.plan, action.event.kind),
-      };
-      if (!fitsInPlan(state.plan, event)) return state;
-      const planned = { ...state, plan: [...state.plan, event] };
-      // An ask event planned while it should already run asks at once: its
-      // start is gone and would never be crossed.
-      const isRunning = eventAt(planned, state.elapsedHours)?.id === event.id;
-      return isRunning && event.mode === 'ask'
-        ? {
-            ...planned,
-            asking: {
-              eventId: event.id,
-              day: Math.floor(state.elapsedHours / HOURS_PER_DAY),
-            },
-          }
-        : planned;
-    }
-    case 'answerAsk': {
-      const { asking } = state;
-      if (!asking) return state;
-      const event = state.plan.find(({ id }) => id === asking.eventId);
-      return {
-        ...state,
-        asking: undefined,
-        declined:
-          !event || action.isAccepted
-            ? state.declined
-            : [...state.declined, occurrenceKey(event, asking.day)],
-      };
+      if (state.job || state.location !== 'home') return state;
+      const searched = run(state, JOB_SEARCH);
+      return { ...searched, job: hireAt(action.jobId, searched.elapsedHours) };
     }
     case 'restart': {
-      return newGameState(action.birthDate);
+      return newGameState(action.game);
     }
   }
 };

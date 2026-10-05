@@ -1,18 +1,14 @@
 export { gameReducer } from './reducer';
 export type { GameAction } from './reducer';
 export {
-  askingOf,
-  canSlowDown,
-  canSpeedUp,
-  isEarning,
-  isEnjoyingCakeNow,
-  isReadingNow,
-  isSleepingNow,
-  locationOf,
-  pendingPayOf,
-  speedOf,
+  availableActionsOf,
+  blockerOf,
+  currentBookOf,
+  currentShiftOf,
+  nextShiftOf,
+  playedHoursOf,
   weekHourOf,
   weekOf,
 } from './selectors';
 export { INITIAL_GAME_STATE, newGameState } from './types';
-export type { GameState } from './types';
+export type { GameState, NewGame } from './types';

@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 
 import { INITIAL_GAME_STATE } from '@game/gameState';
-import { READING_SCHEDULE, WORKING_STATE } from '@test/schedules';
+import { hireAt } from '@game/jobs';
 
 import {
   parseSave,
@@ -28,20 +28,18 @@ const memoryStorage = (): SaveStorage & { items: Map<string, string> } => {
 const state = {
   ...INITIAL_GAME_STATE,
   elapsedHours: 123.5,
-  balanceCents: 25_000,
+  coins: 250,
   calories: 61.2,
   fat: 4.5,
   brain: 33.3,
   dreamGauge: 42.5,
   dreams: 3,
-  cakeUntil: 120,
   bookId: 'hobbit',
   bookHours: 12.5,
   readBookIds: ['animal-farm', 'dune'],
-  ...WORKING_STATE,
-  plan: READING_SCHEDULE.plan,
-  declined: ['read-evening@3'],
-  asking: { eventId: 'read-evening', day: 4 },
+  job: hireAt('clothes-seller', 30),
+  location: 'work' as const,
+  history: [{ kind: 'work' as const, title: 'Work', start: 122, end: 123.5 }],
 };
 
 const broken = (patch: Record<string, unknown>) =>
@@ -72,22 +70,20 @@ test('refuses a save of another version', () => {
   expect(parseSave(other)).toBeUndefined();
 });
 
-test('keeps a balance below zero: the bills are paid anyway', () => {
-  expect(broken({ balanceCents: -1500 })).toMatchObject({
-    balanceCents: -1500,
-  });
-});
-
 test('refuses a save with a missing or invalid field', () => {
   expect(broken({ birthDate: undefined })).toBeUndefined();
   expect(broken({ birthDate: '4 October 2008' })).toBeUndefined();
-  expect(broken({ balanceCents: 12.5 })).toBeUndefined();
-  expect(broken({ expenses: undefined })).toBeUndefined();
-  expect(broken({ expenses: { ...state.expenses, rent: -1 } })).toBeUndefined();
+  expect(broken({ coins: 12.5 })).toBeUndefined();
+  expect(broken({ coins: -1 })).toBeUndefined();
+  expect(broken({ origin: undefined })).toBeUndefined();
+  expect(broken({ startHours: undefined })).toBeUndefined();
+  expect(broken({ elapsedHours: 1, startHours: 5 })).toBeUndefined();
+  expect(broken({ location: 'moon' })).toBeUndefined();
+  expect(broken({ location: undefined })).toBeUndefined();
+  expect(broken({ job: undefined })).toBeUndefined();
   expect(broken({ elapsedHours: '10' })).toBeUndefined();
   expect(broken({ elapsedHours: [] })).toBeUndefined();
   expect(broken({ calories: 101 })).toBeUndefined();
-  expect(broken({ speedIndex: 99 })).toBeUndefined();
   expect(broken({ brain: 101 })).toBeUndefined();
   expect(broken({ brain: undefined })).toBeUndefined();
   expect(broken({ dreamGauge: 100 })).toBeUndefined();
@@ -103,12 +99,14 @@ test('refuses a save with a missing or invalid field', () => {
   expect(broken({ readBookIds: ['dune', 'dune'] })).toBeUndefined();
   expect(broken({ readBookIds: ['hobbit'] })).toBeUndefined();
   expect(broken({ readBookIds: undefined })).toBeUndefined();
-  expect(broken({ plan: undefined })).toBeUndefined();
-  expect(broken({ plan: [{ id: 'x' }] })).toBeUndefined();
-  expect(broken({ declined: [1] })).toBeUndefined();
+  expect(broken({ history: undefined })).toBeUndefined();
+  expect(
+    broken({ history: [{ kind: 'dance', title: 'x', start: 1, end: 2 }] }),
+  ).toBeUndefined();
+  expect(
+    broken({ history: [{ kind: 'work', title: 'x', start: 2, end: 1 }] }),
+  ).toBeUndefined();
   expect(broken({ job: { id: 'astronaut', since: 0 } })).toBeUndefined();
-  expect(broken({ asking: { eventId: 3, day: 1 } })).toBeUndefined();
-  expect(broken({ asking: { eventId: 'gone', day: 1 } })).toBeUndefined();
 });
 
 test('writes then reads the save in the storage', () => {

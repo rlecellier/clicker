@@ -1,19 +1,19 @@
 export {
   DAYS_PER_WEEK,
-  DEFAULT_SPEED,
-  DEFAULT_SPEED_INDEX,
-  GAME_START,
   HOURS_PER_DAY,
-  HOURS_PER_SECOND,
   HOURS_PER_WEEK,
   MS_PER_DAY,
-  SPEEDS,
+  STEP_HOURS,
 } from './constants';
 export {
   dateOfDay,
   dayOfMonth,
-  daysInMonthOfWeek,
+  gameStartOf,
+  monthLabel,
   weekdayIndex,
   weekdayLabel,
+  yearOf,
 } from './dates';
+export type { GameStart } from './dates';
 export { formatClock, formatDuration, parseClock } from './clock';
+export { momentOf } from './moment';

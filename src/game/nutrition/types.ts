@@ -3,8 +3,6 @@ export type Nutrition = {
   calories: number;
   // calories that went over 80 and were turned into fat
   fat: number;
-  // game hour at which the cake being enjoyed ends, 0 when there is none
-  cakeUntil: number;
 };
 
 // where the calories gauge stands compared to the 20%–80% range to keep

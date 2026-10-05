@@ -1,29 +1,29 @@
+import type { ActionId } from '@game/actions';
+import type { Action } from '@game/actions';
 import type { Body } from '@game/body';
-import type { CalendarEvent, Schedule } from '@game/calendar';
-import type { Expenses } from '@game/expenses';
 import type { GameState } from '@game/gameState';
-import type { Employment, JobId } from '@game/jobs';
+import type { DoneEntry } from '@game/history';
+import type { Employment, JobId, Shift, ShiftOccurrence } from '@game/jobs';
 import type { Location } from '@game/location';
 import type { CatalogBook } from '@game/reading';
 
 export type GameContextValue = {
-  // money in integer cents
-  balanceCents: number;
-  // total paid so far, per kind of expense
-  expenses: Expenses;
-  // game hours since Monday 00:00 of the first week
+  // gold coins
+  coins: number;
+  // game hours since Monday 00:00 of the first week; it only moves when the
+  // player acts
   elapsedHours: number;
+  // UTC midnight, in ms, of the Monday of the first week: day 0 of the game
+  origin: number;
   // day the player was born, YYYY-MM-DD
   birthDate: string;
+  // game hours the player has lived since the game started
+  playedHours: number;
   // age of the player in whole years
   age: number;
   week: number;
   weekHour: number;
-  speed: number;
-  canSpeedUp: boolean;
-  canSlowDown: boolean;
-  pendingPayCents: number;
-  isEarning: boolean;
+  // where the player is
   location: Location;
   calories: number;
   body: Body;
@@ -33,33 +33,28 @@ export type GameContextValue = {
   dreamGauge: number;
   // dreams made so far
   dreams: number;
-  isSleeping: boolean;
-  isEnjoyingCake: boolean;
   // book on the go, none between two books
   currentBook: CatalogBook | undefined;
-  // hours of reading events spent on the current book so far
+  // hours of reading spent on the current book so far
   bookHours: number;
   // books read to the last page, in reading order
   readBooks: CatalogBook[];
   // no book left to read
   isLibraryRead: boolean;
-  // a reading event runs on a book: the book moves on
-  isReadingNow: boolean;
-  // what the player plans to do, and the occurrences they declined
-  schedule: Schedule;
+  // what the player did, actions done in a row merged
+  history: DoneEntry[];
   // the job the player holds, if any
   job?: Employment;
-  // what the job requires of the player, if they hold one
-  obligations: CalendarEvent[];
-  // the `ask` event the game waits on: the game is paused until it is answered
-  asking?: { event: CalendarEvent; day: number };
-  faster: () => void;
-  slower: () => void;
-  snack: () => void;
-  cake: () => void;
+  // the shift the player is in the middle of, if any
+  currentShift?: Shift;
+  // the next shift to start
+  nextShift?: ShiftOccurrence;
+  // the actions of the place the player is at, with what keeps them from
+  // doing one
+  actions: { action: Action; blocker?: string }[];
+  perform: (actionId: ActionId) => void;
+  goTo: (place: Location) => void;
   takeJob: (jobId: JobId) => void;
-  planEvent: (event: Omit<CalendarEvent, 'id'>) => void;
-  answerAsk: (isAccepted: boolean) => void;
   restart: () => void;
 };
 

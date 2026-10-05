@@ -7,9 +7,3 @@
   flex-direction: column;
   gap: 0.75rem;
 }
-
-/* The cash available, to see what the player can spend. */
-.cash {
-  margin-bottom: 1.5rem;
-  text-align: left;
-}

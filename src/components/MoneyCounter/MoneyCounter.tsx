@@ -1,12 +1,19 @@
-import { formatMoney } from '@game/money';
+import { Coins } from 'lucide-react';
+
+import { formatCoins } from '@game/coins';
 
 import styles from './MoneyCounter.module.css';
 
 type MoneyCounterProps = {
-  // integer cents
-  cents: number;
+  // gold coins
+  coins: number;
 };
 
-export const MoneyCounter = ({ cents }: MoneyCounterProps) => {
-  return <p className={styles.money}>{formatMoney(cents)}</p>;
+export const MoneyCounter = ({ coins }: MoneyCounterProps) => {
+  return (
+    <p className={styles.money} role="status" aria-label="Gold coins">
+      <Coins aria-hidden size={22} className={styles.icon} />
+      {formatCoins(coins)}
+    </p>
+  );
 };

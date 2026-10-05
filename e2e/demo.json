@@ -1,3 +1,9 @@
 {
-  "screenshots": ["get-a-job", "job-calendar", "add-event", "ask-event"]
+  "screenshots": [
+    "empty-calendar",
+    "look-for-a-job",
+    "working",
+    "merged-work",
+    "merged-sleep"
+  ]
 }

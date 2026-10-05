@@ -1,6 +1,6 @@
 import { Meter } from '@base-ui/react/meter';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Brain, Moon } from 'lucide-react';
+import { Brain } from 'lucide-react';
 
 import { BRAIN_CAP } from '@game/sleep';
 
@@ -19,10 +19,9 @@ const brainGauge = cva('', {
 type BrainGaugeProps = VariantProps<typeof brainGauge> & {
   // gauge between 0 and 100
   brain: number;
-  isSleeping: boolean;
 };
 
-export const BrainGauge = ({ brain, isSleeping, size }: BrainGaugeProps) => {
+export const BrainGauge = ({ brain, size }: BrainGaugeProps) => {
   return (
     <Meter.Root
       value={brain}
@@ -35,17 +34,9 @@ export const BrainGauge = ({ brain, isSleeping, size }: BrainGaugeProps) => {
         <span className={styles.value}>
           <Brain aria-hidden size={14} /> {Math.round(brain)}%
         </span>
-        {isSleeping && (
-          <span className={styles.sleeping}>
-            <Moon aria-hidden size={12} /> Asleep
-          </span>
-        )}
       </div>
       <Meter.Track className={styles.track}>
-        <Meter.Indicator
-          className={styles.indicator}
-          data-sleeping={isSleeping || undefined}
-        />
+        <Meter.Indicator className={styles.indicator} />
       </Meter.Track>
     </Meter.Root>
   );

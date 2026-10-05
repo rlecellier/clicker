@@ -1,9 +1,8 @@
-import { isWorkHours, pendingPayCents } from '@game/earnings';
-import { locationAt } from '@game/location';
-import { isEnjoyingCake } from '@game/nutrition';
-import { getBook, isReadingAt } from '@game/reading';
-import { isSleeping } from '@game/sleep';
-import { HOURS_PER_WEEK, SPEEDS } from '@game/time';
+import { actionsAt, type Action } from '@game/actions';
+import { getBook, isLibraryRead } from '@game/reading';
+import { nextShiftAfter, shiftAt } from '@game/jobs';
+import { HOURS_PER_WEEK } from '@game/time';
+
 import type { GameState } from './types';
 
 export const weekOf = (state: GameState) =>
@@ -12,34 +11,38 @@ export const weekOf = (state: GameState) =>
 export const weekHourOf = (state: GameState) =>
   state.elapsedHours % HOURS_PER_WEEK;
 
-export const speedOf = (state: GameState) => SPEEDS[state.speedIndex] ?? 1;
+// Hours the player has lived in the game since it started.
+export const playedHoursOf = (state: GameState) =>
+  state.elapsedHours - state.startHours;
 
-export const canSpeedUp = (state: GameState) =>
-  state.speedIndex < SPEEDS.length - 1;
+// The shift the player is in the middle of, if any.
+export const currentShiftOf = (state: GameState) =>
+  shiftAt(state.job, state.elapsedHours);
 
-export const canSlowDown = (state: GameState) => state.speedIndex > 0;
+export const nextShiftOf = (state: GameState) =>
+  nextShiftAfter(state.job, state.elapsedHours);
 
-export const pendingPayOf = (state: GameState) =>
-  pendingPayCents(state.job, state.elapsedHours);
-
-export const isEarning = (state: GameState) =>
-  isWorkHours(state.job, state.elapsedHours);
-
-export const isEnjoyingCakeNow = (state: GameState) =>
-  isEnjoyingCake(state, state.elapsedHours);
-
-export const isSleepingNow = (state: GameState) =>
-  isSleeping(state, state.elapsedHours);
-
-export const locationOf = (state: GameState) =>
-  locationAt(state, state.elapsedHours);
-
-// Reading right now: a reading event runs on the book on the go.
-export const isReadingNow = (state: GameState) =>
-  isReadingAt(state, state.elapsedHours) && getBook(state.bookId) !== undefined;
-
-// The `ask` event the game waits on, and its day.
-export const askingOf = (state: GameState) => {
-  const event = state.plan.find(({ id }) => id === state.asking?.eventId);
-  return event && state.asking ? { event, day: state.asking.day } : undefined;
+// Why an action cannot be done right now, undefined when it can.
+export const blockerOf = (
+  state: GameState,
+  action: Action,
+): string | undefined => {
+  if (action.place !== state.location) return 'Not here';
+  if (action.kind === 'work' && !currentShiftOf(state)) {
+    return 'Not your working hours';
+  }
+  return action.kind === 'read' && isLibraryRead(state)
+    ? 'The whole library is read'
+    : undefined;
 };
+
+// The actions of the place the player is at, with what keeps them from doing
+// one.
+export const availableActionsOf = (state: GameState) =>
+  actionsAt(state.location).map((action) => ({
+    action,
+    blocker: blockerOf(state, action),
+  }));
+
+// The book on the go.
+export const currentBookOf = (state: GameState) => getBook(state.bookId);

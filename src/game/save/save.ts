@@ -1,15 +1,14 @@
-import { isCalendarEvent } from '@game/calendar';
-import { EXPENSE_IDS } from '@game/expenses';
+import { isDoneEntry } from '@game/history';
 import { isJobId } from '@game/jobs';
+import { isLocation } from '@game/location';
 import { CALORIES_CAP } from '@game/nutrition';
 import { getBook } from '@game/reading';
 import { BRAIN_CAP, DREAM_CAP } from '@game/sleep';
-import { SPEEDS } from '@game/time';
 import type { GameState } from '@game/gameState';
 
 export const SAVE_KEY = 'clicker.save';
 // Bumped when the shape of `GameState` changes in a way old saves can't fit.
-export const SAVE_VERSION = 6;
+export const SAVE_VERSION = 7;
 
 // The part of `Storage` the save needs, so it can be faked in tests.
 export type SaveStorage = Pick<Storage, 'getItem' | 'setItem'>;
@@ -39,16 +38,6 @@ const isCurrentBook = (id: unknown, hours: unknown) =>
     : isBookId(id) &&
       isBetweenZeroAnd(hours, getBook(id as string)?.hours ?? 0);
 
-const isExpenses = (value: unknown) =>
-  typeof value === 'object' &&
-  value !== null &&
-  EXPENSE_IDS.every((id) =>
-    isBetweenZeroAnd(
-      (value as Record<string, unknown>)[id],
-      Number.MAX_SAFE_INTEGER,
-    ),
-  );
-
 const isEmployment = (value: unknown) =>
   value === undefined ||
   (typeof value === 'object' &&
@@ -59,13 +48,6 @@ const isEmployment = (value: unknown) =>
       Number.MAX_SAFE_INTEGER,
     ));
 
-const isAsking = (value: unknown) =>
-  value === undefined ||
-  (typeof value === 'object' &&
-    value !== null &&
-    typeof (value as Record<string, unknown>).eventId === 'string' &&
-    Number.isSafeInteger((value as Record<string, unknown>).day));
-
 // A save comes from outside: it is checked before it becomes a game.
 const isGameState = (value: unknown): value is GameState => {
   if (typeof value !== 'object' || value === null) return false;
@@ -73,13 +55,14 @@ const isGameState = (value: unknown): value is GameState => {
   return (
     typeof state.birthDate === 'string' &&
     ISO_DAY.test(state.birthDate) &&
+    Number.isFinite(state.origin) &&
+    isBetweenZeroAnd(state.startHours, Number.MAX_SAFE_INTEGER) &&
     isBetweenZeroAnd(state.elapsedHours, Number.MAX_SAFE_INTEGER) &&
-    Number.isSafeInteger(state.speedIndex) &&
-    isBetweenZeroAnd(state.speedIndex, SPEEDS.length - 1) &&
-    Number.isSafeInteger(state.balanceCents) &&
-    // bills can push the balance below zero
-    Math.abs(state.balanceCents as number) <= Number.MAX_SAFE_INTEGER &&
-    isExpenses(state.expenses) &&
+    // the game never goes back before its start
+    (state.elapsedHours as number) >= (state.startHours as number) &&
+    Number.isSafeInteger(state.coins) &&
+    isBetweenZeroAnd(state.coins, Number.MAX_SAFE_INTEGER) &&
+    isLocation(state.location as string | undefined) &&
     isBetweenZeroAnd(state.calories, CALORIES_CAP) &&
     isBetweenZeroAnd(state.brain, BRAIN_CAP) &&
     isBetweenZeroAnd(state.dreamGauge, DREAM_CAP) &&
@@ -88,20 +71,13 @@ const isGameState = (value: unknown): value is GameState => {
     Number.isSafeInteger(state.dreams) &&
     isBetweenZeroAnd(state.dreams, Number.MAX_SAFE_INTEGER) &&
     isBetweenZeroAnd(state.fat, Number.MAX_SAFE_INTEGER) &&
-    isBetweenZeroAnd(state.cakeUntil, Number.MAX_SAFE_INTEGER) &&
     isCurrentBook(state.bookId, state.bookHours) &&
     isReadBookIds(state.readBookIds, state.bookId) &&
-    Array.isArray(state.plan) &&
-    state.plan.every(isCalendarEvent) &&
-    Array.isArray(state.declined) &&
-    state.declined.every((key) => typeof key === 'string') &&
-    isEmployment(state.job) &&
-    isAsking(state.asking) &&
-    // the game waits on the answer: the event asked about must be planned
-    (state.asking === undefined ||
-      state.plan.some(
-        ({ id }) => id === (state.asking as Record<string, unknown>).eventId,
-      ))
+    Array.isArray(state.history) &&
+    state.history.every(isDoneEntry) &&
+    // a state with a job is at work only if the job is there to go to
+    (state.location !== 'work' || state.job !== undefined) &&
+    isEmployment(state.job)
   );
 };
 

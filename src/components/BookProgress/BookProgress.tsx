@@ -5,17 +5,15 @@ import styles from './BookProgress.module.css';
 
 type BookProgressProps = {
   title: string;
-  // free-time hours read so far
+  // hours of reading spent on the book so far
   hoursRead: number;
   totalHours: number;
-  isReading: boolean;
 };
 
 export const BookProgress = ({
   title,
   hoursRead,
   totalHours,
-  isReading,
 }: BookProgressProps) => {
   const percent = Math.floor((hoursRead / totalHours) * 100);
 
@@ -36,10 +34,7 @@ export const BookProgress = ({
         </span>
       </div>
       <Meter.Track className={styles.track}>
-        <Meter.Indicator
-          className={styles.indicator}
-          data-reading={isReading || undefined}
-        />
+        <Meter.Indicator className={styles.indicator} />
       </Meter.Track>
     </Meter.Root>
   );

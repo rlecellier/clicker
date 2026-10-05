@@ -15,7 +15,6 @@ import { BodyGauge } from '@component/BodyGauge';
 import { BrainGauge } from '@component/BrainGauge';
 import { CaloriesGauge } from '@component/CaloriesGauge';
 import { DreamGauge } from '@component/DreamGauge';
-import { MoneyCounter } from '@component/MoneyCounter';
 import { PLACES } from '@component/PlaceInfo';
 import type { Body } from '@game/body';
 import { LOCATIONS, type Location } from '@game/location';
@@ -24,14 +23,11 @@ import styles from './Sidebar.module.css';
 
 type SidebarProps = {
   id: string;
-  // integer cents
-  balanceCents: number;
   calories: number;
   body: Body;
   brain: number;
   dreamGauge: number;
   dreams: number;
-  isSleeping: boolean;
   // where the player is, marked in the places menu
   location: Location;
   // only matters on mobile: from tablet up the sidebar is always shown
@@ -54,13 +50,11 @@ const LINKS = [
 // tablet up.
 export const Sidebar = ({
   id,
-  balanceCents,
   calories,
   body,
   brain,
   dreamGauge,
   dreams,
-  isSleeping,
   location,
   isOpen,
   onClose,
@@ -96,13 +90,12 @@ export const Sidebar = ({
         aria-hidden
       />
       <aside id={id} className={styles.panel} data-open={isOpen || undefined}>
-        <MoneyCounter cents={balanceCents} />
         <CaloriesGauge calories={calories} />
         <BodyGauge
           fatPercent={body.fatPercent}
           musclePercent={body.musclePercent}
         />
-        <BrainGauge brain={brain} isSleeping={isSleeping} />
+        <BrainGauge brain={brain} />
         <DreamGauge dreamGauge={dreamGauge} dreams={dreams} />
         <nav aria-label="Pages" className={styles.nav}>
           {LINKS.map(({ to, label, Icon }) => (

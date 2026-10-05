@@ -59,9 +59,3 @@
   color: inherit;
   text-decoration: none;
 }
-
-.controls {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0.75rem 1rem;
-}
