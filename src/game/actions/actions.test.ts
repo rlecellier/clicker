@@ -7,7 +7,9 @@ test('at home the player eats, reads and sleeps', () => {
     'breakfast',
     'lunch',
     'dinner',
-    'read',
+    'read-1',
+    'read-2',
+    'read-3',
     'sleep-2',
     'sleep-4',
     'sleep-6',
@@ -18,6 +20,11 @@ test('at home the player eats, reads and sleeps', () => {
 test('at work the player works, half an hour at a time', () => {
   expect(actionsAt('work')).toEqual([ACTIONS.work]);
   expect(ACTIONS.work.hours).toBe(0.5);
+});
+
+test('reading lasts 1, 2 or 3 hours', () => {
+  expect(ACTIONS['read-3'].hours).toBe(3);
+  expect(ACTIONS['read-3'].label).toBe('Read 3h');
 });
 
 test('sleeping lasts as long as its name says', () => {
@@ -32,6 +39,6 @@ test('every action lasts a whole number of half hours', () => {
 });
 
 test('recognises the actions of the game', () => {
-  expect(isActionId('read')).toBe(true);
+  expect(isActionId('read-2')).toBe(true);
   expect(isActionId('fly')).toBe(false);
 });

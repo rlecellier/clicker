@@ -12,6 +12,16 @@ const sleep = (hours: number): Action => ({
   hours,
 });
 
+const read = (hours: number): Action => ({
+  id: `read-${hours}` as ActionId,
+  label: `Read ${hours}h`,
+  group: { name: 'Read', option: `${hours}h` },
+  title: 'Read',
+  kind: 'read',
+  place: 'home',
+  hours,
+});
+
 export const ACTIONS: Record<ActionId, Action> = {
   work: {
     id: 'work',
@@ -51,14 +61,9 @@ export const ACTIONS: Record<ActionId, Action> = {
     hours: 1,
     calories: 21,
   },
-  read: {
-    id: 'read',
-    label: 'Read',
-    title: 'Read',
-    kind: 'read',
-    place: 'home',
-    hours: 1,
-  },
+  'read-1': read(1),
+  'read-2': read(2),
+  'read-3': read(3),
   'sleep-2': sleep(2),
   'sleep-4': sleep(4),
   'sleep-6': sleep(6),
