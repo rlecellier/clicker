@@ -5,6 +5,7 @@ import type { Action, ActionId } from './types';
 const sleep = (hours: number): Action => ({
   id: `sleep-${hours}` as ActionId,
   label: `Sleep ${hours}h`,
+  group: { name: 'Sleep', option: `${hours}h` },
   title: 'Sleep',
   kind: 'sleep',
   place: 'home',
@@ -22,6 +23,7 @@ export const ACTIONS: Record<ActionId, Action> = {
   },
   breakfast: {
     id: 'breakfast',
+    group: { name: 'Eat', option: 'Breakfast' },
     label: 'Have breakfast',
     title: 'Breakfast',
     kind: 'meal',
@@ -31,6 +33,7 @@ export const ACTIONS: Record<ActionId, Action> = {
   },
   lunch: {
     id: 'lunch',
+    group: { name: 'Eat', option: 'Lunch' },
     label: 'Have lunch',
     title: 'Lunch',
     kind: 'meal',
@@ -40,6 +43,7 @@ export const ACTIONS: Record<ActionId, Action> = {
   },
   dinner: {
     id: 'dinner',
+    group: { name: 'Eat', option: 'Dinner' },
     label: 'Have dinner',
     title: 'Dinner',
     kind: 'meal',

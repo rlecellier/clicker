@@ -13,7 +13,7 @@ import styles from './GamePage.module.css';
 
 export const GamePage = () => {
   const { currentBook, bookHours } = useGameContext();
-  const { location, job, travel, actions, perform, goTo } = useGamePanel();
+  const { location, job, travel, rows, perform, goTo } = useGamePanel();
 
   return (
     <div className={styles.content}>
@@ -35,7 +35,7 @@ export const GamePage = () => {
           </Button>
         )}
         <GetJob />
-        <ActionList actions={actions} onPerform={perform} />
+        <ActionList rows={rows} onPerform={perform} />
         {currentBook && (
           <BookProgress
             title={currentBook.title}
