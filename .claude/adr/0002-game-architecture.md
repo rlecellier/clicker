@@ -1,6 +1,6 @@
 # ADR 0002 — Architecture du jeu : état, temps et logique pure
 
-- **Statut** : accepté
+- **Statut** : accepté (§1 sur l'horloge et §3 sur l'argent : voir ADR 0004)
 - **Date** : 2026-10-04
 - **Contexte de la décision** : revue d'architecture (`docs/architecture-review.md`),
   décisions D1, D2, D3 et D6 acceptées en revue.

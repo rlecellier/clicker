@@ -1,6 +1,6 @@
 # Idée — actions prévues dans le calendrier
 
-- **Statut** : idée brute, en cours de description. Rien n'est développé.
+- **Statut** : écartée pour la première boucle de jeu (voir l'ADR 0004).
 - **Date** : 2026-10-04
 - **Note** : l'idée est peut-être à « reverse » plus tard (à tester d'abord).
 
