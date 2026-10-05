@@ -1,6 +1,8 @@
 import type { CSSProperties } from 'react';
 
-import { doneOnDay, type DoneEntry } from '@game/history';
+import { Button } from '@base-ui/react/button';
+
+import { doneOnDay, type DoneEntry, type PlannedEntry } from '@game/history';
 import { shiftsOnDay, type Employment } from '@game/jobs';
 import {
   dayOfMonth,
@@ -18,6 +20,10 @@ type CalendarGridProps = {
   days: number[];
   // what the player did, in the main lane of each day
   history: DoneEntry[];
+  // what the queue will make the player do next, in the same lane
+  planned?: PlannedEntry[];
+  // the player cancels the planned action at that rank in the queue
+  onCancel?: (index: number) => void;
   // the job whose shifts the player must work, in a thin lane beside it
   job?: Employment;
   // the day the game is on, where the time cursor is brightest
@@ -45,6 +51,8 @@ export const CalendarGrid = ({
   origin,
   days,
   history,
+  planned = [],
+  onCancel,
   job,
   currentDay,
   dayRatio,
@@ -72,7 +80,7 @@ export const CalendarGrid = ({
           <span>{weekdayLabel(origin, day)}</span>
           <span className={styles.lanes} aria-hidden>
             <span>Must</span>
-            <span>Done</span>
+            <span>Done · Next</span>
           </span>
         </div>
       ))}
@@ -125,6 +133,28 @@ export const CalendarGrid = ({
                 title={`${entry.title} ${range(entry.start, entry.end)}`}
               >
                 {entry.title}
+              </li>
+            ))}
+            {doneOnDay(planned, day).map((entry) => (
+              <li
+                key={`planned-${entry.id}`}
+                className={styles.planned}
+                data-kind={entry.kind}
+                style={{
+                  top: percentOfDay(entry.start),
+                  height: percentOfDay(entry.end - entry.start),
+                }}
+              >
+                <Button
+                  className={styles.cancel}
+                  title={`Planned: ${entry.title} ${range(entry.start, entry.end)}`}
+                  aria-label={`Cancel ${entry.title}`}
+                  onClick={() => {
+                    onCancel?.(entry.index);
+                  }}
+                >
+                  {entry.title}
+                </Button>
               </li>
             ))}
             <li

@@ -40,6 +40,22 @@ test('on desktop: the sidebar stays, the calendar shows a week or a day and zoom
   const after = (await lunch.boundingBox())!;
   expect(Math.abs(after.y - before.y)).toBeLessThan(5);
 
+  // What is queued shows in the calendar, and a click takes it back.
+  await openPage(page, 'Game');
+  await page.getByRole('button', { name: /Sleep 4h/ }).click();
+  await page.getByRole('button', { name: /Sleep 2h/ }).click();
+  await page.getByRole('button', { name: /Sleep 6h/ }).click();
+  await openPage(page, 'Calendar');
+  const planned = page.getByRole('list', { name: 'Mon 1' }).getByRole('button');
+  await expect(planned).toHaveCount(2);
+  await planned.first().click();
+  await expect(planned).toHaveCount(1);
+  await page.getByRole('button', { name: 'Cancel all planned' }).click();
+  await expect(planned).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: 'Cancel all planned' }),
+  ).toBeDisabled();
+
   // Nothing before the week the game began; weeks and days can be browsed.
   await expect(
     page.getByRole('button', { name: 'Previous week' }),
