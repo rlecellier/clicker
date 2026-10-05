@@ -6,6 +6,8 @@
        page) and 1024px (desktop); media queries cannot read variables, so
        they are written as is. */
     --header-height: 3.5rem;
+    /* a place, in the list of places and at the top of its page: same height */
+    --place-height: 4.5rem;
     /* the days strip, right under the header */
     --strip-height: 3.5rem;
     /* the bar between the header and the strip, on mobile only: the game
