@@ -59,6 +59,7 @@
   /* the screen below the header, the time controls and the toolbar */
   --calendar-height: max(24rem, calc(100dvh - 15.5rem - var(--clock-height)));
   height: var(--calendar-height);
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   touch-action: pan-y;
