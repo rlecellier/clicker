@@ -1,4 +1,5 @@
 import { GameBriefing } from '@component/GameBriefing';
+import { GenderPicker } from '@component/GenderPicker';
 import { TitleScreen } from '@component/TitleScreen';
 import { useStartFlow } from '@hook/useStartFlow';
 import { START_AGE } from '@game/age';
@@ -9,11 +10,16 @@ type StartPageProps = {
 };
 
 export const StartPage = ({ onStart }: StartPageProps) => {
-  const { step, showBriefing } = useStartFlow();
+  const { step, gender, showGender, pickGender } = useStartFlow();
 
-  return step === 'title' ? (
-    <TitleScreen onNewGame={showBriefing} />
-  ) : (
-    <GameBriefing age={START_AGE} coins={INITIAL_COINS} onStart={onStart} />
+  if (step === 'title') return <TitleScreen onNewGame={showGender} />;
+  if (step === 'gender') return <GenderPicker onPick={pickGender} />;
+  return (
+    <GameBriefing
+      age={START_AGE}
+      coins={INITIAL_COINS}
+      gender={gender}
+      onStart={onStart}
+    />
   );
 };
