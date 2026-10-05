@@ -1,6 +1,8 @@
 # ADR 0004 — Première boucle de jeu : le temps avance par les actions
 
-- **Statut** : accepté (à tester : le modèle peut être reversé)
+- **Statut** : accepté (à tester : le modèle peut être reversé) ; §1, §2, §3 et §5
+  amendés par l'ADR 0005 (le temps défile pendant l'action, le lieu ne change
+  pas seul, repas payants et frigo)
 - **Date** : 2026-10-05
 - **Remplace** : l'horloge temps réel (ADR 0002 §1), le calendrier « prévu »
   et le déclenchement `ask` (ADR 0003)
