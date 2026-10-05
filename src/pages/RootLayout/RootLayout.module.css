@@ -9,7 +9,9 @@
 }
 
 .main {
+  /* Leaves room for the folded sidebar, fixed on the left on mobile. */
   flex: 1;
+  margin-left: var(--rail-width);
   min-width: 0;
   box-sizing: border-box;
   text-align: center;
@@ -45,6 +47,10 @@
 }
 
 @media (min-width: 640px) {
+  .main {
+    margin-left: 0;
+  }
+
   .menuButton {
     display: none;
   }

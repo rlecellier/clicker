@@ -32,7 +32,7 @@ type SidebarProps = {
   dreams: number;
   // where the player is, marked in the places menu
   location: Location;
-  // only matters on mobile: from tablet up the sidebar is always shown
+  // only matters on mobile: unfolds the icon rail, from tablet up the sidebar is always shown
   isOpen: boolean;
   onClose: () => void;
   onRestart: () => void;
@@ -48,8 +48,8 @@ const LINKS = [
   { to: '/achievements', label: 'Achievements', Icon: Trophy },
 ];
 
-// The cash, the gauges and the pages menu: slides in on mobile, always shown from
-// tablet up.
+// The gauges and the pages menu: on mobile it is a rail of icons that unfolds
+// over the page, from tablet up it is always fully shown.
 export const Sidebar = ({
   id,
   calories,
@@ -93,14 +93,16 @@ export const Sidebar = ({
         aria-hidden
       />
       <aside id={id} className={styles.panel} data-open={isOpen || undefined}>
-        <CaloriesGauge calories={calories} />
-        <FridgeGauge fridge={fridge} />
-        <BodyGauge
-          fatPercent={body.fatPercent}
-          musclePercent={body.musclePercent}
-        />
-        <BrainGauge brain={brain} />
-        <DreamGauge dreamGauge={dreamGauge} dreams={dreams} />
+        <div className={styles.gauges}>
+          <CaloriesGauge calories={calories} />
+          <FridgeGauge fridge={fridge} />
+          <BodyGauge
+            fatPercent={body.fatPercent}
+            musclePercent={body.musclePercent}
+          />
+          <BrainGauge brain={brain} />
+          <DreamGauge dreamGauge={dreamGauge} dreams={dreams} />
+        </div>
         <nav aria-label="Pages" className={styles.nav}>
           {LINKS.map(({ to, label, Icon }) => (
             <NavLink
@@ -108,9 +110,11 @@ export const Sidebar = ({
               to={to}
               end
               className={styles.link}
+              title={label}
               onClick={onClose}
             >
-              <Icon aria-hidden size={18} /> {label}
+              <Icon aria-hidden size={18} />
+              <span className={styles.label}>{label}</span>
             </NavLink>
           ))}
           <button
@@ -123,7 +127,8 @@ export const Sidebar = ({
               setIsPlacesOpen((isOpened) => !isOpened);
             }}
           >
-            <MapPin aria-hidden size={18} /> Places
+            <MapPin aria-hidden size={18} />
+            <span className={styles.label}>Places</span>
             <ChevronDown aria-hidden size={16} className={styles.chevron} />
           </button>
           <div
@@ -139,10 +144,12 @@ export const Sidebar = ({
                     <NavLink
                       to={`${PLACES_PATH}${place}`}
                       className={styles.sublink}
+                      title={label}
                       tabIndex={isPlacesOpen ? undefined : -1}
                       onClick={onClose}
                     >
-                      <Icon aria-hidden size={16} /> {label}
+                      <Icon aria-hidden size={16} />
+                      <span className={styles.label}>{label}</span>
                       {place === location && (
                         <span className={styles.here} title="You are here">
                           <span className={styles.visuallyHidden}>
@@ -160,12 +167,14 @@ export const Sidebar = ({
         <button
           type="button"
           className={styles.restart}
+          title="Restart Game"
           onClick={() => {
             onRestart();
             onClose();
           }}
         >
-          <RotateCcw aria-hidden size={18} /> Restart Game
+          <RotateCcw aria-hidden size={18} />
+          <span className={styles.label}>Restart Game</span>
         </button>
       </aside>
     </>
