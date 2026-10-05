@@ -1,0 +1,40 @@
+.root {
+  margin-top: 1rem;
+}
+
+.title {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+
+.label {
+  flex: 1;
+}
+
+.place {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.remove {
+  display: inline-flex;
+  padding: 0.25rem;
+}

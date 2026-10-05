@@ -51,7 +51,10 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   await expect(page).toHaveURL(/\/places\/work$/);
   await expect(page.getByText('You are not here')).toBeVisible();
   await expect(sidebar).not.toBeInViewport();
-  await openPage(page, 'Places');
+  // A place keeps the title and a way back to the list, without the menu.
+  await expect(page.getByRole('heading', { name: 'Places' })).toBeVisible();
+  await page.getByRole('link', { name: 'All places' }).click();
+  await expect(page).toHaveURL(/\/places$/);
   await page.getByRole('link', { name: /Home/ }).click();
   await expect(page.getByText('You are here', { exact: true })).toBeVisible();
 
