@@ -146,10 +146,11 @@ export const gameReducer = (
   switch (action.type) {
     case 'perform': {
       const done = ACTIONS[action.actionId];
-      if (done.place === 'anywhere' || done.place === state.location) {
+      const isHere = done.place === 'anywhere' || done.place === state.location;
+      if (isHere && !state.activity) {
         return begin(state, action.actionId, action.roll);
       }
-      // another place: it waits for the player to be there
+      // busy, or another place: it waits for the player to be free and there
       return queueBlockerOf(state, done)
         ? state
         : {
