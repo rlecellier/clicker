@@ -50,7 +50,7 @@ export const CalendarPage = () => {
   });
 
   return (
-    <section className={styles.root} aria-label="Calendar">
+    <section aria-label="Calendar">
       <header className={styles.toolbar}>
         <div className={styles.navigation}>
           <Button

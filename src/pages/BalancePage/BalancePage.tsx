@@ -12,7 +12,7 @@ export const BalancePage = () => {
   const workedHours = hoursDone(history, 'work');
 
   return (
-    <section className={styles.root}>
+    <section>
       <h2 className={styles.title}>Balance</h2>
       <dl className={styles.summary}>
         <div>
