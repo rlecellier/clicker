@@ -1,5 +1,5 @@
 import { Button } from '@base-ui/react/button';
-import { Menu, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Link, Outlet } from 'react-router';
 
@@ -10,6 +10,7 @@ import { GameClock } from '@component/GameClock';
 import { MoneyCounter } from '@component/MoneyCounter';
 import { Sidebar } from '@component/Sidebar';
 import { GameProvider, useGameContext } from '@context/GameContext';
+import { useMediaQuery } from '@hook/useMediaQuery';
 import { birthDateOf } from '@game/age';
 import { newGameState } from '@game/gameState';
 import { getCaloriesStatus } from '@game/nutrition';
@@ -35,6 +36,8 @@ const Layout = () => {
     restart,
   } = useGameContext();
   const { date, time } = momentOf(origin, elapsedHours);
+  // the clock sits above the days strip on mobile, where the header is tight
+  const isLargeScreen = useMediaQuery('(min-width: 640px)');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
@@ -54,9 +57,9 @@ const Layout = () => {
             }}
           >
             {isMenuOpen ? (
-              <X aria-hidden size={18} />
+              <ChevronLeft aria-hidden size={18} />
             ) : (
-              <Menu aria-hidden size={18} />
+              <ChevronRight aria-hidden size={18} />
             )}
           </Button>
           <h1 className={styles.title}>
@@ -67,11 +70,16 @@ const Layout = () => {
         </div>
         <div className={styles.status}>
           <MoneyCounter coins={coins} />
-          <GameClock date={date} time={time} />
+          {isLargeScreen && <GameClock date={date} time={time} />}
           <CaloriesStatus status={getCaloriesStatus(calories)} />
           <AgeCounter years={age} />
         </div>
       </header>
+      {!isLargeScreen && (
+        <div className={styles.clockBar}>
+          <GameClock date={date} time={time} />
+        </div>
+      )}
       <DayTimeline
         origin={origin}
         history={history}

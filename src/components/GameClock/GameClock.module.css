@@ -16,3 +16,16 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
+
+/* On mobile it sits in a bar of its own: date and time on one line. */
+@media (max-width: 639px) {
+  .root {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .time {
+    font-size: 1.1rem;
+  }
+}

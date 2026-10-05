@@ -57,7 +57,7 @@
    horizontal ones are swipes, and the pinch is handled by the page. */
 .grid {
   /* the screen below the header, the time controls and the toolbar */
-  --calendar-height: max(24rem, calc(100dvh - 15.5rem));
+  --calendar-height: max(24rem, calc(100dvh - 15.5rem - var(--clock-height)));
   height: var(--calendar-height);
   overflow-y: auto;
   overscroll-behavior: contain;
