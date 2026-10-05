@@ -1,9 +1,13 @@
 .root {
   --day-width: 33.333%;
 
-  position: relative;
+  /* stays under the header while the page scrolls */
+  position: sticky;
+  top: var(--header-height);
+  z-index: 3;
   overflow: hidden;
-  height: 3.5rem;
+  height: var(--strip-height);
+  box-sizing: border-box;
   background: var(--color-bg);
   border-bottom: 1px solid var(--color-surface);
 }
