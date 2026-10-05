@@ -3,6 +3,7 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: 'e2e',
   testMatch: '**/*.e2e.ts',
+  fullyParallel: true,
   reporter: 'list',
   use: {
     baseURL: 'http://localhost:4173',

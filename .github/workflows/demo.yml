@@ -38,10 +38,11 @@ jobs:
       - run: npm ci
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
-      - run: npx playwright install --with-deps chromium
       - run: npm run e2e
         env:
           CI: 'true'
+          # Chrome is preinstalled on the runner: no browser download.
+          CHROMIUM_PATH: /usr/bin/google-chrome
           DEMO: '1'
       - id: collect
         run: |
