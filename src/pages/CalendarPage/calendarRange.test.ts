@@ -17,16 +17,16 @@ test('the week view shows the whole week, from Monday to Sunday', () => {
 });
 
 test('labels a day with its weekday and its full date', () => {
-  expect(rangeLabel(ORIGIN, [2])).toBe('Wed 3 Feb 2027');
+  expect(rangeLabel(ORIGIN, [2])).toBe('Wed 9 Feb 2027');
 });
 
 test('labels a week within one month', () => {
-  expect(rangeLabel(ORIGIN, visibleDays(0, 'week'))).toBe('1 – 7 Feb 2027');
+  expect(rangeLabel(ORIGIN, visibleDays(0, 'week'))).toBe('1 – 28 Feb 2027');
 });
 
 test('a week is a month: it always stays within one month and one year', () => {
   // week 1 of February 2027 is March, week 10 is December, week 11 is January
-  expect(rangeLabel(ORIGIN, visibleDays(7, 'week'))).toBe('1 – 7 Mar 2027');
-  expect(rangeLabel(ORIGIN, visibleDays(77, 'week'))).toBe('1 – 7 Jan 2028');
-  expect(rangeLabel(ORIGIN, [76])).toBe('Sun 7 Dec 2027');
+  expect(rangeLabel(ORIGIN, visibleDays(7, 'week'))).toBe('1 – 28 Mar 2027');
+  expect(rangeLabel(ORIGIN, visibleDays(77, 'week'))).toBe('1 – 28 Jan 2028');
+  expect(rangeLabel(ORIGIN, [76])).toBe('Sun 25 Dec 2027');
 });

@@ -45,12 +45,12 @@ test('on desktop: the sidebar stays, the calendar shows a week or a day and zoom
     page.getByRole('button', { name: 'Previous week' }),
   ).toBeDisabled();
   await page.getByRole('button', { name: 'Next week' }).click();
-  await expect(title).toHaveText('1 – 7 Nov 2026');
+  await expect(title).toHaveText('1 – 28 Nov 2026');
   await page.getByRole('button', { name: 'Previous week' }).click();
   await page.getByRole('button', { name: 'Day', exact: true }).click();
   await expect(page.getByRole('main').getByRole('list')).toHaveCount(1);
   await page.getByRole('button', { name: 'Next day' }).click();
-  await expect(title).toHaveText('Tue 2 Oct 2026');
+  await expect(title).toHaveText('Tue 5 Oct 2026');
   await page.getByRole('button', { name: 'Today' }).click();
   await expect(title).toHaveText('Mon 1 Oct 2026');
   await page.getByRole('button', { name: 'Week', exact: true }).click();
@@ -85,7 +85,7 @@ test('on mobile: the calendar shows one day, swipes to the next and pinches to z
   await grid.dispatchEvent('touchend', {
     changedTouches: [{ identifier: 0, clientX: 100, clientY: 300 }],
   });
-  await expect(title).toHaveText('Tue 2 Oct 2026');
+  await expect(title).toHaveText('Tue 5 Oct 2026');
   await page.getByRole('button', { name: 'Today' }).click();
   await expect(title).toHaveText('Mon 1 Oct 2026');
 

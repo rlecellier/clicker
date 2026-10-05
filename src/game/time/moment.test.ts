@@ -11,7 +11,7 @@ test('tells the date and the time of a game hour', () => {
     time: '14:30',
   });
   expect(momentOf(ORIGIN, 2 * 24 + 7)).toEqual({
-    date: 'Wed 3 Oct 2026',
+    date: 'Wed 9 Oct 2026',
     time: '07:00',
   });
 });

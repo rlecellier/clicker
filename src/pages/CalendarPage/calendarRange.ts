@@ -1,6 +1,7 @@
 import {
   DAYS_PER_WEEK,
   dayOfMonth,
+  lastDayOfMonth,
   monthLabel,
   weekdayLabel,
   yearOf,
@@ -16,7 +17,7 @@ export const visibleDays = (selectedDay: number, view: CalendarView) => {
   return Array.from({ length: DAYS_PER_WEEK }, (_, index) => monday + index);
 };
 
-// "Wed 3 Feb 2027" for a day, "1 – 7 Feb 2027" for a week: a week is a month
+// "Wed 3 Feb 2027" for a day, "1 – 28 Feb 2027" for a week: a week is a month
 // of the artificial calendar (ADR 0006), so it never spans two of them.
 export const rangeLabel = (origin: number, days: number[]) => {
   const first = days[0] ?? 0;
@@ -24,5 +25,5 @@ export const rangeLabel = (origin: number, days: number[]) => {
   const month = `${monthLabel(origin, first)} ${yearOf(origin, first)}`;
   return first === last
     ? `${weekdayLabel(origin, first)} ${dayOfMonth(origin, first)} ${month}`
-    : `${dayOfMonth(origin, first)} – ${dayOfMonth(origin, last)} ${month}`;
+    : `${dayOfMonth(origin, first)} – ${lastDayOfMonth(origin, last)} ${month}`;
 };

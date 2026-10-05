@@ -1,4 +1,6 @@
 export {
+  DATES_PER_DAY,
+  DATES_PER_MONTH,
   DAYS_PER_WEEK,
   DAYS_PER_YEAR,
   HOURS_PER_DAY,
@@ -11,6 +13,7 @@ export {
 export {
   dayOfMonth,
   gameStartOf,
+  lastDayOfMonth,
   monthLabel,
   weekdayIndex,
   weekdayLabel,

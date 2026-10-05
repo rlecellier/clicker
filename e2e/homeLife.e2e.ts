@@ -106,7 +106,7 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await expect(clock).toContainText('00:00');
   await perform(page, /Sleep 2h/, 2);
   await perform(page, /Sleep 6h/, 6);
-  await expect(clock).toContainText('Tue 2 Oct 2026');
+  await expect(clock).toContainText('Tue 5 Oct 2026');
   await expect(clock).toContainText('08:00');
 
   // Actions in a row are one entry of the calendar, cut at midnight.
@@ -120,7 +120,7 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   const strip = page.getByRole('img', { name: /Oct 2026, / });
   for (const name of ['Balance', 'Profile', 'Game']) {
     await openPage(page, name);
-    await expect(strip).toHaveAccessibleName('Tue 2 Oct 2026, 08:00');
+    await expect(strip).toHaveAccessibleName('Tue 5 Oct 2026, 08:00');
   }
   await openPage(page, 'Profile');
   await expect(page.getByText('1.70 m')).toBeVisible();

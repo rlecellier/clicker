@@ -16,8 +16,10 @@ avance plus vite, le temps devient artificiel.
 - **Une semaine du jeu est un mois**, une **année dure 12 semaines** (84 jours,
   2 016 heures). Les jours restent de 24 heures et les semaines de 7 jours,
   du lundi au dimanche.
-- Un mois a donc 7 jours, numérotés de 1 à 7 comme les jours de la semaine
-  (lundi = 1). La première semaine porte le mois réel du lancement
+- Un mois du calendrier a **28 dates**, et l'année **12 mois, soit 336 dates**
+  (pas 365 : c'est un jeu). Un mois est une semaine de jeu de 7 jours : chaque
+  jour couvre 4 dates. Il s'affiche par la première (lundi 1, mardi 5, …,
+  dimanche 25) et une semaine s'intitule « 1 – 28 ». La première semaine porte le mois réel du lancement
   (`origin`), les suivantes enchaînent (oct., nov., déc., janv. de l'année
   suivante…). Une semaine ne chevauche jamais deux mois ni deux années :
   `rangeLabel` n'a plus de cas « deux mois ».

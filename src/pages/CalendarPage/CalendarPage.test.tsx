@@ -44,7 +44,9 @@ test('shows the whole week on a large screen', () => {
   useScreen(true);
   renderPage();
   expect(screen.getAllByRole('list')).toHaveLength(7);
-  expect(screen.getByRole('heading', { name: '1 – 7 Feb 2027' })).toBeVisible();
+  expect(
+    screen.getByRole('heading', { name: '1 – 28 Feb 2027' }),
+  ).toBeVisible();
 });
 
 test('the view toggle switches between the week and the day', () => {
@@ -57,18 +59,20 @@ test('the view toggle switches between the week and the day', () => {
   fireEvent.click(day);
   expect(day).toHaveAttribute('aria-pressed', 'true');
   expect(screen.getAllByRole('list')).toHaveLength(1);
-  expect(screen.getByRole('list', { name: 'Wed 3' })).toBeInTheDocument();
+  expect(screen.getByRole('list', { name: 'Wed 9' })).toBeInTheDocument();
 });
 
 test('the arrows move by a week in the week view, by a day in the day view', () => {
   useScreen(true);
   renderPage();
   fireEvent.click(screen.getByRole('button', { name: 'Next week' }));
-  expect(screen.getByRole('heading', { name: '1 – 7 Mar 2027' })).toBeVisible();
+  expect(
+    screen.getByRole('heading', { name: '1 – 28 Mar 2027' }),
+  ).toBeVisible();
 
   fireEvent.click(screen.getByRole('button', { name: 'Day' }));
   fireEvent.click(screen.getByRole('button', { name: 'Next day' }));
-  expect(screen.getByRole('list', { name: 'Thu 4' })).toBeInTheDocument();
+  expect(screen.getByRole('list', { name: 'Thu 13' })).toBeInTheDocument();
 });
 
 test('has no previous week before the start of the game', () => {
@@ -87,7 +91,7 @@ test('shows a single day on mobile, without the view toggle', () => {
   useScreen(false);
   renderPage();
   expect(screen.getAllByRole('list')).toHaveLength(1);
-  expect(screen.getByRole('list', { name: 'Wed 3' })).toBeInTheDocument();
+  expect(screen.getByRole('list', { name: 'Wed 9' })).toBeInTheDocument();
   expect(screen.queryByRole('group', { name: 'View' })).not.toBeInTheDocument();
 });
 
@@ -95,10 +99,10 @@ test('swipes from one day to the next on mobile', () => {
   useScreen(false);
   renderPage();
   swipe(250, 100);
-  expect(screen.getByRole('list', { name: 'Thu 4' })).toBeInTheDocument();
+  expect(screen.getByRole('list', { name: 'Thu 13' })).toBeInTheDocument();
   swipe(100, 250);
   swipe(100, 250);
-  expect(screen.getByRole('list', { name: 'Tue 2' })).toBeInTheDocument();
+  expect(screen.getByRole('list', { name: 'Tue 5' })).toBeInTheDocument();
 });
 
 test('Today comes back to the current day', () => {
@@ -108,9 +112,9 @@ test('Today comes back to the current day', () => {
   expect(today).toBeDisabled();
 
   swipe(250, 100);
-  expect(screen.getByRole('list', { name: 'Thu 4' })).toBeInTheDocument();
+  expect(screen.getByRole('list', { name: 'Thu 13' })).toBeInTheDocument();
   fireEvent.click(today);
-  expect(screen.getByRole('list', { name: 'Wed 3' })).toBeInTheDocument();
+  expect(screen.getByRole('list', { name: 'Wed 9' })).toBeInTheDocument();
 });
 
 test('shows what was done and what the job requires', () => {
