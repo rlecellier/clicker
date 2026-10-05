@@ -40,7 +40,8 @@ const Layout = ({ onRestart }: LayoutProps) => {
     origin,
   } = useGameContext();
   const { date, time } = momentOf(origin, elapsedHours);
-  // the clock sits above the days strip on mobile, where the header is tight
+  // the clock and the action share a bar above the days strip on mobile, where
+  // the header is tight
   const isLargeScreen = useMediaQuery('(min-width: 640px)');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = useCallback(() => {
@@ -82,6 +83,9 @@ const Layout = ({ onRestart }: LayoutProps) => {
       {!isLargeScreen && (
         <div className={styles.clockBar}>
           <GameClock date={date} time={time} />
+          <div className={styles.clockBarActivity}>
+            {activity && <ActivityProgress {...activity} />}
+          </div>
         </div>
       )}
       <DayTimeline
@@ -91,9 +95,11 @@ const Layout = ({ onRestart }: LayoutProps) => {
         dayPosition={elapsedHours / HOURS_PER_DAY}
         label={`${date}, ${time}`}
       />
-      <div className={styles.activity}>
-        {activity && <ActivityProgress {...activity} />}
-      </div>
+      {isLargeScreen && (
+        <div className={styles.activity}>
+          {activity && <ActivityProgress {...activity} />}
+        </div>
+      )}
       <div className={styles.body}>
         <Sidebar
           id="sidebar"

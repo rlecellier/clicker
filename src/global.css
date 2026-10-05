@@ -8,13 +8,14 @@
     --header-height: 3.5rem;
     /* the days strip, right under the header */
     --strip-height: 3.5rem;
-    /* the game clock between the header and the strip, on mobile only */
-    --clock-height: 2.25rem;
-    /* the action in progress, right under the strip: always reserved. One line
-       on mobile, two from tablet up */
-    --activity-height: 2.25rem;
-    /* what the header, the clock, the strip and the action in progress take
-       at the top of the page */
+    /* the bar between the header and the strip, on mobile only: the game
+       clock and the action in progress share it, always reserved */
+    --clock-height: 2.5rem;
+    /* the action in progress, right under the strip, from tablet up only:
+       always reserved */
+    --activity-height: 0rem;
+    /* what the header, the clock bar, the strip and the action in progress
+       take at the top of the page */
     --top-height: calc(
       var(--header-height) + var(--clock-height) + var(--strip-height) +
         var(--activity-height)
