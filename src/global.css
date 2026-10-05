@@ -1,5 +1,9 @@
 :root {
   --header-height: 3.5rem;
+  /* the days strip, right under the header */
+  --strip-height: 3.5rem;
+  /* what the header and the strip take at the top of the page */
+  --top-height: calc(var(--header-height) + var(--strip-height));
   --color-bg: #1b1d23;
   --color-text: #eee;
   --color-muted: #888;
@@ -38,10 +42,17 @@ body {
   max-width: 480px;
 }
 
-/* The sidebar sits beside the phone-like column from tablet up. */
+/* The sidebar sits beside the page from tablet up, which gets wider on a
+   large screen. */
 @media (min-width: 640px) {
   #root {
-    max-width: 720px;
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1024px) {
+  #root {
+    max-width: 1280px;
   }
 }
 

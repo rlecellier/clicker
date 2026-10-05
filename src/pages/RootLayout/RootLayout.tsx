@@ -72,6 +72,13 @@ const Layout = () => {
           <AgeCounter years={age} />
         </div>
       </header>
+      <DayTimeline
+        origin={origin}
+        history={history}
+        job={job}
+        dayPosition={elapsedHours / HOURS_PER_DAY}
+        label={`${date}, ${time}`}
+      />
       <div className={styles.body}>
         <Sidebar
           id="sidebar"
@@ -86,13 +93,6 @@ const Layout = () => {
           onRestart={restart}
         />
         <main className={styles.main}>
-          <DayTimeline
-            origin={origin}
-            history={history}
-            job={job}
-            dayPosition={elapsedHours / HOURS_PER_DAY}
-            label={`${date}, ${time}`}
-          />
           <Outlet />
         </main>
       </div>
