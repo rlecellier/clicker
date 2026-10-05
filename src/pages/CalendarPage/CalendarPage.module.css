@@ -63,3 +63,10 @@
   overscroll-behavior: contain;
   touch-action: pan-y;
 }
+
+/* On a large screen, the day does not stretch to the whole page. */
+@media (min-width: 640px) {
+  .grid {
+    --calendar-height: clamp(24rem, calc(100dvh - 12rem), 34rem);
+  }
+}
