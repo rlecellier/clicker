@@ -19,7 +19,9 @@ test('the places menu unfolds and leads to the places', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Work' })).toBeVisible();
   await expect(page.getByText('You are not here')).toBeVisible();
   // choosing a place closes the menu on mobile
-  await expect(page.getByRole('complementary')).not.toBeInViewport();
+  await expect(
+    page.getByRole('meter', { name: 'Calories' }),
+  ).not.toBeInViewport();
 
   await page.getByRole('button', { name: 'Menu' }).click();
   await page.getByRole('link', { name: /Home/ }).click();
@@ -28,7 +30,7 @@ test('the places menu unfolds and leads to the places', async ({ page }) => {
 
 test('the menu closes with Escape and with its backdrop', async ({ page }) => {
   const menu = page.getByRole('button', { name: 'Menu' });
-  const sidebar = page.getByRole('complementary');
+  const sidebar = page.getByRole('meter', { name: 'Calories' });
 
   await menu.click();
   await expect(sidebar).toBeInViewport();
@@ -46,7 +48,9 @@ test('the menu leads to the balance and back to the game', async ({ page }) => {
   await page.getByRole('button', { name: 'Menu' }).click();
   await page.getByRole('link', { name: 'Balance' }).click();
   await expect(page.getByRole('heading', { name: 'Balance' })).toBeVisible();
-  await expect(page.getByRole('complementary')).not.toBeInViewport();
+  await expect(
+    page.getByRole('meter', { name: 'Calories' }),
+  ).not.toBeInViewport();
 
   await page.getByRole('button', { name: 'Menu' }).click();
   await page.getByRole('link', { name: 'Game' }).click();

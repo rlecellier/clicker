@@ -51,7 +51,7 @@ test('a new game starts at home, at the date and time of the player, with nothin
 
   // The calendar is empty: nothing done, nothing required.
   await openPage(page, 'Calendar');
-  await expect(page.getByRole('listitem')).toHaveCount(0);
+  await expect(page.getByRole('main').getByRole('listitem')).toHaveCount(0);
   await demoShot(page, 'empty-calendar');
 });
 
