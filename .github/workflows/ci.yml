@@ -3,7 +3,10 @@ name: CI
 # Lint, types, format, unit tests, build and e2e journeys on every pull request
 # and on `main`, so a red change cannot be merged unnoticed.
 on:
+  # `closed` only exists to cancel the runs still queued for a merged or closed
+  # pull request: it joins their concurrency group, and its jobs are skipped.
   pull_request:
+    types: [opened, synchronize, reopened, closed]
   push:
     branches: [main]
 
@@ -16,6 +19,7 @@ concurrency:
 
 jobs:
   check:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,6 +37,7 @@ jobs:
       - run: npm run build
 
   e2e:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
