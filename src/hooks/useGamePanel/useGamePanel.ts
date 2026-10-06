@@ -15,7 +15,7 @@ export const useGamePanel = () => {
     elapsedHours,
     origin,
   } = useGameContext();
-  const { sections, perform } = usePlaceActions(location);
+  const { sections, perform, pick } = usePlaceActions(location);
 
   const currentDay = Math.floor(elapsedHours / HOURS_PER_DAY);
 
@@ -41,5 +41,6 @@ export const useGamePanel = () => {
     },
     sections,
     perform,
+    pick,
   };
 };

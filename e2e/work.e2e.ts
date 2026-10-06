@@ -8,6 +8,8 @@ import {
   openPage,
   perform,
   startGame,
+  choose,
+  performChoice,
 } from './support';
 
 const coins = (page: Page) => page.getByRole('status', { name: 'Gold coins' });
@@ -97,15 +99,15 @@ test('look for a job, work a morning, eat out and come back home', async ({
   await expect(location).toHaveAttribute('data-location', 'home');
   await expect(clock).toContainText('13:30');
   await moveTo(page, 'Work');
-  await perform(page, 'Think 1h', 1);
+  await performChoice(page, 'Think', '1h', 1);
   await expect(clock).toContainText('14:30');
   await expect(location).toHaveAttribute('data-location', 'work');
 
   // Actions of the other place are queued: they start once the player is there.
   await openPage(page, 'Places');
   await page.getByRole('link', { name: /Home/ }).click();
-  await page.getByRole('button', { name: /Have a snack/ }).click();
-  await page.getByRole('button', { name: /Have a meal/ }).click();
+  await choose(page, 'Eat', 'Snack');
+  await choose(page, 'Eat', 'Meal');
   const queue = page.getByRole('region', { name: 'Queued actions' });
   await expect(queue).toContainText('Have a snack');
   await expect(queue).toContainText('Have a meal');

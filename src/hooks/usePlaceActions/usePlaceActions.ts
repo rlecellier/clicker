@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { PLACES } from '@component/PlaceInfo';
 import { useGameContext } from '@context/GameContext';
 import type { GameContextValue } from '@context/GameContext/types';
@@ -14,6 +16,8 @@ export type Row = {
   key: string;
   // the name of the group, none for an action alone
   name?: string;
+  // the id of the option chosen in a group
+  selected?: string;
   kind: EventKind;
   options: {
     id: string;
@@ -33,7 +37,10 @@ const TITLES: Record<ActionCategory, string | undefined> = {
 };
 
 // The actions of a group (sleep 2, 4, 6, 8 h) share one row.
-const rowsOf = (actions: ReturnType<GameContextValue['actionsAt']>): Row[] => {
+const rowsOf = (
+  actions: ReturnType<GameContextValue['actionsAt']>,
+  picks: Record<string, string>,
+): Row[] => {
   const rows: Row[] = [];
   for (const { action, blocker } of actions) {
     const option = {
@@ -53,6 +60,7 @@ const rowsOf = (actions: ReturnType<GameContextValue['actionsAt']>): Row[] => {
       rows.push({
         key: action.group?.name ?? action.id,
         name: action.group?.name,
+        selected: picks[action.group?.name ?? ''],
         kind: action.kind,
         options: [option],
       });
@@ -68,6 +76,8 @@ const rowsOf = (actions: ReturnType<GameContextValue['actionsAt']>): Row[] => {
 export const usePlaceActions = (place: Location) => {
   const { actionsAt, perform } = useGameContext();
   const offered = actionsAt(place);
+  // the option chosen in each group, by the group's name
+  const [picks, setPicks] = useState<Record<string, string>>({});
 
   return {
     sections: ACTION_CATEGORIES.map((category) => ({
@@ -75,8 +85,12 @@ export const usePlaceActions = (place: Location) => {
       title: TITLES[category] ?? `At ${PLACES[place].label.toLowerCase()}`,
       rows: rowsOf(
         offered.filter(({ action }) => action.category === category),
+        picks,
       ),
     })).filter(({ rows }) => rows.length > 0),
+    pick: (name: string, id: string) => {
+      setPicks((current) => ({ ...current, [name]: id }));
+    },
     perform: (id: string) => {
       perform(id as ActionId);
     },

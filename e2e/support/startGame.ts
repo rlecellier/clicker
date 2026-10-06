@@ -55,3 +55,22 @@ export const moveTo = async (page: Page, place: string) => {
   });
   await page.getByRole('button', { name: 'Go', exact: true }).click();
 };
+
+// Chooses an option of a group (Eat: Snack, Meal) and presses its button.
+export const choose = async (page: Page, group: string, option: string) => {
+  await page
+    .getByRole('combobox', { name: `${group} choice` })
+    .selectOption({ label: option });
+  await page.getByRole('button', { name: group, exact: true }).click();
+};
+
+// Same, then lets the action run.
+export const performChoice = async (
+  page: Page,
+  group: string,
+  option: string,
+  hours: number,
+) => {
+  await choose(page, group, option);
+  await elapse(page, hours);
+};

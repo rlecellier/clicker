@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { openPage, perform, startGame } from './support';
+import { openPage, startGame, choose, performChoice } from './support';
 
 test('on desktop: the sidebar stays, the calendar shows a week or a day and zooms', async ({
   page,
@@ -10,7 +10,7 @@ test('on desktop: the sidebar stays, the calendar shows a week or a day and zoom
   await expect(page.getByRole('meter', { name: 'Calories' })).toBeInViewport();
   await expect(page.getByRole('button', { name: 'Menu' })).toBeHidden();
 
-  await perform(page, /Have a meal/, 1);
+  await performChoice(page, 'Eat', 'Meal', 1);
   await openPage(page, 'Calendar');
   const title = page.getByRole('heading', { level: 2 });
   await expect(page.getByRole('main').getByRole('list')).toHaveCount(7);
@@ -42,9 +42,9 @@ test('on desktop: the sidebar stays, the calendar shows a week or a day and zoom
 
   // What is queued shows in the calendar, and a click takes it back.
   await openPage(page, 'Game');
-  await page.getByRole('button', { name: /Sleep 4h/ }).click();
-  await page.getByRole('button', { name: /Sleep 2h/ }).click();
-  await page.getByRole('button', { name: /Sleep 6h/ }).click();
+  await choose(page, 'Sleep', '4h');
+  await choose(page, 'Sleep', '2h');
+  await choose(page, 'Sleep', '6h');
   await openPage(page, 'Calendar');
   const planned = page.getByRole('list', { name: 'Mon 1' }).getByRole('button');
   await expect(planned).toHaveCount(2);
@@ -82,7 +82,7 @@ test('on mobile: the calendar shows one day, swipes to the next and pinches to z
   });
   const page = await context.newPage();
   await startGame(page);
-  await perform(page, /Have a meal/, 1);
+  await performChoice(page, 'Eat', 'Meal', 1);
   await openPage(page, 'Calendar');
   await expect(page.getByRole('main').getByRole('list')).toHaveCount(1);
   const title = page.getByRole('heading', { level: 2 });

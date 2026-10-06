@@ -14,7 +14,7 @@ import styles from './GamePage.module.css';
 
 export const GamePage = () => {
   const { currentBook, bookHours } = useGameContext();
-  const { location, job, sections, perform } = useGamePanel();
+  const { location, job, sections, perform, pick } = useGamePanel();
   const move = useMove();
   const queue = useQueue();
 
@@ -33,7 +33,7 @@ export const GamePage = () => {
           />
         )}
         <GetJob />
-        <ActionSections sections={sections} onPerform={perform} />
+        <ActionSections sections={sections} onPerform={perform} onPick={pick} />
         <QueueList items={queue.items} onRemove={queue.remove} />
         {currentBook && (
           <BookProgress

@@ -21,12 +21,14 @@ type ActionSectionsProps = {
     rows: Parameters<typeof ActionList>[0]['rows'];
   }[];
   onPerform: (id: string) => void;
+  onPick: (key: string, id: string) => void;
 };
 
 // The actions, with a heading telling where each group comes from.
 export const ActionSections = ({
   sections,
   onPerform,
+  onPick,
 }: ActionSectionsProps) => {
   return (
     <div className={styles.root}>
@@ -43,7 +45,7 @@ export const ActionSections = ({
               {Icon && <Icon aria-hidden size={14} />}
               {title}
             </h3>
-            <ActionList rows={rows} onPerform={onPerform} />
+            <ActionList rows={rows} onPerform={onPerform} onPick={onPick} />
           </section>
         );
       })}
