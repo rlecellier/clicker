@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 import { birthDateOf } from '@game/age';
 import { newGameState, type GameState } from '@game/gameState';
@@ -12,10 +13,13 @@ export const useGameStart = () => {
   const [game, setGame] = useState<GameState | undefined>(() =>
     readSave(localStorage),
   );
+  const navigate = useNavigate();
+  // A new game always opens on the home page, whatever URL the player was on.
   const start = useCallback(() => {
     const now = new Date();
     setGame(newGameState({ ...gameStartOf(now), birthDate: birthDateOf(now) }));
-  }, []);
+    void navigate('/', { replace: true });
+  }, [navigate]);
 
   const restart = useCallback(() => {
     clearSave(localStorage);

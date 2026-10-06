@@ -124,6 +124,14 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   await expect(clock).toContainText('08:00');
   await expect(lookForAJob).toBeVisible();
 
+  // A new game always opens on the home page, even from another URL.
+  await page.evaluate(() => {
+    localStorage.clear();
+  });
+  await page.goto('/calendar');
+  await startNewGame(page);
+  await expect(page).toHaveURL(/\/$/);
+
   // A broken save is ignored: the player is back at the start screens.
   await performChoice(page, 'Eat', 'Snack', 0.5);
   await page.evaluate(() => {
