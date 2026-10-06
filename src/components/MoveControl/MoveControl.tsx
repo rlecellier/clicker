@@ -1,6 +1,8 @@
 import { Button } from '@base-ui/react/button';
 import { ChevronDown, MapPin } from 'lucide-react';
 
+import { IconRow } from '@component/IconRow';
+
 import styles from './MoveControl.module.css';
 
 type MoveControlProps = {
@@ -22,28 +24,29 @@ export const MoveControl = ({
   onGo,
 }: MoveControlProps) => {
   return (
-    <div className={styles.root} role="group" aria-label="Move">
-      <MapPin aria-hidden size={18} />
-      <div className={styles.field}>
-        <select
-          className={styles.select}
-          aria-label="Destination"
-          value={value}
-          onChange={(event) => {
-            onChange(event.target.value);
-          }}
-        >
-          {destinations.map(({ id, label }) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </select>
-        <ChevronDown aria-hidden size={18} className={styles.chevron} />
-      </div>
-      <Button className={styles.go} disabled={disabled} onClick={onGo}>
-        Go
-      </Button>
+    <div role="group" aria-label="Move">
+      <IconRow icon={MapPin}>
+        <div className={styles.field}>
+          <select
+            className={styles.select}
+            aria-label="Destination"
+            value={value}
+            onChange={(event) => {
+              onChange(event.target.value);
+            }}
+          >
+            {destinations.map(({ id, label }) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown aria-hidden size={18} className={styles.chevron} />
+        </div>
+        <Button className={styles.go} disabled={disabled} onClick={onGo}>
+          Go
+        </Button>
+      </IconRow>
     </div>
   );
 };

@@ -1,0 +1,4 @@
+/* Fills the line beside its icon, like the actions. */
+.root {
+  flex: 1 1 auto;
+}
