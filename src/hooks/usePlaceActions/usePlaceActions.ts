@@ -5,12 +5,13 @@ import { useGameContext } from '@context/GameContext';
 import type { GameContextValue } from '@context/GameContext/types';
 import {
   ACTION_CATEGORIES,
+  defaultActionOf,
   type ActionCategory,
   type ActionId,
 } from '@game/actions';
 import type { EventKind } from '@game/history';
 import type { Location } from '@game/location';
-import { formatDuration } from '@game/time';
+import { formatDuration, HOURS_PER_DAY } from '@game/time';
 
 export type Row = {
   key: string;
@@ -40,6 +41,7 @@ const TITLES: Record<ActionCategory, string | undefined> = {
 const rowsOf = (
   actions: ReturnType<GameContextValue['actionsAt']>,
   picks: Record<string, string>,
+  hourOfDay: number,
 ): Row[] => {
   const rows: Row[] = [];
   for (const { action, blocker } of actions) {
@@ -60,7 +62,10 @@ const rowsOf = (
       rows.push({
         key: action.group?.name ?? action.id,
         name: action.group?.name,
-        selected: picks[action.group?.name ?? ''],
+        // what the player chose, else what suits the time of day
+        selected:
+          picks[action.group?.name ?? ''] ??
+          (action.group && defaultActionOf(action.group.name, hourOfDay)),
         kind: action.kind,
         options: [option],
       });
@@ -74,8 +79,9 @@ const rowsOf = (
 // there, queued for when they get there otherwise. A category with no action
 // is left out.
 export const usePlaceActions = (place: Location) => {
-  const { actionsAt, perform } = useGameContext();
+  const { actionsAt, perform, elapsedHours } = useGameContext();
   const offered = actionsAt(place);
+  const hourOfDay = elapsedHours % HOURS_PER_DAY;
   // the option chosen in each group, by the group's name
   const [picks, setPicks] = useState<Record<string, string>>({});
 
@@ -86,6 +92,7 @@ export const usePlaceActions = (place: Location) => {
       rows: rowsOf(
         offered.filter(({ action }) => action.category === category),
         picks,
+        hourOfDay,
       ),
     })).filter(({ rows }) => rows.length > 0),
     pick: (name: string, id: string) => {

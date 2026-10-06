@@ -4,6 +4,7 @@ import {
   ACTION_CATEGORIES,
   ACTIONS,
   actionsAt,
+  defaultActionOf,
   isActionId,
   isDoableAt,
 } from './actions';
@@ -86,4 +87,13 @@ test('the actions of a place stay at that place', () => {
 
 test('the categories are shown place first, then the player, then the phone', () => {
   expect(ACTION_CATEGORIES).toEqual(['place', 'self', 'online']);
+});
+
+test('sleep defaults to a full night, eating to a snack before noon and a meal after', () => {
+  expect(defaultActionOf('Sleep', 22)).toBe('sleep-8');
+  expect(defaultActionOf('Eat', 8)).toBe('snack');
+  expect(defaultActionOf('Eat', 11.5)).toBe('snack');
+  expect(defaultActionOf('Eat', 12)).toBe('meal');
+  expect(defaultActionOf('Eat', 19)).toBe('meal');
+  expect(defaultActionOf('Read', 12)).toBeUndefined();
 });
