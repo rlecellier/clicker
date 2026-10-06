@@ -10,6 +10,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
+import { IconRow } from '@component/IconRow';
 import type { EventKind } from '@game/history';
 
 import styles from './ActionList.module.css';
@@ -61,54 +62,60 @@ export const ActionList = ({ rows, onPerform, onPick }: ActionListProps) => {
           // a group: choose an option, then do it
           const chosen = options.find(({ id }) => id === selected) ?? first;
           return (
-            <li key={key} className={styles.row}>
-              <Icon aria-hidden size={18} />
-              <div className={styles.field}>
-                <select
-                  className={styles.select}
-                  aria-label={`${name} choice`}
-                  value={chosen.id}
-                  onChange={(event) => {
-                    onPick(key, event.target.value);
+            <li key={key}>
+              <IconRow icon={Icon}>
+                <div className={styles.field}>
+                  <select
+                    className={styles.select}
+                    aria-label={`${name} choice`}
+                    value={chosen.id}
+                    onChange={(event) => {
+                      onPick(key, event.target.value);
+                    }}
+                  >
+                    {options.map(({ id, text }) => (
+                      <option key={id} value={id}>
+                        {text}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    aria-hidden
+                    size={18}
+                    className={styles.chevron}
+                  />
+                </div>
+                <Button
+                  className={styles.go}
+                  title={chosen.blocker ?? chosen.detail}
+                  disabled={chosen.blocker !== undefined}
+                  onClick={() => {
+                    onPerform(chosen.id);
                   }}
                 >
-                  {options.map(({ id, text }) => (
-                    <option key={id} value={id}>
-                      {text}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown aria-hidden size={18} className={styles.chevron} />
-              </div>
-              <Button
-                className={styles.go}
-                title={chosen.blocker ?? chosen.detail}
-                disabled={chosen.blocker !== undefined}
-                onClick={() => {
-                  onPerform(chosen.id);
-                }}
-              >
-                {name}
-              </Button>
+                  {name}
+                </Button>
+              </IconRow>
             </li>
           );
         }
         const { id, label, detail, blocker, text } = first;
         return (
-          <li key={key} className={styles.row}>
-            <Button
-              className={styles.action}
-              aria-label={label}
-              title={blocker ?? detail}
-              disabled={blocker !== undefined}
-              onClick={() => {
-                onPerform(id);
-              }}
-            >
-              <Icon aria-hidden size={18} />
-              <span className={styles.label}>{text}</span>
-              <span className={styles.detail}>{blocker ?? detail}</span>
-            </Button>
+          <li key={key}>
+            <IconRow icon={Icon}>
+              <Button
+                className={styles.action}
+                aria-label={label}
+                title={blocker ?? detail}
+                disabled={blocker !== undefined}
+                onClick={() => {
+                  onPerform(id);
+                }}
+              >
+                <span className={styles.label}>{text}</span>
+                <span className={styles.detail}>{blocker ?? detail}</span>
+              </Button>
+            </IconRow>
           </li>
         );
       })}

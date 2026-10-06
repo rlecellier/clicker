@@ -7,13 +7,7 @@
   list-style: none;
 }
 
-/* An action alone fills the line; a group is an icon, a select and a button. */
-.row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
+/* An action alone fills the line; a group is a select and a button. */
 .action {
   display: flex;
   flex-wrap: wrap;
@@ -21,6 +15,7 @@
   justify-content: center;
   gap: 0.5rem;
   flex: 1 1 auto;
+  min-width: 0;
   text-align: left;
 }
 

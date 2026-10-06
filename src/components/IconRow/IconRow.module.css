@@ -1,0 +1,12 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Always there, icon or not, so every row's content starts at the same place. */
+.icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: center;
+}
