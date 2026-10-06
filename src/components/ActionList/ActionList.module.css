@@ -1,5 +1,4 @@
 .root {
-  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -8,34 +7,20 @@
   list-style: none;
 }
 
-/* The choices of a group share the line with its name, and go under it when
-   they do not fit (narrow phone, large text). */
+/* An action alone fills the line; a group is an icon, a select and a button. */
 .row {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
 
-.name {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  min-width: 5rem;
-  text-align: left;
-}
-
-/* With large text, the detail goes under the label. */
 .action {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  /* Equal shares of the line, but never narrower than the text: the row
-     wraps instead. */
-  flex: 1 1 0;
-  min-width: fit-content;
+  flex: 1 1 auto;
   text-align: left;
 }
 
@@ -46,24 +31,48 @@
   text-align: left;
 }
 
-.name ~ .action {
-  padding-inline: 0.4rem;
-}
-
-.name ~ .action .label {
-  text-align: center;
-}
-
 .detail {
   color: var(--color-muted);
   font-size: 0.8rem;
 }
 
-/* When a group no longer fits on one line (narrow phone, large text: the
-   threshold is in em, so it follows the text size), its name goes above and
-   its choices share the line below. */
-@container (width < 16.5em) {
-  .name {
-    flex-basis: 100%;
-  }
+/* The select looks like a button; its arrow is an icon laid over the right
+   padding, which leaves room for it. */
+.field {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.select {
+  width: 100%;
+  min-width: 0;
+  padding: 0.9rem;
+  padding-inline-end: 2.75rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  appearance: none;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font: inherit;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.select:hover:enabled {
+  background: var(--color-accent-hover);
+}
+
+.chevron {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0.9rem;
+  margin-block: auto;
+  color: var(--color-on-accent);
+  pointer-events: none;
+}
+
+.go {
+  flex: 0 0 auto;
 }

@@ -2,6 +2,7 @@ import { Button } from '@base-ui/react/button';
 import {
   BookOpen,
   Briefcase,
+  ChevronDown,
   Lightbulb,
   Moon,
   ShoppingCart,
@@ -24,11 +25,13 @@ const ICONS: Record<EventKind, LucideIcon> = {
 };
 
 type ActionListProps = {
-  // one row each: an action alone, or the choices of a group on one line
+  // one row each: an action alone, or a group of choices (a select and a button)
   rows: {
     key: string;
     // the name of the group, none for an action alone
     name?: string;
+    // the id of the option chosen in a group
+    selected?: string;
     kind: EventKind;
     options: {
       id: string;
@@ -42,39 +45,70 @@ type ActionListProps = {
     }[];
   }[];
   onPerform: (id: string) => void;
+  // choose an option of a group
+  onPick: (key: string, id: string) => void;
 };
 
 // The actions of the place the player is at, one row each.
-export const ActionList = ({ rows, onPerform }: ActionListProps) => {
+export const ActionList = ({ rows, onPerform, onPick }: ActionListProps) => {
   return (
     <ul className={styles.root} aria-label="Actions">
-      {rows.map(({ key, name, kind, options }) => {
+      {rows.map(({ key, name, selected, kind, options }) => {
         const Icon = ICONS[kind];
-        return (
-          <li key={key} className={styles.row}>
-            {name && (
-              <span className={styles.name}>
-                <Icon aria-hidden size={18} /> {name}
-              </span>
-            )}
-            {options.map(({ id, text, label, detail, blocker }) => (
+        const first = options[0];
+        if (!first) return;
+        if (name) {
+          // a group: choose an option, then do it
+          const chosen = options.find(({ id }) => id === selected) ?? first;
+          return (
+            <li key={key} className={styles.row}>
+              <Icon aria-hidden size={18} />
+              <div className={styles.field}>
+                <select
+                  className={styles.select}
+                  aria-label={`${name} choice`}
+                  value={chosen.id}
+                  onChange={(event) => {
+                    onPick(key, event.target.value);
+                  }}
+                >
+                  {options.map(({ id, text }) => (
+                    <option key={id} value={id}>
+                      {text}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown aria-hidden size={18} className={styles.chevron} />
+              </div>
               <Button
-                key={id}
-                className={styles.action}
-                aria-label={label}
-                title={blocker ?? detail}
-                disabled={blocker !== undefined}
+                className={styles.go}
+                title={chosen.blocker ?? chosen.detail}
+                disabled={chosen.blocker !== undefined}
                 onClick={() => {
-                  onPerform(id);
+                  onPerform(chosen.id);
                 }}
               >
-                {!name && <Icon aria-hidden size={18} />}
-                <span className={styles.label}>{text}</span>
-                {!name && (
-                  <span className={styles.detail}>{blocker ?? detail}</span>
-                )}
+                {name}
               </Button>
-            ))}
+            </li>
+          );
+        }
+        const { id, label, detail, blocker, text } = first;
+        return (
+          <li key={key} className={styles.row}>
+            <Button
+              className={styles.action}
+              aria-label={label}
+              title={blocker ?? detail}
+              disabled={blocker !== undefined}
+              onClick={() => {
+                onPerform(id);
+              }}
+            >
+              <Icon aria-hidden size={18} />
+              <span className={styles.label}>{text}</span>
+              <span className={styles.detail}>{blocker ?? detail}</span>
+            </Button>
           </li>
         );
       })}

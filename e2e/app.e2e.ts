@@ -6,8 +6,9 @@ import {
   moveTo,
   openPage,
   openSite,
-  perform,
   startNewGame,
+  choose,
+  performChoice,
 } from './support';
 
 // On mobile: the start screens, the menu, the places page, then the save and
@@ -87,7 +88,7 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   await expect(lookForAJob).toBeVisible();
 
   // The game is saved and resumed when the page is reloaded.
-  await perform(page, /Have a snack/, 0.5);
+  await performChoice(page, 'Eat', 'Snack', 0.5);
   await getAJob(page);
   await moveTo(page, 'Work');
   await expect(clock).toContainText('09:30');
@@ -103,7 +104,7 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
 
   // An action that is not over is not saved: the game resumes before it.
   await moveTo(page, 'Home');
-  await page.getByRole('button', { name: /Sleep 8h/ }).click();
+  await choose(page, 'Sleep', '8h');
   await elapse(page, 3);
   await page.reload();
   await expect(clock).toContainText('09:30');
@@ -124,7 +125,7 @@ test('start a game, navigate the menu, resume a saved game and restart it', asyn
   await expect(lookForAJob).toBeVisible();
 
   // A broken save is ignored: the player is back at the start screens.
-  await perform(page, /Have a snack/, 0.5);
+  await performChoice(page, 'Eat', 'Snack', 0.5);
   await page.evaluate(() => {
     localStorage.setItem('clicker.save', '{"version":1,"state":{"oops":true}}');
   });

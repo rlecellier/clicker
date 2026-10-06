@@ -14,7 +14,7 @@ import styles from './PlacePage.module.css';
 export const PlacePage = () => {
   const { place } = useParams();
   const { location } = useGameContext();
-  const { sections, perform } = usePlaceActions(
+  const { sections, perform, pick } = usePlaceActions(
     isLocation(place) ? place : 'home',
   );
   const queue = useQueue();
@@ -32,7 +32,7 @@ export const PlacePage = () => {
         All places
       </Link>
       <PlaceBanner place={place} location={location} />
-      <ActionSections sections={sections} onPerform={perform} />
+      <ActionSections sections={sections} onPerform={perform} onPick={pick} />
       <QueueList items={queue.items} onRemove={queue.remove} />
     </div>
   );

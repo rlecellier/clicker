@@ -37,7 +37,8 @@ test('a new game starts at home, with the actions of the apartment', () => {
   renderApp();
   expect(screen.getByText('Home', { selector: 'strong' })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /Look for a job/ })).toBeEnabled();
-  expect(screen.getByRole('button', { name: /Sleep 8h/ })).toBeEnabled();
+  expect(screen.getByRole('combobox', { name: 'Sleep choice' })).toBeEnabled();
+  expect(screen.getByRole('button', { name: 'Sleep' })).toBeEnabled();
   expect(screen.queryByRole('button', { name: /Go to work/ })).toBeNull();
 });
 

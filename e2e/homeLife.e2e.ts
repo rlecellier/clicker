@@ -1,6 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-import { demoShot, elapse, openPage, perform, startGame } from './support';
+import {
+  demoShot,
+  elapse,
+  openPage,
+  startGame,
+  choose,
+  performChoice,
+} from './support';
 
 // One long day at home: every action of the home page, in a row.
 test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
@@ -38,11 +45,11 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await expect(
     page
       .getByRole('region', { name: 'At home' })
-      .getByRole('button', { name: 'Have a snack' }),
+      .getByRole('combobox', { name: 'Eat choice' }),
   ).toBeVisible();
   await expect(
     page.getByRole('region', { name: 'You' }).getByRole('button', {
-      name: 'Think 1h',
+      name: 'Think',
     }),
   ).toBeVisible();
 
@@ -51,10 +58,10 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await expect(clock).toContainText('08:00');
 
   // Meals: half an hour, then an hour. Two in a row are too much.
-  await perform(page, /Have a snack/, 0.5);
+  await performChoice(page, 'Eat', 'Snack', 0.5);
   await expect(clock).toContainText('08:30');
   await expect(fridge).toHaveAttribute('aria-valuetext', '9 / 10');
-  await perform(page, /Have a meal/, 1);
+  await performChoice(page, 'Eat', 'Meal', 1);
   await expect(clock).toContainText('09:30');
   await expect(fridge).toHaveAttribute('aria-valuetext', '8 / 10');
   const carrot = page.getByRole('button', { name: 'Calories status' });
@@ -63,7 +70,7 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await expect(page.getByText('Too much energy')).toBeVisible();
 
   // An hour to think while digesting.
-  await perform(page, 'Think 1h', 1);
+  await performChoice(page, 'Think', '1h', 1);
   await expect(clock).toContainText('10:30');
 
   // Shopping takes an hour and fills the fridge once it is over.
@@ -78,7 +85,7 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await demoShot(page, 'fridge');
 
   // Time runs at one game hour per second, one action at a time.
-  await page.getByRole('button', { name: /Sleep 4h/ }).click();
+  await choose(page, 'Sleep', '4h');
   await expect(clock).toContainText('11:30');
   await expect(progress).toHaveAttribute('aria-valuetext', 'Sleep, 0%');
   await elapse(page, 2);
@@ -86,7 +93,7 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await expect(progress).toHaveAttribute('aria-valuetext', /Sleep, (5|6)\d%/);
   await demoShot(page, 'time-running');
   // An action asked for while busy waits in the queue, and can be cancelled.
-  await page.getByRole('button', { name: /Sleep 2h/ }).click();
+  await choose(page, 'Sleep', '2h');
   await expect(
     page.getByRole('region', { name: 'Queued actions' }),
   ).toContainText('Sleep');
@@ -100,14 +107,14 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
 
   // Reading draws a book and moves it on; it is listed once read.
   await expect(book).toBeHidden();
-  await perform(page, 'Read 1h', 1);
+  await performChoice(page, 'Read', '1h', 1);
   await expect(book).toHaveAttribute('aria-valuetext', '16%');
-  await perform(page, 'Read 2h', 2);
+  await performChoice(page, 'Read', '2h', 2);
   await expect(book).toHaveAttribute('aria-valuetext', '50%');
   await openPage(page, 'Achievements');
   await expect(page.getByText('No book read yet.')).toBeVisible();
   await openPage(page, 'Game');
-  await perform(page, 'Read 3h', 3);
+  await performChoice(page, 'Read', '3h', 3);
   await expect(clock).toContainText('21:30');
   await openPage(page, 'Achievements');
   await expect(page.getByText('Books read (1)')).toBeVisible();
@@ -115,11 +122,11 @@ test('a day at home: eat, shop, sleep, read and think', async ({ page }) => {
   await openPage(page, 'Game');
 
   // Thinking, then a night's sleep that goes past midnight.
-  await perform(page, 'Think 30 min', 0.5);
-  await perform(page, 'Think 2h', 2);
+  await performChoice(page, 'Think', '30 min', 0.5);
+  await performChoice(page, 'Think', '2h', 2);
   await expect(clock).toContainText('00:00');
-  await perform(page, /Sleep 2h/, 2);
-  await perform(page, /Sleep 6h/, 6);
+  await performChoice(page, 'Sleep', '2h', 2);
+  await performChoice(page, 'Sleep', '6h', 6);
   await expect(clock).toContainText('Tue 5 Oct 2026');
   await expect(clock).toContainText('08:00');
 
