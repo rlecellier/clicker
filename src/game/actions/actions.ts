@@ -126,6 +126,18 @@ export const actionsAt = (place: Location): Action[] =>
     isDoableAt(action, place),
   );
 
+// The option of a group offered first at that hour of the day: a snack for
+// breakfast, a meal for lunch and dinner, a full night of sleep. None for a
+// group with no preference.
+export const defaultActionOf = (
+  group: string,
+  hourOfDay: number,
+): ActionId | undefined => {
+  if (group === 'Sleep') return 'sleep-8';
+  if (group === 'Eat') return hourOfDay < 12 ? 'snack' : 'meal';
+  return undefined;
+};
+
 // The categories, in the order they are shown.
 export const ACTION_CATEGORIES: readonly ActionCategory[] = [
   'place',

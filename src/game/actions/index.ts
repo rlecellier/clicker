@@ -3,6 +3,7 @@ export {
   ACTION_IDS,
   ACTIONS,
   actionsAt,
+  defaultActionOf,
   isDoableAt,
   isActionId,
   JOB_SEARCH,
